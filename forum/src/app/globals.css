@@ -1,0 +1,324 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+    --font-heading: "Source Serif 4 Variable", Georgia, "Times New Roman", serif;
+    --font-serif: "Source Serif 4 Variable", Georgia, "Times New Roman", serif;
+    --font-yazit: "Cinzel Variable", "Trajan Pro", Georgia, serif;
+    --color-altin: var(--altin);
+    --font-sans: var(--font-geist-sans);
+    --font-mono: var(--font-geist-mono);
+    --color-success: var(--success);
+    --color-warning: var(--warning);
+    --color-vurgu: var(--vurgu);
+    --color-vurgu-foreground: var(--vurgu-foreground);
+    --color-murekkep: var(--murekkep);
+    --color-kagit: var(--kagit);
+    --color-sidebar-ring: var(--sidebar-ring);
+    --color-sidebar-border: var(--sidebar-border);
+    --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+    --color-sidebar-accent: var(--sidebar-accent);
+    --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+    --color-sidebar-primary: var(--sidebar-primary);
+    --color-sidebar-foreground: var(--sidebar-foreground);
+    --color-sidebar: var(--sidebar);
+    --color-chart-5: var(--chart-5);
+    --color-chart-4: var(--chart-4);
+    --color-chart-3: var(--chart-3);
+    --color-chart-2: var(--chart-2);
+    --color-chart-1: var(--chart-1);
+    --color-ring: var(--ring);
+    --color-input: var(--input);
+    --color-border: var(--border);
+    --color-destructive: var(--destructive);
+    --color-accent-foreground: var(--accent-foreground);
+    --color-accent: var(--accent);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-muted: var(--muted);
+    --color-secondary-foreground: var(--secondary-foreground);
+    --color-secondary: var(--secondary);
+    --color-primary-foreground: var(--primary-foreground);
+    --color-primary: var(--primary);
+    --color-popover-foreground: var(--popover-foreground);
+    --color-popover: var(--popover);
+    --color-card-foreground: var(--card-foreground);
+    --color-card: var(--card);
+    --color-foreground: var(--foreground);
+    --color-background: var(--background);
+    --radius-sm: calc(var(--radius) * 0.6);
+    --radius-md: calc(var(--radius) * 0.8);
+    --radius-lg: var(--radius);
+    --radius-xl: calc(var(--radius) * 1.4);
+    --radius-2xl: calc(var(--radius) * 1.8);
+    --radius-3xl: calc(var(--radius) * 2.2);
+    --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+/*
+ * Ortak Akıl kimliği: Roma mermeri.
+ * Gündüz beyaz Carrara mermeri (gri damarlar), gece siyah Nero Marquina (beyaz damarlar).
+ * Vurgu rengi imparatorluk porfiri; evet = verde antico (eski yeşil mermer), hayır = porfir kırmızısı;
+ * süslemelerde altın varak. Başlıklar Trajan sütunu harflerinden esinlenen Cinzel ile "yazıt" gibi oyulur.
+ */
+:root {
+    --kagit: oklch(0.962 0.004 240);
+    --murekkep: oklch(0.25 0.014 255);
+    --altin: oklch(0.66 0.11 80);
+    --background: var(--kagit);
+    --foreground: var(--murekkep);
+    --card: oklch(0.982 0.003 240);
+    --card-foreground: var(--murekkep);
+    --popover: oklch(0.988 0.003 240);
+    --popover-foreground: var(--murekkep);
+    --primary: var(--murekkep);
+    --primary-foreground: var(--kagit);
+    --secondary: oklch(0.928 0.006 240);
+    --secondary-foreground: var(--murekkep);
+    --muted: oklch(0.93 0.006 240);
+    --muted-foreground: oklch(0.47 0.016 255);
+    --accent: oklch(0.915 0.008 240);
+    --accent-foreground: var(--murekkep);
+    --destructive: oklch(0.48 0.15 20);
+    --border: oklch(0.835 0.009 245);
+    --input: oklch(0.79 0.011 245);
+    --ring: oklch(0.42 0.12 8 / 60%);
+    --success: oklch(0.47 0.085 168);
+    --warning: oklch(0.6 0.115 75);
+    --vurgu: oklch(0.42 0.12 8);
+    --vurgu-foreground: oklch(0.975 0.004 240);
+    --chart-1: var(--murekkep);
+    --chart-2: oklch(0.42 0.12 8);
+    --chart-3: oklch(0.47 0.085 168);
+    --chart-4: oklch(0.66 0.11 80);
+    --chart-5: oklch(0.56 0.015 250);
+    --radius: 0.15rem;
+    --sidebar: var(--kagit);
+    --sidebar-foreground: var(--murekkep);
+    --sidebar-primary: var(--murekkep);
+    --sidebar-primary-foreground: var(--kagit);
+    --sidebar-accent: oklch(0.915 0.008 240);
+    --sidebar-accent-foreground: var(--murekkep);
+    --sidebar-border: oklch(0.835 0.009 245);
+    --sidebar-ring: oklch(0.42 0.12 8 / 60%);
+
+    /* Mermer damarları: "turbulence" gürültüsünün sıfıra yakın sırtları ince damar çizer */
+    --mermer: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%201600%201000'%20preserveAspectRatio%3D'xMidYMid%20slice'%3E%3Cfilter%20id%3D'b'%20x%3D'0'%20y%3D'0'%20width%3D'100%25'%20height%3D'100%25'%3E%3CfeTurbulence%20type%3D'fractalNoise'%20baseFrequency%3D'0.004'%20numOctaves%3D'4'%20seed%3D'5'%2F%3E%3CfeColorMatrix%20values%3D'0%200%200%200%200.38%200%200%200%200%200.38%200%200%200%200%200.38%200.3%200%200%200%20-0.105'%2F%3E%3C%2Ffilter%3E%3Cfilter%20id%3D'w'%20filterUnits%3D'userSpaceOnUse'%20x%3D'-300'%20y%3D'-300'%20width%3D'2200'%20height%3D'1600'%3E%3CfeTurbulence%20type%3D'fractalNoise'%20baseFrequency%3D'0.0032'%20numOctaves%3D'6'%20seed%3D'8'%20result%3D'n'%2F%3E%3CfeDisplacementMap%20in%3D'SourceGraphic'%20in2%3D'n'%20scale%3D'300'%20xChannelSelector%3D'R'%20yChannelSelector%3D'G'%2F%3E%3CfeGaussianBlur%20stdDeviation%3D'0.55'%2F%3E%3C%2Ffilter%3E%3Cfilter%20id%3D'y'%3E%3CfeGaussianBlur%20stdDeviation%3D'6'%2F%3E%3C%2Ffilter%3E%3Crect%20width%3D'1600'%20height%3D'1000'%20filter%3D'url(%23b)'%2F%3E%3Cg%20filter%3D'url(%23w)'%20fill%3D'none'%20stroke%3D'rgb(97%2C100%2C107)'%20stroke-linecap%3D'round'%3E%3Cpath%20d%3D'M-200%20900L1800%20250'%20stroke-width%3D'2.2'%20stroke-opacity%3D'0.42'%2F%3E%3Cpath%20d%3D'M-200%20900L1800%20250'%20stroke-width%3D'30.8'%20stroke-opacity%3D'0.075'%20filter%3D'url(%23y)'%2F%3E%3Cpath%20d%3D'M-200%201150L1800%20520'%20stroke-width%3D'0.9'%20stroke-opacity%3D'0.336'%2F%3E%3Cpath%20d%3D'M-200%201150L1800%20520'%20stroke-width%3D'12.6'%20stroke-opacity%3D'0.06'%20filter%3D'url(%23y)'%2F%3E%3Cpath%20d%3D'M-200%20520L1800%20-60'%20stroke-width%3D'1.4'%20stroke-opacity%3D'0.378'%2F%3E%3Cpath%20d%3D'M-200%20520L1800%20-60'%20stroke-width%3D'19.6'%20stroke-opacity%3D'0.068'%20filter%3D'url(%23y)'%2F%3E%3Cpath%20d%3D'M-200%201300L1800%20820'%20stroke-width%3D'3'%20stroke-opacity%3D'0.294'%2F%3E%3Cpath%20d%3D'M-200%201300L1800%20820'%20stroke-width%3D'42'%20stroke-opacity%3D'0.052'%20filter%3D'url(%23y)'%2F%3E%3Cpath%20d%3D'M-200%20700L1800%20120'%20stroke-width%3D'0.6'%20stroke-opacity%3D'0.252'%2F%3E%3Cpath%20d%3D'M-200%20700L1800%20120'%20stroke-width%3D'8.4'%20stroke-opacity%3D'0.045'%20filter%3D'url(%23y)'%2F%3E%3Cpath%20d%3D'M200%201300L1800%20380'%20stroke-width%3D'0.7'%20stroke-opacity%3D'0.231'%2F%3E%3Cpath%20d%3D'M200%201300L1800%20380'%20stroke-width%3D'9.8'%20stroke-opacity%3D'0.041'%20filter%3D'url(%23y)'%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+    /* Meandros (Roma mozaiklerindeki kırık çizgi) bordürü */
+    --meandros: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='12'%3E%3Cpath d='M0 1H16M0 11H16M2 11V3.5H13V8.5H6.5V6H9.5' fill='none' stroke='%232b2f39' stroke-width='1.3'/%3E%3C/svg%3E");
+    /* Defne dalı (altın varak) */
+    --defne: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 80'%3E%3Cg fill='%23b08d3e'%3E%3Cpath d='M30 78Q8 50 22 4' fill='none' stroke='%23b08d3e' stroke-width='1.6'/%3E%3Cellipse cx='19.2' cy='67.2' rx='3' ry='7.5' transform='rotate(-55 19.2 67.2)'/%3E%3Cellipse cx='15' cy='57.6' rx='3' ry='7.5' transform='rotate(-50 15 57.6)'/%3E%3Cellipse cx='12.5' cy='47.2' rx='3' ry='7.5' transform='rotate(-45 12.5 47.2)'/%3E%3Cellipse cx='11.6' cy='35.9' rx='3' ry='7.5' transform='rotate(-38 11.6 35.9)'/%3E%3Cellipse cx='12.3' cy='23.9' rx='3' ry='7' transform='rotate(-32 12.3 23.9)'/%3E%3Cellipse cx='14.8' cy='12' rx='2.8' ry='6.5' transform='rotate(-26 14.8 12)'/%3E%3Cellipse cx='28' cy='64' rx='3' ry='7.5' transform='rotate(45 28 64)'/%3E%3Cellipse cx='25' cy='54' rx='3' ry='7.5' transform='rotate(40 25 54)'/%3E%3Cellipse cx='22.5' cy='43.5' rx='3' ry='7.5' transform='rotate(35 22.5 43.5)'/%3E%3Cellipse cx='21.6' cy='32.5' rx='3' ry='7' transform='rotate(30 21.6 32.5)'/%3E%3Cellipse cx='22.4' cy='20.5' rx='2.8' ry='6.5' transform='rotate(24 22.4 20.5)'/%3E%3Cellipse cx='22.3' cy='5.5' rx='2.4' ry='5.5' transform='rotate(8 22.3 5.5)'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* Gece: siyah Nero Marquina mermeri */
+.dark {
+    --kagit: oklch(0.175 0.006 255);
+    --murekkep: oklch(0.94 0.006 240);
+    --altin: oklch(0.78 0.11 84);
+    --background: var(--kagit);
+    --foreground: var(--murekkep);
+    --card: oklch(0.205 0.007 255);
+    --card-foreground: var(--murekkep);
+    --popover: oklch(0.22 0.008 255);
+    --popover-foreground: var(--murekkep);
+    --primary: var(--murekkep);
+    --primary-foreground: var(--kagit);
+    --secondary: oklch(0.25 0.008 255);
+    --secondary-foreground: var(--murekkep);
+    --muted: oklch(0.24 0.008 255);
+    --muted-foreground: oklch(0.72 0.012 240);
+    --accent: oklch(0.27 0.01 255);
+    --accent-foreground: var(--murekkep);
+    --destructive: oklch(0.68 0.15 18);
+    --border: oklch(1 0 0 / 13%);
+    --input: oklch(1 0 0 / 18%);
+    --ring: oklch(0.58 0.125 18 / 60%);
+    --success: oklch(0.72 0.1 168);
+    --warning: oklch(0.8 0.115 82);
+    --vurgu: oklch(0.58 0.125 18);
+    --vurgu-foreground: oklch(0.97 0.004 240);
+    --chart-1: var(--murekkep);
+    --chart-2: oklch(0.58 0.125 18);
+    --chart-3: oklch(0.72 0.1 168);
+    --chart-4: oklch(0.78 0.11 84);
+    --chart-5: oklch(0.72 0.012 240);
+    --sidebar: var(--kagit);
+    --sidebar-foreground: var(--murekkep);
+    --sidebar-primary: var(--murekkep);
+    --sidebar-primary-foreground: var(--kagit);
+    --sidebar-accent: oklch(0.27 0.01 255);
+    --sidebar-accent-foreground: var(--murekkep);
+    --sidebar-border: oklch(1 0 0 / 13%);
+    --sidebar-ring: oklch(0.58 0.125 18 / 60%);
+
+    --mermer: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%201600%201000'%20preserveAspectRatio%3D'xMidYMid%20slice'%3E%3Cfilter%20id%3D'b'%20x%3D'0'%20y%3D'0'%20width%3D'100%25'%20height%3D'100%25'%3E%3CfeTurbulence%20type%3D'fractalNoise'%20baseFrequency%3D'0.004'%20numOctaves%3D'4'%20seed%3D'5'%2F%3E%3CfeColorMatrix%20values%3D'0%200%200%200%200.86%200%200%200%200%200.86%200%200%200%200%200.86%200.12%200%200%200%20-0.042'%2F%3E%3C%2Ffilter%3E%3Cfilter%20id%3D'w'%20filterUnits%3D'userSpaceOnUse'%20x%3D'-300'%20y%3D'-300'%20width%3D'2200'%20height%3D'1600'%3E%3CfeTurbulence%20type%3D'fractalNoise'%20baseFrequency%3D'0.0032'%20numOctaves%3D'6'%20seed%3D'8'%20result%3D'n'%2F%3E%3CfeDisplacementMap%20in%3D'SourceGraphic'%20in2%3D'n'%20scale%3D'300'%20xChannelSelector%3D'R'%20yChannelSelector%3D'G'%2F%3E%3CfeGaussianBlur%20stdDeviation%3D'0.55'%2F%3E%3C%2Ffilter%3E%3Cfilter%20id%3D'y'%3E%3CfeGaussianBlur%20stdDeviation%3D'6'%2F%3E%3C%2Ffilter%3E%3Crect%20width%3D'1600'%20height%3D'1000'%20filter%3D'url(%23b)'%2F%3E%3Cg%20filter%3D'url(%23w)'%20fill%3D'none'%20stroke%3D'rgb(219%2C222%2C229)'%20stroke-linecap%3D'round'%3E%3Cpath%20d%3D'M-200%20900L1800%20250'%20stroke-width%3D'2.2'%20stroke-opacity%3D'0.34'%2F%3E%3Cpath%20d%3D'M-200%20900L1800%20250'%20stroke-width%3D'30.8'%20stroke-opacity%3D'0.05'%20filter%3D'url(%23y)'%2F%3E%3Cpath%20d%3D'M-200%201150L1800%20520'%20stroke-width%3D'0.9'%20stroke-opacity%3D'0.272'%2F%3E%3Cpath%20d%3D'M-200%201150L1800%20520'%20stroke-width%3D'12.6'%20stroke-opacity%3D'0.04'%20filter%3D'url(%23y)'%2F%3E%3Cpath%20d%3D'M-200%20520L1800%20-60'%20stroke-width%3D'1.4'%20stroke-opacity%3D'0.306'%2F%3E%3Cpath%20d%3D'M-200%20520L1800%20-60'%20stroke-width%3D'19.6'%20stroke-opacity%3D'0.045'%20filter%3D'url(%23y)'%2F%3E%3Cpath%20d%3D'M-200%201300L1800%20820'%20stroke-width%3D'3'%20stroke-opacity%3D'0.238'%2F%3E%3Cpath%20d%3D'M-200%201300L1800%20820'%20stroke-width%3D'42'%20stroke-opacity%3D'0.035'%20filter%3D'url(%23y)'%2F%3E%3Cpath%20d%3D'M-200%20700L1800%20120'%20stroke-width%3D'0.6'%20stroke-opacity%3D'0.204'%2F%3E%3Cpath%20d%3D'M-200%20700L1800%20120'%20stroke-width%3D'8.4'%20stroke-opacity%3D'0.03'%20filter%3D'url(%23y)'%2F%3E%3Cpath%20d%3D'M200%201300L1800%20380'%20stroke-width%3D'0.7'%20stroke-opacity%3D'0.187'%2F%3E%3Cpath%20d%3D'M200%201300L1800%20380'%20stroke-width%3D'9.8'%20stroke-opacity%3D'0.028'%20filter%3D'url(%23y)'%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+    --meandros: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='12'%3E%3Cpath d='M0 1H16M0 11H16M2 11V3.5H13V8.5H6.5V6H9.5' fill='none' stroke='%23c9a95c' stroke-width='1.3'/%3E%3C/svg%3E");
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+    }
+  body {
+    @apply bg-background text-foreground;
+    }
+  /* Mermer levha: ekrana sabit tek parça (döşeme olmadığı için ek yeri görünmez), içeriğin arkasında */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background: var(--mermer) center / cover no-repeat;
+    }
+  button:not(:disabled), [role="button"]:not(:disabled) {
+    cursor: pointer;
+    }
+  html {
+    @apply font-sans antialiased;
+    font-optical-sizing: auto;
+    }
+  h1, h2, h3 {
+    font-family: var(--font-heading);
+    }
+  ::selection {
+    background: color-mix(in oklch, var(--vurgu) 25%, transparent);
+    }
+}
+
+/*
+ * Yazıt: Trajan sütunundaki gibi büyük harfli, taşa oyulmuş başlık.
+ * Katmansız tanımlandı ki başlıklardaki harf aralığı / kalınlık sınıflarının önüne geçsin.
+ * Büyük harfe çevirme lang="tr" ile yapılır (i → İ).
+ */
+.yazit {
+  font-family: var(--font-yazit);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-shadow: 0 1px 0 oklch(1 0 0 / 75%), 0 -1px 0 oklch(0 0 0 / 7%);
+}
+.dark .yazit {
+  text-shadow: 0 -1px 0 oklch(0 0 0 / 70%), 0 1px 0 oklch(1 0 0 / 5%);
+}
+/* Künyenin iki yanında defne dalları */
+.defne::before,
+.defne::after {
+  content: "";
+  display: inline-block;
+  width: 0.42em;
+  height: 0.84em;
+  margin: 0 0.18em;
+  vertical-align: -0.04em;
+  background: var(--defne) center / contain no-repeat;
+}
+.defne::after {
+  transform: scaleX(-1);
+}
+
+/* Mesaj ve konu metinlerinde satır sonları korunur */
+.metin {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+@layer components {
+  /* Üst etiket (kicker): "EĞİTİM", "MANŞET" — yazıt harfleriyle */
+  .ust-etiket {
+    font-family: var(--font-yazit);
+    font-size: 11.5px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--vurgu);
+  }
+  /* Taşa oyulmuş çizgiler */
+  .cizgi-kalin {
+    border-top: 3px solid var(--foreground);
+  }
+  /* Meandros bordürü (üstte) */
+  .cizgi-cift {
+    border-top: 12px solid transparent;
+    background-image: var(--meandros);
+    background-repeat: repeat-x;
+    background-position: left top;
+    background-size: 16px 12px;
+    background-origin: border-box;
+  }
+  /* Meandros bordürü (altta) */
+  .meandros-alt {
+    border-bottom: 12px solid transparent;
+    background-image: var(--meandros);
+    background-repeat: repeat-x;
+    background-position: left bottom;
+    background-size: 16px 12px;
+    background-origin: border-box;
+  }
+  .cizgi-ince {
+    border-top: 1px solid var(--foreground);
+  }
+  /* Manşet paragrafının ilk harfi büyük (drop cap) */
+  .ilk-harf::first-letter {
+    float: left;
+    font-family: var(--font-serif);
+    font-weight: 700;
+    font-size: 3.6em;
+    line-height: 0.82;
+    padding: 0.06em 0.08em 0 0;
+    color: var(--foreground);
+  }
+  /* Okuma metni: serif, rahat satır aralığı */
+  .yazi {
+    font-family: var(--font-serif);
+    font-size: 17px;
+    line-height: 1.62;
+  }
+}
+
+/* Canlı oylama bandı (haber kanalı alt bandı gibi akar) */
+@keyframes bant-kay {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.bant-ic {
+  animation: bant-kay var(--bant-sure, 60s) linear infinite;
+}
+.bant:hover .bant-ic {
+  animation-play-state: paused;
+}
+
+/* Meclis yarım dairesinde sandalyeler tek tek yerine oturur */
+@keyframes sandalye-otur {
+  from { opacity: 0; transform: scale(0.2); }
+  to { opacity: 1; transform: scale(1); }
+}
+.sandalye {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: sandalye-otur 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+/* Şu anki durak nabız gibi atar */
+@keyframes nabiz {
+  0% { box-shadow: 0 0 0 0 color-mix(in oklch, var(--vurgu) 45%, transparent); }
+  100% { box-shadow: 0 0 0 10px transparent; }
+}
+.nabiz {
+  animation: nabiz 1.6s ease-out infinite;
+}
+
+/* Canlı nokta */
+@keyframes yanip-son {
+  50% { opacity: 0.25; }
+}
+.canli-nokta {
+  animation: yanip-son 1.2s steps(1) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bant-ic, .sandalye, .nabiz, .canli-nokta {
+    animation: none;
+  }
+}
