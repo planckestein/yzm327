@@ -32,9 +32,9 @@ type Props = {
 };
 
 const ROL_DAMGASI: Record<string, { ad: string; sinif: string }> = {
-  resmi: { ad: "Resmî açıklama", sinif: "border-foreground bg-foreground text-background" },
-  bilirkisi: { ad: "Uzman", sinif: "border-warning/60 text-warning" },
-  yz: { ad: "YZ Analist", sinif: "border-success/50 text-success" },
+  resmi: { ad: "Resmî açıklama", sinif: "text-foreground" },
+  bilirkisi: { ad: "Uzman", sinif: "text-warning" },
+  yz: { ad: "YZ Analist", sinif: "text-muted-foreground" },
 };
 
 export function Gonderi({ g, konuId, girisli, yazilabilir, acikSilmeKarari, benKurum }: Props) {
@@ -43,20 +43,20 @@ export function Gonderi({ g, konuId, girisli, yazilabilir, acikSilmeKarari, benK
   const resmi = g.rol === "resmi";
 
   return (
-    <article id={g.id ? `m${g.id}` : "ilk"} data-tur={yz ? "yz-mesaj" : undefined} className="group flex scroll-mt-28 gap-3 py-5 target:bg-vurgu/5 sm:gap-4">
+    <article id={g.id ? `m${g.id}` : "ilk"} data-tur={yz ? "yz-mesaj" : undefined} className="group flex scroll-mt-28 gap-3 py-5 target:bg-accent/60 sm:gap-4">
       <KullaniciAvatar ad={g.yazan} rol={g.rol} />
       <div className="min-w-0 flex-1">
         <header className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm">
           {resmi ? (
-            <span className="inline-flex items-center gap-1 font-bold">
+            <span className="inline-flex items-center gap-1 font-semibold">
               {g.gorunenAd ?? g.yazan}
               <BadgeCheck className="size-4" aria-label="Doğrulanmış kurum" />
             </span>
           ) : (
-            <KullaniciAdi ad={g.yazan} className="font-bold" />
+            <KullaniciAdi ad={g.yazan} className="font-semibold" />
           )}
           {rol && <Damga className={rol.sinif}>{rol.ad}</Damga>}
-          {g.konuAcan && <Damga className="border-border text-muted-foreground">Konuyu açan</Damga>}
+          {g.konuAcan && <Damga nokta={false}>· konuyu açan</Damga>}
           <a href={g.id ? `#m${g.id}` : "#ilk"} className="ml-auto text-xs text-muted-foreground tabular-nums hover:text-foreground">
             <Zaman iso={g.olusturma} /> {g.id !== null && <span className="opacity-60">· №{g.sira}</span>}
           </a>
@@ -65,7 +65,7 @@ export function Gonderi({ g, konuId, girisli, yazilabilir, acikSilmeKarari, benK
         {g.yanit && (
           <a
             href={`#m${g.yanit.id}`}
-            className="mt-2 block border-l-2 border-foreground/25 pl-3 font-serif text-sm text-muted-foreground italic hover:border-vurgu"
+            className="mt-2 block border-l-2 pl-3 text-sm text-muted-foreground italic hover:border-foreground/40"
           >
             <Reply className="mr-1 inline size-3 -scale-x-100 not-italic" />
             <b className="font-sans font-semibold text-foreground not-italic">@{g.yanit.yazan}</b>: {g.yanit.ozet}
@@ -73,7 +73,7 @@ export function Gonderi({ g, konuId, girisli, yazilabilir, acikSilmeKarari, benK
         )}
 
         {g.gizleyenKarar ? (
-          <p className="mt-2 inline-flex flex-wrap items-center gap-2 border border-dashed px-3 py-2 font-serif text-sm text-muted-foreground italic">
+          <p className="mt-2 inline-flex flex-wrap items-center gap-2 border border-dashed px-3 py-2 text-sm text-muted-foreground italic">
             <EyeOff className="size-4" /> Bu mesaj üyelerin ve Yayın Kurulu’nun oyuyla gizlendi; kaydı arşivde duruyor.
             <Link href={`/karar/${g.gizleyenKarar}`} className="font-sans font-semibold text-foreground not-italic hover:underline">
               Kararı gör
@@ -82,9 +82,9 @@ export function Gonderi({ g, konuId, girisli, yazilabilir, acikSilmeKarari, benK
         ) : (
           <div
             className={cn(
-              "metin mt-1.5 font-serif text-[16.5px] leading-relaxed",
-              yz && "mt-3 border border-dashed border-success/50 bg-success/5 p-4 font-sans text-[15px]",
-              resmi && "mt-3 border-l-4 border-foreground bg-card py-3 pr-3 pl-4",
+              "metin mt-1.5 text-[16.5px] leading-relaxed",
+              yz && "mt-3 border bg-muted/40 p-4 font-sans text-[15px]",
+              resmi && "mt-3 border-l-2 border-foreground py-1 pl-4",
             )}
           >
             {g.icerik}

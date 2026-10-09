@@ -4,7 +4,7 @@ import { Handshake } from "lucide-react";
 import { db } from "@/lib/db";
 import { kategoriEtiketi } from "@/lib/akis";
 import { etkiIstatistikleri, konuTepkileri, kurumAdlari, TEPKILER } from "@/lib/etki";
-import { konuUzlasmasi } from "@/lib/oylama";
+import { konuUzlasmasi } from "@/lib/surec";
 import { KategoriRozeti } from "@/components/ortak/KategoriRozeti";
 import { EtkiRozeti } from "@/components/ortak/EtkiRozeti";
 import { AraBaslik, SayfaBasligi } from "@/components/ortak/SayfaBasligi";
@@ -40,27 +40,24 @@ export default function EtkiSayfasi() {
         <AraBaslik>Fikirden uygulamaya</AraBaslik>
         <ol className="grid gap-2.5">
           {HUNI.map((h, i) => (
-            <li key={h.ad} className="grid grid-cols-[120px_1fr_56px] items-center gap-3 text-sm sm:grid-cols-[160px_1fr_64px]">
-              <span className="text-[11px] font-bold tracking-[0.1em] text-muted-foreground uppercase">{h.ad}</span>
-              <span className="h-8 bg-foreground/5">
-                <span
-                  className={`block h-full ${i < 2 ? "bg-foreground" : "bg-vurgu"}`}
-                  style={{ width: `${(h.n / enBuyuk) * 100}%`, opacity: 1 - (i % 3) * 0.15 }}
-                />
+            <li key={h.ad} className="grid grid-cols-[120px_1fr_48px] items-center gap-3 text-sm sm:grid-cols-[160px_1fr_56px]">
+              <span className="text-xs font-medium text-muted-foreground">{h.ad}</span>
+              <span className="h-2 bg-foreground/8">
+                <span className={`block h-full ${i < HUNI.length - 1 ? "bg-foreground/55" : "bg-vurgu"}`} style={{ width: `${(h.n / enBuyuk) * 100}%` }} />
               </span>
-              <span className="text-right font-serif text-3xl leading-none font-bold tabular-nums">{h.n}</span>
+              <span className="text-right text-lg leading-none font-semibold tabular-nums">{h.n}</span>
             </li>
           ))}
         </ol>
-        <p className="font-serif text-lg">
-          Uzlaşılan fikirlerin <b className="text-vurgu">%{e.oran}</b>’i kurumların çalışma gündemine girdi ya da uygulandı. Kurumlar
+        <p>
+          Uzlaşılan fikirlerin <b>%{e.oran}</b>’i kurumların çalışma gündemine girdi ya da uygulandı. Kurumlar
           bugüne kadar <b>{e.resmiAciklama}</b> resmî açıklama yaptı.
         </p>
       </section>
 
       <section className="flex flex-col">
         <AraBaslik>Uzlaşılan fikirler ve kurum yanıtları</AraBaslik>
-        {konular.length === 0 && <p className="py-4 font-serif text-muted-foreground italic">Henüz uzlaşmayla kapanan konu yok.</p>}
+        {konular.length === 0 && <p className="py-4 text-muted-foreground italic">Henüz uzlaşmayla kapanan konu yok.</p>}
         <div className="divide-y">
           {konular.map((k) => {
             const u = konuUzlasmasi(k.id);
@@ -75,26 +72,26 @@ export default function EtkiSayfasi() {
                     </span>
                   )}
                 </div>
-                <Link href={`/konu/${k.id}`} className="mt-1 block font-serif text-2xl leading-tight font-bold hover:underline">
+                <Link href={`/konu/${k.id}`} className="mt-1 block text-2xl leading-tight font-semibold hover:underline">
                   {k.baslik}
                 </Link>
                 {u && (
-                  <p className="mt-2 flex gap-2 font-serif text-muted-foreground italic">
+                  <p className="mt-2 flex gap-2 text-muted-foreground italic">
                     <Handshake className="mt-1 size-4 shrink-0 not-italic" />
                     <span className="line-clamp-2">{(JSON.parse(u.veri) as { metin: string }).metin}</span>
                   </p>
                 )}
-                <div className="mt-4 grid gap-3 border-l-[3px] border-foreground pl-4">
+                <div className="mt-4 grid gap-3 border-l-2 border-foreground/40 pl-4">
                   {guncel.length ? (
                     guncel.map((t) => (
                       <div key={t.id} className="flex flex-col gap-1 sm:flex-row sm:items-start sm:gap-4">
-                        <span className="shrink-0 text-[11px] font-bold tracking-[0.08em] uppercase sm:w-52">{adlar.get(t.kurum) ?? t.kurum}</span>
+                        <span className="shrink-0 text-xs font-medium sm:w-52">{adlar.get(t.kurum) ?? t.kurum}</span>
                         <p className="min-w-0 flex-1 text-sm">{t.aciklama}</p>
                         <EtkiRozeti durum={t.durum} className="self-start" />
                       </div>
                     ))
                   ) : (
-                    <p className="font-serif text-sm text-muted-foreground italic">Henüz hiçbir kurum yanıt vermedi.</p>
+                    <p className="text-sm text-muted-foreground italic">Henüz hiçbir kurum yanıt vermedi.</p>
                   )}
                 </div>
               </article>

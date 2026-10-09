@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { KilimSerit } from "@/components/motif/Motif";
 
 type Props = {
   ust: string;
@@ -8,28 +9,32 @@ type Props = {
   className?: string;
 };
 
-/** İç sayfaların gazete bölüm başlığı: üst etiket, büyük serif başlık, giriş paragrafı ve çift çizgi. */
+/** İç sayfaların başlığı: küçük üst etiket, başlık, giriş paragrafı ve altında kızıl su yolu (zikzak) şeridi. */
 export function SayfaBasligi({ ust, baslik, children, sag, className }: Props) {
   return (
-    <header className={cn("meandros-alt flex flex-col gap-3 pb-5", className)}>
+    <header className={cn("flex flex-col gap-2", className)}>
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div className="min-w-0">
           <div className="ust-etiket">{ust}</div>
-          <h1 className="yazit mt-1 font-serif text-[clamp(1.7rem,3.8vw,2.75rem)] leading-[1.08] font-black tracking-[-0.025em]">{baslik}</h1>
+          <h1 className="mt-1 text-[clamp(1.6rem,3.2vw,2.25rem)] leading-tight font-semibold">{baslik}</h1>
         </div>
         {sag}
       </div>
-      {children && <div className="max-w-2xl font-serif text-[17px] leading-relaxed text-muted-foreground">{children}</div>}
+      {children && <div className="max-w-2xl text-base leading-relaxed text-muted-foreground">{children}</div>}
+      <KilimSerit desen="zikzak" ilmek={1} className="mt-3 text-kizil/70" />
     </header>
   );
 }
 
-/** Bölüm içi ara başlık: serif başlık, altında siyah çizgi. */
+/** Bölüm içi ara başlık; altında ince kızıl su yolu şeridi. */
 export function AraBaslik({ children, sag, className }: { children: React.ReactNode; sag?: React.ReactNode; className?: string }) {
   return (
-    <div className={cn("flex items-end justify-between gap-3 border-b border-foreground pb-1.5", className)}>
-      <h2 className="yazit font-serif text-lg font-bold">{children}</h2>
-      {sag}
+    <div className={cn("flex flex-col gap-1.5", className)}>
+      <div className="flex items-end justify-between gap-3">
+        <h2 className="text-base font-semibold">{children}</h2>
+        {sag}
+      </div>
+      <KilimSerit desen="zikzak" ilmek={1} className="text-kizil/60" />
     </div>
   );
 }

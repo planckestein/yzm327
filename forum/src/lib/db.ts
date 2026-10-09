@@ -5,11 +5,11 @@ import path from "node:path";
 
 // Tek dosyalık SQLite veritabanı: forum/veri/forum.db (kurulum gerekmez, ücretsiz).
 // Şema değişirse eski veritabanını silin (veri klasörü); ilk açılışta yeniden oluşur.
-const VERI_KLASORU = path.join(process.cwd(), "veri");
-
+// Klasör bağlantı açılırken belirlenir; testler böylece geçici bir klasörde boş bir veritabanıyla çalışır.
 function ac(): DatabaseSync {
-  fs.mkdirSync(VERI_KLASORU, { recursive: true });
-  const db = new DatabaseSync(path.join(VERI_KLASORU, "forum.db"), { timeout: 5000 });
+  const klasor = path.join(process.cwd(), "veri");
+  fs.mkdirSync(klasor, { recursive: true });
+  const db = new DatabaseSync(path.join(klasor, "forum.db"), { timeout: 5000 });
   db.exec("PRAGMA foreign_keys = ON; PRAGMA journal_mode = WAL;");
   semaKur(db);
   return db;
@@ -218,7 +218,7 @@ const TOHUM: TohumKategori[] = [
     ad: "İfade Özgürlüğü ve Basın",
     aciklama: "Basın özgürlüğü, sansür, erişim engelleri ve gazetecilik.",
     kelimeler: "ifade,basın,gazeteci,sansür,yayın,medya,haber,erişim engel,sosyal medya,özgürlük,dezenformasyon,yasak",
-    kurallar: "Ortak Akıl’da tehdit dışında her ifade serbesttir.",
+    kurallar: "Kurultay’da tehdit dışında her ifade serbesttir.",
   },
   {
     ad: "Ekonomi ve Çalışma Hayatı",
@@ -273,9 +273,9 @@ const TOHUM: TohumKategori[] = [
     kelimeler: "aile,nüfus,doğum,çocuk,evlilik,boşanma,anne,baba,din,inanç,değer,gelenek,ahlak,gençlik,kreş,sosyal medya",
   },
   {
-    ad: "Ortak Akıl Hakkında",
+    ad: "Kurultay Hakkında",
     aciklama: "Platformun yayın ilkeleri, oylama düzeni ve işleyişi üzerine tartışmalar.",
-    kelimeler: "platform,ortak akıl,oylama,ilke,kurul,yayın,moderasyon,azınlık,çoğunluk,yönetmen",
+    kelimeler: "platform,kurultay,oylama,ilke,kurul,yayın,moderasyon,azınlık,çoğunluk,yönetmen",
     kurallar: "Yayın ilkelerini değiştirmek için Kararlar sayfasından ilke önerisi yapılır.",
   },
 ];

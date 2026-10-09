@@ -1,44 +1,19 @@
 import { ImageResponse } from "next/og";
+import { otagSvgMetni } from "@/components/motif/OtagCizimi";
 
-// PWA ikonlarını kodla üretir (ayrı resim dosyası gerekmez): /ikon/192, /ikon/512
+// PWA ikonlarını kodla üretir (ayrı resim dosyası gerekmez): /ikon/192, /ikon/256, /ikon/512
+// Ak keçe zemin üstünde dokuma otağ; maskelenebilir ikonun güvenli alanında kalacak boyda.
 export async function GET(_req: Request, { params }: RouteContext<"/ikon/[boyut]">) {
-  const boyut = (await params).boyut === "192" ? 192 : 512;
-  const s = boyut / 512;
-
-  const sutun = (
-    <div style={{ width: 44 * s, height: 190 * s, background: "#ffffff", borderRadius: 6 * s }} />
-  );
+  const istenen = Number((await params).boyut);
+  const boyut = [192, 256, 512].includes(istenen) ? istenen : 512; // 256: masaüstü kısayolunun simgesi (.ico)
+  const otag = Math.round(boyut * 0.62);
+  const kaynak = `data:image/svg+xml;base64,${Buffer.from(otagSvgMetni(otag)).toString("base64")}`;
 
   return new ImageResponse(
     (
-      <div
-        style={{
-          width: "100%",
-          height: "100%",
-          background: "#1f3a5f",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        {/* Meclis binası: çatı, sütunlar, taban */}
-        <div
-          style={{
-            width: 0,
-            height: 0,
-            borderLeft: `${170 * s}px solid transparent`,
-            borderRight: `${170 * s}px solid transparent`,
-            borderBottom: `${80 * s}px solid #ffffff`,
-          }}
-        />
-        <div style={{ display: "flex", gap: 30 * s, marginTop: 14 * s }}>
-          {sutun}
-          {sutun}
-          {sutun}
-          {sutun}
-        </div>
-        <div style={{ width: 340 * s, height: 30 * s, background: "#ffffff", marginTop: 14 * s, borderRadius: 6 * s }} />
+      <div style={{ width: "100%", height: "100%", background: "#f6efe2", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={kaynak} width={otag} height={Math.round((otag * 18) / 28)} alt="" />
       </div>
     ),
     { width: boyut, height: boyut },

@@ -10,7 +10,7 @@ export default async function KayitSayfasi() {
   if (await mevcutKullanici()) redirect("/");
   return (
     <div className="mx-auto flex w-full max-w-lg flex-col gap-6">
-      <SayfaBasligi ust="Ücretsiz üyelik" baslik="Ortak Akıl’a katıl">
+      <SayfaBasligi ust="Ücretsiz üyelik" baslik="Kurultay’a katıl">
         Konu öner, tartışmalara katıl, kararlarda oy kullan. Başkaları yalnızca adını ve takma adını görür.
       </SayfaBasligi>
       <KayitFormu />

@@ -5,7 +5,7 @@ import { suanIso } from "./saat";
 import { TEHDIT_MESAJI, tehditBul } from "./tehdit";
 
 /*
- * Etki takibi — Ortak Akıl'da uzlaşılan fikirlerin karar vericilere ulaşıp ulaşmadığının kaydı.
+ * Etki takibi — Kurultay'da uzlaşılan fikirlerin karar vericilere ulaşıp ulaşmadığının kaydı.
  * Kurum hesapları (bakanlıklar, komisyonlar) uzlaşılan konulara resmî tepki bildirir. Tepkiler
  * silinmez; yeni bir tepki eskisinin üstüne yazılmaz, geçmişe eklenir ve deftere yazılır.
  */

@@ -7,21 +7,20 @@ import { db } from "@/lib/db";
 import { KullaniciAvatar } from "@/components/ortak/KullaniciAvatar";
 import { Zaman } from "@/components/ortak/Zaman";
 import { AraBaslik, SayfaBasligi } from "@/components/ortak/SayfaBasligi";
+import { kucult } from "@/lib/metin";
 
 export const metadata: Metadata = { title: "Ara" };
 
-const kucuk = (s: string) => s.toLocaleLowerCase("tr-TR");
-
 /** Aranan kelimenin çevresinden kısa bir parça */
 function parca(metin: string, q: string) {
-  const i = kucuk(metin).indexOf(q);
+  const i = kucult(metin).indexOf(q);
   if (i < 0) return metin.slice(0, 160);
   const bas = Math.max(0, i - 60);
   return (bas > 0 ? "…" : "") + metin.slice(bas, i + q.length + 100) + (i + q.length + 100 < metin.length ? "…" : "");
 }
 
 function Vurgu({ metin, q }: { metin: string; q: string }) {
-  const i = kucuk(metin).indexOf(q);
+  const i = kucult(metin).indexOf(q);
   if (i < 0) return <>{metin}</>;
   return (
     <>
@@ -34,13 +33,13 @@ function Vurgu({ metin, q }: { metin: string; q: string }) {
 
 export default async function AraSayfasi({ searchParams }: PageProps<"/ara">) {
   const ham = String((await searchParams).q ?? "").trim();
-  const q = kucuk(ham);
+  const q = kucult(ham);
 
   const konular = q
     ? (db
         .prepare("SELECT id, baslik, aciklama, olusturma FROM konular WHERE durum IN ('aktif','oylamada','kapandi') ORDER BY id DESC")
         .all() as { id: number; baslik: string; aciklama: string; olusturma: string }[]).filter(
-        (k) => kucuk(k.baslik).includes(q) || kucuk(k.aciklama).includes(q),
+        (k) => kucult(k.baslik).includes(q) || kucult(k.aciklama).includes(q),
       )
     : [];
   const mesajlar = q
@@ -51,7 +50,7 @@ export default async function AraSayfasi({ searchParams }: PageProps<"/ara">) {
            WHERE m.gizleyen_surec_id IS NULL AND k.durum != 'silindi' ORDER BY m.id DESC`,
         )
         .all() as { id: number; icerik: string; olusturma: string; takma_ad: string; konu_id: number; baslik: string }[]).filter((m) =>
-        kucuk(m.icerik).includes(q),
+        kucult(m.icerik).includes(q),
       )
     : [];
 
@@ -75,7 +74,7 @@ export default async function AraSayfasi({ searchParams }: PageProps<"/ara">) {
                 {konular.map((k) => (
                   <li key={k.id}>
                     <Link href={`/konu/${k.id}`} className="group block py-3">
-                      <div className="font-serif text-lg font-semibold group-hover:underline">
+                      <div className="text-lg font-semibold group-hover:underline">
                         <Vurgu metin={k.baslik} q={q} />
                       </div>
                       <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">
@@ -101,7 +100,7 @@ export default async function AraSayfasi({ searchParams }: PageProps<"/ara">) {
                         <div className="text-xs text-muted-foreground">
                           @{m.takma_ad} · {m.baslik} · <Zaman iso={m.olusturma} />
                         </div>
-                        <p className="mt-0.5 font-serif">
+                        <p className="mt-0.5">
                           <Vurgu metin={parca(m.icerik, q)} q={q} />
                         </p>
                       </div>

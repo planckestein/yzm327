@@ -1,5 +1,6 @@
 import { Check, Minus, X } from "lucide-react";
-import { ASAMA_ADLARI, SUREC_TURLERI, surecOylamalari, type Asama, type Surec } from "@/lib/oylama";
+import { surecOylamalari } from "@/lib/oylama";
+import { ASAMA_ADLARI, SUREC_TURLERI, type Asama, type Surec } from "@/lib/surec";
 import { cn } from "@/lib/utils";
 
 type AdimDurumu = "tamam" | "simdi" | "red" | "bekliyor" | "atlandi";
@@ -55,26 +56,26 @@ export function KararAdimlari({ surec }: { surec: Surec }) {
               {i < tum.length - 1 && (
                 <span
                   className={cn(
-                    "absolute top-[33px] left-[15px] h-[calc(100%-13px)] w-[3px] sm:top-[15px] sm:left-8 sm:h-[3px] sm:w-[calc(100%-32px)]",
-                    sonrakiGecildi ? "bg-foreground" : "bg-foreground/15",
+                    "absolute top-[33px] left-[15.5px] h-[calc(100%-13px)] w-[2px] sm:top-[15.5px] sm:left-8 sm:h-[2px] sm:w-[calc(100%-32px)]",
+                    sonrakiGecildi ? "bg-foreground/60" : "bg-foreground/15",
                   )}
                 />
               )}
               <span
                 className={cn(
-                  "relative z-10 flex size-[33px] shrink-0 items-center justify-center rounded-full border-[3px] bg-background",
+                  "relative z-10 flex size-[33px] shrink-0 items-center justify-center rounded-full border-2 bg-background",
                   d === "tamam" && "border-foreground bg-foreground text-background",
                   d === "red" && "border-destructive bg-destructive text-background",
-                  d === "simdi" && "nabiz border-vurgu text-vurgu",
+                  d === "simdi" && "border-vurgu text-vurgu",
                   d === "atlandi" && "border-foreground/30 text-muted-foreground",
                   d === "bekliyor" && "border-foreground/20 text-muted-foreground",
                   son && d === "tamam" && "border-success bg-success",
                 )}
               >
                 {d === "tamam" ? (
-                  <Check className="size-4" strokeWidth={3} />
+                  <Check className="size-4" strokeWidth={2.5} />
                 ) : d === "red" ? (
-                  <X className="size-4" strokeWidth={3} />
+                  <X className="size-4" strokeWidth={2.5} />
                 ) : d === "atlandi" ? (
                   <Minus className="size-4" />
                 ) : d === "simdi" ? (
@@ -82,10 +83,10 @@ export function KararAdimlari({ surec }: { surec: Surec }) {
                 ) : null}
               </span>
               <div className="min-w-0 sm:pr-3">
-                <div className={cn("text-[11px] font-bold tracking-[0.1em] uppercase", d === "bekliyor" && "text-muted-foreground")}>
+                <div className={cn("text-xs font-medium", d === "bekliyor" && "text-muted-foreground")}>
                   {son ? "Karar" : ASAMA_ADLARI[a]}
                 </div>
-                <div className={cn("font-serif text-sm text-muted-foreground italic", d === "simdi" && "font-semibold text-vurgu not-italic")}>
+                <div className={cn("text-sm text-muted-foreground italic", d === "simdi" && "font-semibold text-vurgu not-italic")}>
                   {son ? (sonuc === "kabul" ? "Kabul edildi" : sonuc === "red" ? "Reddedildi" : "Bekleniyor") : altYazi(a, d)}
                 </div>
               </div>

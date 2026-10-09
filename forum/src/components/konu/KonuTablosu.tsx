@@ -12,7 +12,7 @@ import { Zaman } from "@/components/ortak/Zaman";
 
 /** Gazetenin iç sayfa dizini gibi konu listesi: üst etiket, serif başlık, sağda yanıt sayısı. */
 export function KonuTablosu({ konular, bos }: { konular: AkisKonusu[]; bos: React.ReactNode }) {
-  if (!konular.length) return <div className="border-y border-dashed py-10 text-center font-serif text-muted-foreground italic">{bos}</div>;
+  if (!konular.length) return <div className="border-y border-dashed py-10 text-center text-muted-foreground italic">{bos}</div>;
 
   return (
     <ul className="divide-y border-b">
@@ -36,7 +36,7 @@ function KonuSatiri({ k }: { k: AkisKonusu }) {
         </div>
         <Link
           href={`/konu/${k.id}`}
-          className="mt-1 block font-serif text-[19px] leading-snug font-semibold text-foreground decoration-vurgu decoration-2 underline-offset-4 after:absolute after:inset-0 group-hover:underline"
+          className="mt-1 block text-[19px] leading-snug font-semibold text-foreground decoration-2 underline-offset-4 after:absolute after:inset-0 group-hover:underline"
         >
           {k.baslik}
         </Link>
@@ -69,8 +69,8 @@ function KonuSatiri({ k }: { k: AkisKonusu }) {
       </div>
 
       <div className="flex w-12 flex-col items-end pt-5 text-right">
-        <span className="font-serif text-2xl leading-none font-bold tabular-nums">{k.mesaj_sayisi}</span>
-        <span className="mt-1 text-[10px] tracking-[0.1em] text-muted-foreground uppercase">yanıt</span>
+        <span className="text-2xl leading-none font-semibold tabular-nums">{k.mesaj_sayisi}</span>
+        <span className="mt-1 text-[10px] text-muted-foreground">yanıt</span>
       </div>
     </li>
   );

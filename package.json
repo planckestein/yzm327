@@ -1,12 +1,15 @@
 {
-  "name": "ortak-akil-kok",
+  "name": "kurultay-kok",
   "private": true,
-  "description": "Kısayol: komutlar forum/ klasöründe çalışır. Bu klasörden de npm run dev / demo / build / start kullanılabilir.",
+  "description": "Kısayol: komutlar forum/ klasöründe çalışır. Kurultay'ı açmak için Kurultay.cmd'ye çift tıkla ya da npm run baslat.",
   "scripts": {
+    "baslat": "npm --prefix forum run baslat",
     "dev": "npm --prefix forum run dev",
     "demo": "npm --prefix forum run demo",
     "build": "npm --prefix forum run build",
     "start": "npm --prefix forum run start",
+    "test": "npm --prefix forum run test",
+    "olcum": "npm --prefix forum run olcum",
     "kurulum": "npm --prefix forum install"
   }
 }

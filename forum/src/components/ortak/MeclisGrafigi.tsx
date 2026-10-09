@@ -15,7 +15,7 @@ type Props = {
 type Koltuk = { x: number; y: number; aci: number };
 
 /**
- * Meclis yarım dairesi: oy hakkı olan herkes bir sandalye.
+ * Kurultay yarım dairesi: oy hakkı olan herkes bir sandalye (kilim baklavası).
  * Soldan evetler (yeşil), sağdan hayırlar (kırmızı) dolar; boş sandalyeler henüz oy vermeyenlerdir.
  * Kesik çizgi kabul eşiğidir: yeşiller çizgiyi geçerse öneri kabul edilir.
  */
@@ -67,7 +67,6 @@ export function MeclisGrafigi({ evet, hayir, secmen, gereken, benim, kucuk, clas
         : liste[kG - 1].aci / 2
       : null;
   const benimSira = benim === "evet" ? kE - 1 : benim === "hayir" ? kS - kH : -1;
-  const gecikme = Math.min(25, 700 / Math.max(1, kS));
   const buyuk = evet >= 1000 || (gereken ?? 0) >= 1000;
 
   return (
@@ -80,33 +79,37 @@ export function MeclisGrafigi({ evet, hayir, secmen, gereken, benim, kucuk, clas
       >
         {liste.map((k, i) => {
           const tur = i < kE ? "evet" : i >= kS - kH ? "hayir" : "bos";
+          // Her sandalye kilimdeki gibi bir baklava (45° dönmüş kare)
+          const yan = (tur === "bos" ? yaricap * 0.8 : yaricap) * 1.45;
           return (
-            <circle
+            <rect
               key={i}
-              cx={k.x}
-              cy={k.y}
-              r={tur === "bos" ? yaricap * 0.86 : yaricap}
+              x={k.x - yan / 2}
+              y={k.y - yan / 2}
+              width={yan}
+              height={yan}
+              transform={`rotate(45 ${k.x} ${k.y})`}
               className={cn(
-                "sandalye",
                 tur === "evet" && "fill-success",
                 tur === "hayir" && "fill-destructive",
                 tur === "bos" && "fill-transparent stroke-muted-foreground/45",
               )}
-              strokeWidth={tur === "bos" ? 1.4 : 0}
-              style={{ animationDelay: `${i * gecikme}ms` }}
+              strokeWidth={tur === "bos" ? 1.3 : 0}
             />
           );
         })}
         {benimSira >= 0 && liste[benimSira] && (
-          <circle
-            cx={liste[benimSira].x}
-            cy={liste[benimSira].y}
-            r={yaricap + 3.2}
+          <rect
+            x={liste[benimSira].x - (yaricap * 1.45 + 6) / 2}
+            y={liste[benimSira].y - (yaricap * 1.45 + 6) / 2}
+            width={yaricap * 1.45 + 6}
+            height={yaricap * 1.45 + 6}
+            transform={`rotate(45 ${liste[benimSira].x} ${liste[benimSira].y})`}
             className="fill-none stroke-foreground"
             strokeWidth={1.6}
           >
             <title>Senin oyun</title>
-          </circle>
+          </rect>
         )}
         {esikAcisi !== null && (
           <g className="text-foreground">
@@ -123,8 +126,8 @@ export function MeclisGrafigi({ evet, hayir, secmen, gereken, benim, kucuk, clas
         )}
         {!kucuk &&
           (buyuk ? (
-            <text x="0" y="-20" textAnchor="middle" className="fill-foreground" style={{ fontFamily: "var(--font-serif)" }}>
-              <tspan fontSize="21" fontWeight="700">
+            <text x="0" y="-20" textAnchor="middle" className="fill-foreground" style={{ fontFamily: "var(--font-sans)" }}>
+              <tspan fontSize="21" fontWeight="600">
                 {sayi(evet)}
               </tspan>
               {gereken !== null && (
@@ -134,8 +137,8 @@ export function MeclisGrafigi({ evet, hayir, secmen, gereken, benim, kucuk, clas
               )}
             </text>
           ) : (
-            <text x="0" y="-6" textAnchor="middle" className="fill-foreground" style={{ fontFamily: "var(--font-serif)" }}>
-              <tspan fontSize="30" fontWeight="700">
+            <text x="0" y="-6" textAnchor="middle" className="fill-foreground" style={{ fontFamily: "var(--font-sans)" }}>
+              <tspan fontSize="30" fontWeight="600">
                 {evet}
               </tspan>
               {gereken !== null && (
@@ -149,13 +152,13 @@ export function MeclisGrafigi({ evet, hayir, secmen, gereken, benim, kucuk, clas
       {!kucuk && (
         <figcaption className="mt-1 flex flex-wrap justify-center gap-x-3 gap-y-0.5 text-[11px] text-muted-foreground tabular-nums">
           <span className="inline-flex items-center gap-1">
-            <span className="size-2 rounded-full bg-success" /> Evet {sayi(evet)}
+            <span className="size-[7px] rotate-45 bg-success" /> Evet {sayi(evet)}
           </span>
           <span className="inline-flex items-center gap-1">
-            <span className="size-2 rounded-full bg-destructive" /> Hayır {sayi(hayir)}
+            <span className="size-[7px] rotate-45 bg-destructive" /> Hayır {sayi(hayir)}
           </span>
           <span className="inline-flex items-center gap-1">
-            <span className="size-2 rounded-full border border-muted-foreground/60" /> Bekleyen {sayi(Math.max(0, secmen - evet - hayir))}
+            <span className="size-[7px] rotate-45 border border-muted-foreground/60" /> Bekleyen {sayi(Math.max(0, secmen - evet - hayir))}
           </span>
           {gereken !== null && (
             <span className="inline-flex items-center gap-1">

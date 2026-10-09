@@ -1,5 +1,5 @@
 /*
- * DEMO VERİSİ — Ortak Akıl'ı yaklaşık 6 haftadır yayındaymış gibi doldurur (hocanın önizlemesi için).
+ * DEMO VERİSİ — Kurultay'ı yaklaşık 6 haftadır yayındaymış gibi doldurur (hocanın önizlemesi için).
  *
  * Çalıştırma (sunucu kapalıyken):  npm run demo
  *
@@ -16,18 +16,9 @@ import { kullaniciOlustur } from "../src/lib/kullanicilar";
 import { tumKategoriler, takipDegistir, takipEdiyorMu } from "../src/lib/ontoloji";
 import { konuOner } from "../src/lib/konular";
 import { kurallar } from "../src/lib/kurallar";
-import {
-  acikOylama,
-  devret,
-  hedefSureci,
-  oyDurumu,
-  oyKullan,
-  surecBaslat,
-  surecGetir,
-  suresiDolanlariKapat,
-  yoneticiKarari,
-  type Secim,
-} from "../src/lib/oylama";
+import { acikOylama, oyDurumu, oyKullan, suresiDolanlariKapat, type Secim } from "../src/lib/oylama";
+import { hedefSureci, surecBaslat, surecGetir, yoneticiKarari } from "../src/lib/surec";
+import { devret } from "../src/lib/devir";
 import { adayOl, destekDegistir } from "../src/lib/secim";
 import { konuDuzenlemeOner, konuSilmeOner, mesajSilmeOner, mesajYaz, serhYaz, uzlasmaOner } from "../src/lib/tartisma";
 import { tepkiBildir } from "../src/lib/etki";
@@ -314,11 +305,11 @@ async function main() {
   await uye("dr_murat", "Murat", "Ergin", "Beşiktaş, İstanbul", "1975-10-10", "bilirkisi"); // ekonomist
   await uye("doc_nese", "Neşe", "Akın", "Atakum, Samsun", "1980-09-17", "bilirkisi"); // iklim bilimci
 
-  takip("zeynep_k", "İfade Özgürlüğü ve Basın", "Anayasa ve Hukuk", "Ortak Akıl Hakkında", "Eğitim");
-  takip("selin_kurt", "Anayasa ve Hukuk", "İfade Özgürlüğü ve Basın", "Ortak Akıl Hakkında", "Dijital Haklar ve Teknoloji");
+  takip("zeynep_k", "İfade Özgürlüğü ve Basın", "Anayasa ve Hukuk", "Kurultay Hakkında", "Eğitim");
+  takip("selin_kurt", "Anayasa ve Hukuk", "İfade Özgürlüğü ve Basın", "Kurultay Hakkında", "Dijital Haklar ve Teknoloji");
   takip("prof_leyla", "Anayasa ve Hukuk", "İfade Özgürlüğü ve Basın");
   takip("elif_demir", "Eğitim", "İfade Özgürlüğü ve Basın", "Sağlık");
-  takip("mert_yilmaz", "Ekonomi ve Çalışma Hayatı", "Dijital Haklar ve Teknoloji", "Şehirler ve Ulaşım", "Ortak Akıl Hakkında");
+  takip("mert_yilmaz", "Ekonomi ve Çalışma Hayatı", "Dijital Haklar ve Teknoloji", "Şehirler ve Ulaşım", "Kurultay Hakkında");
   takip("hakan_ay", "Ekonomi ve Çalışma Hayatı", "Şehirler ve Ulaşım");
   takip("can_ozturk", "Çevre ve Enerji", "Eğitim", "Şehirler ve Ulaşım", "İfade Özgürlüğü ve Basın");
   takip("ayse_aydin", "Sağlık", "Ekonomi ve Çalışma Hayatı");
@@ -390,7 +381,7 @@ async function main() {
   await kurum("calisma_bakanligi", "Çalışma ve Sosyal Güvenlik", "Bakanlığı");
   await uye("kaan_dogan", "Kaan", "Doğan", "Ortahisar, Trabzon", "2004-10-10"); // öğrenci
   await uye("gizem_tas", "Gizem", "Taş", "Karşıyaka, İzmir", "1988-05-05"); // veli
-  takip("kaan_dogan", "Şehirler ve Ulaşım", "Eğitim", "Dijital Haklar ve Teknoloji", "Ortak Akıl Hakkında");
+  takip("kaan_dogan", "Şehirler ve Ulaşım", "Eğitim", "Dijital Haklar ve Teknoloji", "Kurultay Hakkında");
   takip("gizem_tas", "Eğitim", "Sağlık");
   await uye("onur_polat", "Onur", "Polat", "Şahinbey, Gaziantep", "1992-02-02");
   takip("onur_polat", "İfade Özgürlüğü ve Basın", "Ekonomi ve Çalışma Hayatı");
@@ -439,9 +430,9 @@ async function main() {
   await uye("oguz_karaca", "Oğuz", "Karaca", "Yahşihan, Kırıkkale", "1966-03-18"); // emekli astsubay, milliyetçi-muhafazakâr
   await uye("serdar_gunay", "Serdar", "Günay", "Ataşehir, İstanbul", "1985-07-04"); // girişimci, serbest piyasa yanlısı
   await uye("levent_aksoy", "Levent", "Aksoy", "Osmangazi, Bursa", "1962-12-09"); // emekli banka müdürü, merkezde
-  takip("oguz_karaca", "Güvenlik ve Göç", "Anayasa ve Hukuk", "Eğitim", "Aile ve Toplum", "Şehirler ve Ulaşım", "Ortak Akıl Hakkında");
+  takip("oguz_karaca", "Güvenlik ve Göç", "Anayasa ve Hukuk", "Eğitim", "Aile ve Toplum", "Şehirler ve Ulaşım", "Kurultay Hakkında");
   takip("serdar_gunay", "Ekonomi ve Çalışma Hayatı", "Dijital Haklar ve Teknoloji", "Çevre ve Enerji", "Güvenlik ve Göç");
-  takip("levent_aksoy", "Ekonomi ve Çalışma Hayatı", "Anayasa ve Hukuk", "Güvenlik ve Göç", "Aile ve Toplum", "Dijital Haklar ve Teknoloji", "Ortak Akıl Hakkında");
+  takip("levent_aksoy", "Ekonomi ve Çalışma Hayatı", "Anayasa ve Hukuk", "Güvenlik ve Göç", "Aile ve Toplum", "Dijital Haklar ve Teknoloji", "Kurultay Hakkında");
   // Yeni bölümleri eski üyelerin bir kısmı da takip ediyor
   takip("selin_kurt", "Güvenlik ve Göç");
   takip("deniz_arslan", "Güvenlik ve Göç");

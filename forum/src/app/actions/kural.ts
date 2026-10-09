@@ -3,7 +3,7 @@
 import { redirect } from "next/navigation";
 import { mevcutKullanici } from "@/lib/auth";
 import { DEGISTIRILEBILIR, kuralDegeriCoz, kurallar, type KuralAnahtari } from "@/lib/kurallar";
-import { surecBaslat } from "@/lib/oylama";
+import { surecBaslat } from "@/lib/surec";
 import { TEHDIT_MESAJI, tehditBul } from "@/lib/tehdit";
 
 export type KuralOneriDurumu = { hata?: string };

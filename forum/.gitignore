@@ -42,3 +42,6 @@ next-env.d.ts
 
 # forum veritabani
 /veri/
+
+# Başlatıcının indirdiği araçlar (cloudflared) ve kısayol simgesi
+/.araclar/

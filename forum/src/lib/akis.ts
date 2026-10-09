@@ -3,18 +3,8 @@ import { db } from "./db";
 import { kategoriRengi } from "./bicim";
 import { ataZinciri, kategoriAgaci } from "./ontoloji";
 import type { Konu, KonuDurumu } from "./konular";
-import {
-  ASAMA_ADLARI,
-  SUREC_TURLERI,
-  acikOylama,
-  hedefSureci,
-  oyDurumu,
-  gorunenSayim,
-  type Asama,
-  type Oylama,
-  type Surec,
-  type SurecTuru,
-} from "./oylama";
+import { acikOylama, oyDurumu, gorunenSayim, type Oylama } from "./oylama";
+import { ASAMA_ADLARI, SUREC_TURLERI, hedefSureci, type Asama, type Surec, type SurecTuru } from "./surec";
 import { surecBasligi } from "./surecOzeti";
 import { konuEtkisi, resmiAciklamaVarMi, type TepkiDurumu } from "./etki";
 
@@ -220,13 +210,7 @@ export function menuKategorileri(): MenuKategorisi[] {
   });
 }
 
-// ---------------- Ana sayfa (gazete) ----------------
-
-/** Gazetenin "sayı" numarası: platformun ilk gününden bu yana geçen gün. */
-export function yayinSayisi(simdi: Date): number {
-  const ilk = (db.prepare("SELECT MIN(olusturma) AS t FROM kullanicilar").get() as { t: string | null }).t;
-  return ilk ? Math.max(1, Math.floor((simdi.getTime() - new Date(ilk).getTime()) / 86400_000) + 1) : 1;
-}
+// ---------------- Ana sayfa ----------------
 
 /** Manşet için alıntı: konudaki en son (gizlenmemiş, yapay zeka dışı) söz. */
 export function sonSoz(konuId: number): { yazan: string; icerik: string; id: number } | undefined {

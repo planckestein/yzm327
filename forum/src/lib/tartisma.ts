@@ -2,7 +2,8 @@ import "server-only";
 import { db } from "./db";
 import { deftereYaz, sha256 } from "./defter";
 import { konuGetir } from "./konular";
-import { acikSurecVarMi, konuUzlasmasi, surecBaslat, surecOylamalari } from "./oylama";
+import { surecOylamalari } from "./oylama";
+import { acikSurecVarMi, konuUzlasmasi, surecBaslat } from "./surec";
 import { suanIso } from "./saat";
 import { TEHDIT_MESAJI, tehditBul } from "./tehdit";
 

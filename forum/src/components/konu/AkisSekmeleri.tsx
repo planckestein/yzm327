@@ -30,7 +30,7 @@ export function AkisSekmeleri({
           href={(f === "son" ? taban : `${taban}?f=${f}`) + son}
           scroll={!capa}
           className={cn(
-            "border-b-2 border-transparent py-1 text-[12px] font-semibold tracking-[0.08em] whitespace-nowrap text-muted-foreground uppercase transition-colors hover:text-foreground",
+            "border-b-2 border-transparent py-1 text-[12px] font-semibold whitespace-nowrap text-muted-foreground transition-colors hover:text-foreground",
             aktif === f && "border-vurgu text-foreground",
           )}
         >

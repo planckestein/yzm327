@@ -25,14 +25,14 @@ export function SolMenu({ kategoriler, oyBekleyen, onSec }: Props) {
                 href={href}
                 onClick={onSec}
                 className={cn(
-                  "relative flex items-center gap-3 py-2.5 pl-3 font-serif text-[17px] text-muted-foreground transition-colors hover:text-foreground",
-                  aktif && "font-semibold text-foreground before:absolute before:inset-y-2 before:left-0 before:w-[3px] before:bg-vurgu",
+                  "relative flex items-center gap-3 py-2.5 pl-3 text-[17px] text-muted-foreground transition-colors hover:text-foreground",
+                  aktif && "font-medium text-foreground before:absolute before:inset-y-2 before:left-0 before:w-0.5 before:bg-foreground",
                 )}
               >
                 <Ikon className="size-4" />
                 <span className="flex-1">{ad}</span>
                 {href === "/kararlar" && oyBekleyen > 0 && (
-                  <span className="rounded-[2px] bg-vurgu px-1.5 font-sans text-[11px] font-semibold text-vurgu-foreground" title="Oyunu bekleyen kararlar">
+                  <span className="text-xs font-semibold text-vurgu tabular-nums" title="Oyunu bekleyen kararlar">
                     {oyBekleyen}
                   </span>
                 )}
@@ -47,7 +47,7 @@ export function SolMenu({ kategoriler, oyBekleyen, onSec }: Props) {
               onSec?.();
               window.dispatchEvent(new Event(TUR_OLAYI));
             }}
-            className="flex w-full items-center gap-3 py-2.5 pl-3 text-left font-serif text-[17px] text-vurgu"
+            className="flex w-full items-center gap-3 py-2.5 pl-3 text-left text-[17px] text-vurgu"
           >
             <Compass className="size-4" /> Tanıtım turu
           </button>
@@ -55,8 +55,8 @@ export function SolMenu({ kategoriler, oyBekleyen, onSec }: Props) {
       </ul>
 
       <div>
-        <div className="cizgi-kalin mb-2 flex items-center justify-between pt-2">
-          <span className="text-[11px] font-bold tracking-[0.16em] uppercase">Bölümler</span>
+        <div className="border-t mb-2 flex items-center justify-between pt-2">
+          <span className="text-xs font-medium">Bölümler</span>
           <Link href="/kategoriler" onClick={onSec} className="text-xs text-muted-foreground hover:text-foreground">
             Tümü
           </Link>

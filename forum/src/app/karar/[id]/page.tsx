@@ -7,7 +7,8 @@ import { kararOzetiGetir } from "@/lib/akis";
 import { kalanSure, tamTarih } from "@/lib/bicim";
 import { DEGISTIRILEBILIR, kuralDegeriYazi, type KuralAnahtari } from "@/lib/kurallar";
 import { konuGetir } from "@/lib/konular";
-import { ASAMA_ADLARI, gorunenSayim, surecGecmisi, surecGetir, surecOylamalari } from "@/lib/oylama";
+import { gorunenSayim, surecOylamalari } from "@/lib/oylama";
+import { ASAMA_ADLARI, surecGecmisi, surecGetir } from "@/lib/surec";
 import { suan } from "@/lib/saat";
 import { forumYoneticisi } from "@/lib/secim";
 import { mesajGetir } from "@/lib/tartisma";
@@ -26,8 +27,8 @@ export async function generateMetadata({ params }: PageProps<"/karar/[id]">): Pr
 
 function Ara({ children }: { children: React.ReactNode }) {
   return (
-    <div className="border-b border-foreground pb-1.5">
-      <h2 className="font-serif text-xl font-bold">{children}</h2>
+    <div className="border-b pb-2">
+      <h2 className="text-xl font-semibold">{children}</h2>
     </div>
   );
 }
@@ -47,7 +48,7 @@ export default async function KararSayfasi({ params }: PageProps<"/karar/[id]">)
   return (
     <div className="flex flex-col">
       <header className="flex flex-col gap-3 pb-5">
-        <nav className="flex flex-wrap items-center gap-x-2 text-[11px] font-semibold tracking-[0.1em] text-muted-foreground uppercase">
+        <nav className="flex flex-wrap items-center gap-x-2 text-xs font-medium text-muted-foreground">
           <Link href="/kararlar" className="hover:text-foreground">
             Kararlar
           </Link>
@@ -66,73 +67,73 @@ export default async function KararSayfasi({ params }: PageProps<"/karar/[id]">)
           </span>
           <KararDurumRozeti durum={k.durum} asamaAd={k.asamaAd} />
         </div>
-        <h1 className="max-w-4xl font-serif text-[clamp(1.8rem,3.6vw,2.75rem)] leading-[1.08] font-bold tracking-[-0.015em]">{k.baslik}</h1>
+        <h1 className="max-w-4xl text-[clamp(1.7rem,3vw,2.375rem)] leading-[1.15] font-semibold">{k.baslik}</h1>
         <p className="text-sm text-muted-foreground">
           <KullaniciAdi ad={k.oneren} className="text-foreground" /> önerdi · {tamTarih(surec.olusturma)}
           {surec.kapanis && <> · sonuçlandı {tamTarih(surec.kapanis)}</>}
         </p>
       </header>
 
-      <section className="cizgi-cift pt-4 pb-8" data-tur="yolculuk">
-        <div className="mb-4 text-[11px] font-bold tracking-[0.16em] uppercase">Önerinin yolculuğu</div>
+      <section className="border-t pt-4 pb-8" data-tur="yolculuk">
+        <div className="mb-4 text-xs font-medium">Önerinin yolculuğu</div>
         <KararAdimlari surec={surec} />
       </section>
 
-      <div className="cizgi-kalin grid gap-10 pt-6 lg:grid-cols-[minmax(0,1fr)_320px]">
+      <div className="border-t grid gap-10 pt-6 lg:grid-cols-[minmax(0,1fr)_320px]">
         <div className="flex min-w-0 flex-col gap-8">
           {/* Önerinin içeriği */}
           <section className="flex flex-col gap-4">
             <Ara>Öneri</Ara>
             {surec.tur === "kural_degistir" && (
-              <div className="flex flex-wrap items-center gap-3 font-serif text-lg">
+              <div className="flex flex-wrap items-center gap-3 text-lg">
                 <span className="w-full font-sans text-sm text-muted-foreground">{DEGISTIRILEBILIR[v.anahtar as KuralAnahtari]?.ad}</span>
                 <span className="text-muted-foreground line-through decoration-destructive decoration-2">{kuralDegeriYazi(v.anahtar, v.eski)}</span>
                 <ArrowRight className="size-5" />
-                <span className="font-bold underline decoration-success decoration-[3px] underline-offset-4">{kuralDegeriYazi(v.anahtar, v.deger)}</span>
+                <span className="font-semibold underline decoration-success decoration-[3px] underline-offset-4">{kuralDegeriYazi(v.anahtar, v.deger)}</span>
               </div>
             )}
             {surec.tur === "konu_duzenle" && (
               <div className="grid gap-6 sm:grid-cols-2 sm:gap-0 sm:[&>*+*]:border-l sm:[&>*+*]:pl-6 sm:[&>*:first-child]:pr-6">
                 <div>
-                  <div className="text-[11px] font-bold tracking-[0.12em] text-destructive uppercase">Eski</div>
-                  <div className="mt-1 font-serif text-lg font-semibold text-muted-foreground line-through decoration-destructive/60">{v.eski_baslik}</div>
-                  <p className="metin mt-1 font-serif text-muted-foreground">{v.eski_aciklama}</p>
+                  <div className="text-xs font-medium text-destructive">Eski</div>
+                  <div className="mt-1 text-lg font-semibold text-muted-foreground line-through decoration-destructive/60">{v.eski_baslik}</div>
+                  <p className="metin mt-1 text-muted-foreground">{v.eski_aciklama}</p>
                 </div>
                 <div>
-                  <div className="text-[11px] font-bold tracking-[0.12em] text-success uppercase">Önerilen</div>
-                  <div className="mt-1 font-serif text-lg font-semibold">{v.baslik}</div>
-                  <p className="metin mt-1 font-serif">{v.aciklama}</p>
+                  <div className="text-xs font-medium text-success">Önerilen</div>
+                  <div className="mt-1 text-lg font-semibold">{v.baslik}</div>
+                  <p className="metin mt-1">{v.aciklama}</p>
                 </div>
               </div>
             )}
             {surec.tur === "konu_kapat" && (
-              <blockquote className="border-2 border-foreground p-5">
-                <div className="mb-2 inline-flex items-center gap-2 text-[11px] font-bold tracking-[0.14em] uppercase">
+              <blockquote className="border p-5">
+                <div className="mb-2 inline-flex items-center gap-2 text-xs font-medium">
                   <Handshake className="size-4" /> Önerilen uzlaşma
                 </div>
-                <p className="metin font-serif text-xl leading-snug font-medium">{v.metin}</p>
+                <p className="metin text-xl leading-snug font-medium">{v.metin}</p>
               </blockquote>
             )}
             {mesaj && (
-              <blockquote className="border-l-[3px] border-foreground pl-4">
+              <blockquote className="border-l-2 border-foreground/40 pl-4">
                 <div className="mb-1 text-xs text-muted-foreground">
                   @{mesaj.yazan} kullanıcısının mesajı ·{" "}
                   <Link href={`/konu/${mesaj.konu_id}#m${mesaj.id}`} className="font-semibold text-foreground underline underline-offset-2">
                     tartışmada gör
                   </Link>
                 </div>
-                <p className="metin font-serif text-[17px]">{mesaj.gizleyen_surec_id ? "(Bu mesaj gizlendi.)" : mesaj.icerik}</p>
+                <p className="metin text-[17px]">{mesaj.gizleyen_surec_id ? "(Bu mesaj gizlendi.)" : mesaj.icerik}</p>
               </blockquote>
             )}
             {(surec.tur === "konu_ac" || surec.tur === "konu_sil") && konu && (
               <Link href={`/konu/${konu.id}`} className="group block">
-                <div className="font-serif text-xl font-bold group-hover:underline">{konu.baslik}</div>
-                <p className="mt-1 line-clamp-4 font-serif text-muted-foreground">{konu.aciklama}</p>
+                <div className="text-xl font-semibold group-hover:underline">{konu.baslik}</div>
+                <p className="mt-1 line-clamp-4 text-muted-foreground">{konu.aciklama}</p>
               </Link>
             )}
             {v.gerekce && (
-              <p className="font-serif">
-                <span className="font-sans text-[11px] font-bold tracking-[0.12em] text-muted-foreground uppercase">Gerekçe · </span>
+              <p>
+                <span className="font-sans text-xs font-medium text-muted-foreground">Gerekçe · </span>
                 {v.gerekce}
               </p>
             )}
@@ -147,7 +148,7 @@ export default async function KararSayfasi({ params }: PageProps<"/karar/[id]">)
                   const s = gorunenSayim(o);
                   return (
                     <div key={o.id} className="flex flex-col">
-                      <div className="flex items-center justify-between text-[11px] font-bold tracking-[0.1em] uppercase">
+                      <div className="flex items-center justify-between text-xs font-medium">
                         <span>{ASAMA_ADLARI[o.asama]}</span>
                         <span className={o.durum === "kabul" ? "text-success" : "text-destructive"}>{o.durum === "kabul" ? "Kabul" : "Red"}</span>
                       </div>
@@ -166,7 +167,7 @@ export default async function KararSayfasi({ params }: PageProps<"/karar/[id]">)
               {surecGecmisi(surec).map((g, i) => (
                 <li key={i} className="relative pb-3 last:pb-0">
                   <span className="absolute top-2 -left-[26px] size-2.5 rounded-full border-2 border-background bg-foreground" />
-                  <div className="font-serif">{g.olay}</div>
+                  <div>{g.olay}</div>
                   <div className="text-xs text-muted-foreground">{tamTarih(g.zaman)}</div>
                 </li>
               ))}
@@ -185,11 +186,11 @@ export default async function KararSayfasi({ params }: PageProps<"/karar/[id]">)
         <aside className="flex flex-col gap-6 lg:border-l lg:pl-8">
           {k.durum === "suruyor" && k.oylama && <OyKarti surecId={surec.id} ben={ben} ayrinti={false} />}
           {k.yoneticiBekliyor && (
-            <section className="cizgi-kalin pt-2">
-              <div className="flex items-center gap-2 text-[11px] font-bold tracking-[0.14em] text-vurgu uppercase">
+            <section className="border-t pt-2">
+              <div className="flex items-center gap-2 text-xs font-medium text-vurgu">
                 <Crown className="size-4" /> Genel Yayın Yönetmeni
               </div>
-              <h3 className="mt-1 font-serif text-xl font-bold">Onay ya da veto bekleniyor</h3>
+              <h3 className="mt-1 text-xl font-semibold">Onay ya da veto bekleniyor</h3>
               <p className="mt-2 text-sm text-muted-foreground">
                 @{yonetici?.takma_ad} öneriyi onaylayabilir ya da veto edebilir. Karar vermezse öneri {kalanSure(k.yoneticiBekliyor, suan())}{" "}
                 sonra kendiliğinden kabul edilir. Veto edilirse üyeler ve Kurul vetoyu 3’te 2 çoğunlukla aşabilir.
@@ -198,15 +199,12 @@ export default async function KararSayfasi({ params }: PageProps<"/karar/[id]">)
             </section>
           )}
           {k.durum !== "suruyor" && (
-            <section className="flex flex-col items-center py-6 text-center">
-              <span
-                className={`-rotate-6 border-4 border-double px-4 py-2 font-serif text-3xl font-black tracking-wide uppercase ${
-                  k.durum === "kabul" ? "border-success text-success" : "border-destructive text-destructive"
-                }`}
-              >
+            <section className="border-t pt-3">
+              <div className="ust-etiket">Sonuç</div>
+              <div className={`mt-1 text-xl font-semibold ${k.durum === "kabul" ? "text-success" : "text-destructive"}`}>
                 {k.durum === "kabul" ? "Kabul edildi" : "Reddedildi"}
-              </span>
-              {surec.kapanis && <span className="mt-4 text-xs text-muted-foreground">{tamTarih(surec.kapanis)}</span>}
+              </div>
+              {surec.kapanis && <div className="mt-1 text-xs text-muted-foreground">{tamTarih(surec.kapanis)}</div>}
             </section>
           )}
         </aside>

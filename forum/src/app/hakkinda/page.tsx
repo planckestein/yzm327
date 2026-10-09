@@ -1,35 +1,19 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import {
-  ArrowRight,
-  BadgeCheck,
-  Bot,
-  Crown,
-  EyeOff,
-  Gavel,
-  Handshake,
-  Landmark,
-  Lightbulb,
-  Link2,
-  MessageSquareQuote,
-  Share2,
-  ShieldCheck,
-  TrendingUp,
-  Users,
-  UsersRound,
-} from "lucide-react";
-import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { ArrowRight } from "lucide-react";
 import { kuralDegeriYazi, kurallar } from "@/lib/kurallar";
 import { TurDugmesi } from "@/components/tur/TurRehberi";
 import { GosterimDugmesi } from "@/components/tur/CanliGosterim";
+import { DersUyumu } from "./DersUyumu";
+import { TasarimDili } from "./TasarimDili";
 
 export const metadata: Metadata = { title: "Nasıl işliyor?" };
 
 function Baslik({ ust, children }: { ust: string; children: React.ReactNode }) {
   return (
-    <div className="cizgi-kalin flex flex-col gap-1 pt-2">
+    <div className="flex flex-col gap-1 border-t pt-3">
       <span className="ust-etiket">{ust}</span>
-      <h2 className="font-serif text-3xl font-bold tracking-tight">{children}</h2>
+      <h2 className="text-2xl font-semibold">{children}</h2>
     </div>
   );
 }
@@ -39,36 +23,33 @@ export default function HakkindaSayfasi() {
 
   const KURUMLAR = [
     {
-      ikon: Users,
       ad: "Topluluk Oylaması",
       metin: `Bir bölümü takip eden herkes o bölümdeki kararlarda oy verir. Kabul için ${kuralDegeriYazi("cogunlukTuru", k.cogunlukTuru).toLocaleLowerCase("tr-TR")} gerekir. İstersen oyunu güvendiğin birine emanet edebilirsin.`,
     },
     {
-      ikon: UsersRound,
       ad: "Yayın Kurulu",
       metin: `Her bölüm, takipçi sayısından bağımsız ${k.kategoridenTemsilci} kurul üyesi seçer. Küçük bölümler de büyükler kadar söz sahibidir. Kurul’da kabul için ${k.kurulKabulOrani} gerekir.`,
     },
     {
-      ikon: Crown,
       ad: "Genel Yayın Yönetmeni",
       metin: `Yayın ilkelerindeki değişiklikleri onaylar ya da veto eder; hiçbir mesajı tek başına silemez. ${k.yoneticiSuresiGun} gün içinde karar vermezse öneri kendiliğinden kabul edilir. Veto ${k.vetoAsimOrani} ile aşılır.`,
     },
   ];
 
   const TURLER = [
-    { ikon: Lightbulb, ad: "Gündem ve alt başlık açmak", yol: ["Topluluk Oylaması"] },
-    { ikon: Handshake, ad: "Tartışmayı uzlaşmayla kapatmak", yol: ["Topluluk Oylaması"] },
-    { ikon: EyeOff, ad: "Mesaj gizlemek, konu kaldırmak ya da düzenlemek (düzenlemeyi konuyu açan önerir)", yol: ["Topluluk Oylaması", "Yayın Kurulu"] },
-    { ikon: Gavel, ad: "Yayın ilkelerini değiştirmek", yol: ["Tüm topluluk", "Yayın Kurulu", "Genel Yayın Yönetmeni"] },
+    { ad: "Gündem ve alt başlık açmak", yol: ["Topluluk Oylaması"] },
+    { ad: "Tartışmayı uzlaşmayla kapatmak", yol: ["Topluluk Oylaması"] },
+    { ad: "Mesaj gizlemek, konu kaldırmak ya da düzenlemek (düzenlemeyi konuyu açan önerir)", yol: ["Topluluk Oylaması", "Yayın Kurulu"] },
+    { ad: "Yayın ilkelerini değiştirmek", yol: ["Tüm topluluk", "Yayın Kurulu", "Genel Yayın Yönetmeni"] },
   ];
 
   const ILKELER = [
-    { ikon: ShieldCheck, ad: "Sansür yok", metin: "Tehdit dışında hiçbir ifade engellenmez. Bakanlığa, yöneticiye, kurula sert eleştiri serbesttir; cevabı tartışmayla verilir." },
-    { ikon: EyeOff, ad: "Silinmeyen kayıtlar", metin: "Mesajlar düzenlenemez ve silinemez. En fazla topluluk oylamasıyla gizlenir; kaydı yine de korunur." },
-    { ikon: MessageSquareQuote, ad: "Azınlık görüşü", metin: "Uzlaşmaya katılmayanlar gerekçelerini yazar; bu görüşler kalıcıdır ve kurumlara uzlaşmayla birlikte iletilir." },
-    { ikon: Share2, ad: "Oy emaneti", metin: `İsteğe bağlı. Oyunu bölüm bazında güvendiğin birine devredebilirsin; zincirler toplanır. Bir kişi en fazla ${k.maksimumOyAgirligi} oy taşır.` },
-    { ikon: Link2, ad: "Açık Arşiv", metin: "Her olay bir hash zincirine (dağıtık defter) yazılır. Geçmişi kimse, yönetim bile, sessizce değiştiremez; herkes arşivi indirip doğrulayabilir." },
-    { ikon: Bot, ad: "YZ Analist", metin: "Tartışmaları özetleyen, ortak noktaları bulan ve uzlaşma taslağı hazırlayan yapay zeka. Danışmandır; oy kullanmaz." },
+    { ad: "Sansür yok", metin: "Tehdit dışında hiçbir ifade engellenmez. Bakanlığa, yöneticiye, kurula sert eleştiri serbesttir; cevabı tartışmayla verilir." },
+    { ad: "Silinmeyen kayıtlar", metin: "Mesajlar düzenlenemez ve silinemez. En fazla topluluk oylamasıyla gizlenir; kaydı yine de korunur." },
+    { ad: "Azınlık görüşü", metin: "Uzlaşmaya katılmayanlar gerekçelerini yazar; bu görüşler kalıcıdır ve kurumlara uzlaşmayla birlikte iletilir." },
+    { ad: "Oy emaneti", metin: `İsteğe bağlı. Oyunu bölüm bazında güvendiğin birine devredebilirsin; zincirler toplanır. Bir kişi en fazla ${k.maksimumOyAgirligi} oy taşır.` },
+    { ad: "Açık Arşiv", metin: "Her olay bir hash zincirine (dağıtık defter) yazılır. Geçmişi kimse, yönetim bile, sessizce değiştiremez; herkes arşivi indirip doğrulayabilir." },
+    { ad: "YZ Analist", metin: "Tartışmaları özetleyen, ortak noktaları bulan ve uzlaşma taslağı hazırlayan yapay zeka. Danışmandır; oy kullanmaz." },
   ];
 
   const ISTERLER: [string, string, string, string][] = [
@@ -92,23 +73,28 @@ export default function HakkindaSayfasi() {
   // [başlık, açıklama, karşıladığı istek]
   const SON_EKLENENLER: [string, string, string][] = [
     [
+      "Kurultay: otağ ve kilim tasarımı",
+      "Platformun adı ve görünümü eski Türk meclisinden (toy, kurultay) geliyor: keçe zemin, kilim şeritleri, dört yön renkleri, her bölüme bir kilim motifi, her üyeye takma adından üretilen bir tamga. Motifler dokuma ızgarasında ilmek ilmek çizildi. Açık ve gece teması, telefona uygun düzen.",
+      "Büyük bir kitleye hitap etmeli",
+    ],
+    [
+      "Ders içeriğine uyum",
+      "Tasarım desenleri dersinin yedi başlığı kodda karşılık buldu: karar aşamaları State, YZ Analist Facade ve Registry, uygunluk denetimi Chain of Responsibility. Hafta 2’ye uygun olarak kurallarımızı temel çizgilerle ölçtük ve 15 birim testi ekledik.",
+      "Ders: tasarım desenleri · problem çerçeveleme",
+    ],
+    [
       "Canlı gösterim: oylama sonuçlanır, bakanlık yanıt verir",
-      "Süren bir uzlaşma oylaması gözünüzün önünde eşiği aşar ve “Kabul edildi” damgası vurulur. Ardından ilgili bakanlık, uzlaşmayı gündemine aldığını ve uygulayacağını resmî tepkiyle bildirir. Sonuç gerçekten kaydedilir; konu sayfasında da görünür.",
+      "Süren bir uzlaşma oylaması gözünüzün önünde eşiği aşar ve kabul edilir. Ardından ilgili bakanlık, uzlaşmayı gündemine aldığını resmî tepkiyle bildirir. Sonuç gerçekten kaydedilir. Gösterim her açılışta kendi oylamasını hazırlar, yani demo verisi yenilenmeden tekrar tekrar izlenebilir.",
       "Her şey oylamayla · uzlaşma · büyük kitle",
     ],
     [
       "Tanıtım turu",
-      "7 adımda sayfa sayfa gezerek köşetaşı istekleri ilgili yeri vurgulayarak gösterir, sonunda tüm isteklerin listesini verir: üstte ödevdeki cümle (“Hocanın isteği”), altında çözümümüz. Pusula düğmesiyle yeniden başlatılabilir.",
+      "8 adımda sayfa sayfa gezerek köşetaşı istekleri ilgili yeri vurgulayarak gösterir, sonunda tüm isteklerin listesini verir: üstte ödevdeki cümle (“Hocanın isteği”), altında çözümümüz. Pusula düğmesiyle yeniden başlatılabilir.",
       "Tüm istekler",
     ],
     [
-      "Gazete tasarımı",
-      "Platform bir kamuoyu gazetesi gibi tasarlandı: künye, manşet, bölümler, “Meclis’te bugün” sütunu, kurumların yanıtları. Açık ve gece teması, telefona uygun düzen.",
-      "Büyük bir kitleye hitap etmeli",
-    ],
-    [
-      "Meclis yarım dairesi ve canlı oylama bandı",
-      "Her oylamada oy hakkı olanlar sandalye olarak çizilir (yeşil evet, kırmızı hayır, kesik çizgi eşik). Üstteki kırmızı bant süren oylamaları haber kanalı gibi akıtır; oy vermediğin oylamalar “Sıra sende” olarak görünür.",
+      "Meclis yarım dairesi",
+      "Her oylamada oy hakkı olanlar sandalye olarak çizilir (yeşil evet, kırmızı hayır, kesik çizgi eşik). Oy vermediğin oylama varsa üst çubuğun altında tek satırlık bir hatırlatma çıkar.",
       "Her şey oylamayla · ABD meclis modeli",
     ],
     [
@@ -151,13 +137,13 @@ export default function HakkindaSayfasi() {
 
   return (
     <div className="mx-auto flex w-full max-w-5xl flex-col gap-12">
-      <header className="border-b-[4px] border-double border-foreground pb-6">
+      <header className="border-b pb-6">
         <div className="ust-etiket">Nasıl işliyor?</div>
-        <h1 className="mt-2 max-w-3xl font-serif text-[clamp(2.2rem,5vw,3.75rem)] leading-[1.02] font-black tracking-[-0.025em]">
+        <h1 className="mt-2 max-w-3xl text-[clamp(1.7rem,3vw,2.375rem)] leading-[1.15] font-semibold">
           Kimsenin sahibi olmadığı bir kamuoyu platformu
         </h1>
-        <p className="ilk-harf mt-5 max-w-2xl font-serif text-[18px] leading-relaxed">
-          Ortak Akıl bağımsız bir medya kuruluşu gibi çalışır, ama editörü topluluğun kendisidir. Gündemi okurlar belirler, tartışmayı
+        <p className="mt-4 max-w-2xl text-[17px] leading-relaxed text-muted-foreground">
+          Kurultay bağımsız bir medya kuruluşu gibi çalışır, ama editörü topluluğun kendisidir. Gündemi okurlar belirler, tartışmayı
           okurlar yürütür, sonucu okurlar oylar. Uzlaşılan fikirler bakanlıklara ve meclis komisyonlarına ulaşır; onların yanıtları da
           herkesin gözü önünde kayda geçer.
         </p>
@@ -172,13 +158,13 @@ export default function HakkindaSayfasi() {
           </p>
           <TurDugmesi yazi="Tanıtım turunu başlat" />
         </div>
-        <ol className="divide-y border-y border-foreground">
+        <ol className="divide-y border-y">
           {ISTERLER.map(([ister, karsilik, href, yer], i) => (
             <li key={ister} className="grid gap-1 py-3 md:grid-cols-[2rem_minmax(0,0.9fr)_minmax(0,1.3fr)_8rem] md:gap-4">
-              <span className="font-serif text-lg leading-6 font-bold text-vurgu tabular-nums">{i + 1}</span>
-              <span className="font-serif leading-6 font-semibold">{ister}</span>
+              <span className="leading-6 text-muted-foreground tabular-nums">{i + 1}</span>
+              <span className="leading-6 font-semibold">{ister}</span>
               <span className="text-sm leading-6 text-muted-foreground">{karsilik}</span>
-              <Link href={href} className="text-xs leading-6 font-semibold hover:text-vurgu md:text-right">
+              <Link href={href} className="text-xs leading-6 font-semibold hover:underline md:text-right">
                 {yer} →
               </Link>
             </li>
@@ -186,15 +172,15 @@ export default function HakkindaSayfasi() {
         </ol>
 
         <div className="mt-4 flex flex-col gap-4">
-          <div className="flex flex-wrap items-end justify-between gap-3 border-b border-foreground pb-1.5">
-            <h3 className="font-serif text-2xl font-bold">Son eklediklerimiz</h3>
+          <div className="flex flex-wrap items-end justify-between gap-3 border-b pb-2">
+            <h3 className="text-xl font-semibold">Son eklediklerimiz</h3>
             <GosterimDugmesi />
           </div>
           <ul className="grid gap-x-10 gap-y-5 md:grid-cols-2">
             {SON_EKLENENLER.map(([baslik, metin, istek]) => (
               <li key={baslik} className="flex flex-col gap-1">
-                <span className="text-[10px] font-bold tracking-[0.12em] text-vurgu uppercase">{istek}</span>
-                <span className="font-serif text-lg leading-snug font-bold">{baslik}</span>
+                <span className="ust-etiket">{istek}</span>
+                <span className="leading-snug font-semibold">{baslik}</span>
                 <span className="text-sm leading-relaxed text-muted-foreground">{metin}</span>
               </li>
             ))}
@@ -202,42 +188,45 @@ export default function HakkindaSayfasi() {
         </div>
       </section>
 
+      <section id="ders" data-tur="ders" className="flex scroll-mt-28 flex-col gap-5">
+        <Baslik ust="Ders içeriği">Tasarım desenleri ve ölçüm</Baslik>
+        <DersUyumu />
+      </section>
+
+      <section id="tasarim" className="flex scroll-mt-28 flex-col gap-5">
+        <Baslik ust="Tasarım dili">Otağ ve kilim</Baslik>
+        <TasarimDili />
+      </section>
+
       <section className="flex flex-col gap-5">
         <Baslik ust="Denge">Kim karar verir?</Baslik>
-        <div className="grid gap-4 md:grid-cols-3">
-          {KURUMLAR.map(({ ikon: Ikon, ad, metin }) => (
-            <Card key={ad} className="gap-3">
-              <CardHeader>
-                <span className="flex size-10 items-center justify-center bg-foreground text-background">
-                  <Ikon className="size-5" />
-                </span>
-                <CardTitle className="pt-2 font-heading text-lg">{ad}</CardTitle>
-                <CardDescription className="leading-relaxed">{metin}</CardDescription>
-              </CardHeader>
-            </Card>
+        <ol className="grid gap-6 md:grid-cols-3 md:gap-0 md:divide-x">
+          {KURUMLAR.map(({ ad, metin }, i) => (
+            <li key={ad} className="md:px-6 md:first:pl-0 md:last:pr-0">
+              <span className="text-sm text-muted-foreground tabular-nums">{i + 1}.</span>
+              <h3 className="mt-1 text-lg font-semibold">{ad}</h3>
+              <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{metin}</p>
+            </li>
           ))}
-        </div>
+        </ol>
       </section>
 
       <section className="flex flex-col gap-5">
         <Baslik ust="Süreç">Bir önerinin yolculuğu</Baslik>
-        <div className="overflow-hidden rounded-lg border bg-card">
-          {TURLER.map(({ ikon: Ikon, ad, yol }) => (
-            <div key={ad} className="flex flex-col gap-3 border-b px-5 py-4 last:border-b-0 sm:flex-row sm:items-center">
-              <div className="flex items-center gap-3 sm:w-72">
-                <Ikon className="size-4 shrink-0 text-muted-foreground" />
-                <span className="text-sm font-medium">{ad}</span>
-              </div>
-              <div className="flex flex-wrap items-center gap-1.5">
+        <div className="divide-y border-y">
+          {TURLER.map(({ ad, yol }) => (
+            <div key={ad} className="flex flex-col gap-1.5 py-3 sm:flex-row sm:items-center sm:gap-6">
+              <span className="text-sm font-medium sm:w-80 sm:shrink-0">{ad}</span>
+              <span className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-muted-foreground">
                 {yol.map((a, i) => (
-                  <span key={a} className="inline-flex items-center gap-1.5">
-                    {i > 0 && <ArrowRight className="size-3.5 text-muted-foreground" />}
-                    <span className="rounded-full border bg-muted/50 px-2.5 py-0.5 text-xs">{a}</span>
+                  <span key={a} className="inline-flex items-center gap-2">
+                    {i > 0 && <span aria-hidden>→</span>}
+                    {a}
                   </span>
                 ))}
-                <ArrowRight className="size-3.5 text-muted-foreground" />
-                <span className="rounded-full bg-success/15 px-2.5 py-0.5 text-xs font-medium text-success">Kabul</span>
-              </div>
+                <span aria-hidden>→</span>
+                <span className="font-medium text-success">Kabul</span>
+              </span>
             </div>
           ))}
         </div>
@@ -248,26 +237,23 @@ export default function HakkindaSayfasi() {
 
       <section className="flex flex-col gap-5">
         <Baslik ust="Etki">Karar vericiler burayı nasıl kullanır?</Baslik>
-        <div className="grid gap-4 md:grid-cols-3">
-          <div className="rounded-lg border bg-card p-5">
-            <BadgeCheck className="size-6 text-vurgu" />
-            <div className="mt-3 font-heading text-lg font-semibold">Kurum hesapları</div>
+        <div className="grid gap-6 md:grid-cols-3 md:gap-0 md:divide-x md:[&>div]:px-6 md:[&>div:first-child]:pl-0 md:[&>div:last-child]:pr-0">
+          <div>
+            <h3 className="text-lg font-semibold">Kurum hesapları</h3>
             <p className="mt-1 text-sm text-muted-foreground">
               Bakanlıklar ve meclis komisyonları doğrulanmış hesaplarla katılır, tartışmalara resmî açıklama yazar ve kamuoyuna danışmak
               için gündem önerir. <b className="text-foreground">Oy kullanamaz, kimseyi susturamaz, hiçbir mesajı gizleyemez.</b>
             </p>
           </div>
-          <div className="rounded-lg border bg-card p-5">
-            <Landmark className="size-6 text-vurgu" />
-            <div className="mt-3 font-heading text-lg font-semibold">Resmî tepki</div>
+          <div>
+            <h3 className="text-lg font-semibold">Resmî tepki</h3>
             <p className="mt-1 text-sm text-muted-foreground">
               Uzlaşmayla kapanan her konu ilgili kurumlara iletilir. Kurumlar açık bir tutum bildirir: İnceleniyor, Gündeme alındı, Uygulandı
               ya da Gerekçeli ret. Bu tutum silinemez, değişirse geçmişiyle görünür.
             </p>
           </div>
-          <div className="rounded-lg border bg-card p-5">
-            <TrendingUp className="size-6 text-success" />
-            <div className="mt-3 font-heading text-lg font-semibold">Etki raporu</div>
+          <div>
+            <h3 className="text-lg font-semibold">Etki raporu</h3>
             <p className="mt-1 text-sm text-muted-foreground">
               Hangi fikrin hangi kurumun gündemine girdiği, hangisinin uygulandığı ve hangisine hiç yanıt verilmediği herkese açıktır.
               Yanıt vermemek de kayda geçer.
@@ -278,34 +264,31 @@ export default function HakkindaSayfasi() {
 
       <section className="flex flex-col gap-5">
         <Baslik ust="Değerler">Yayın ilkeleri</Baslik>
-        <div className="grid gap-4 sm:grid-cols-2">
-          {ILKELER.map(({ ikon: Ikon, ad, metin }) => (
-            <div key={ad} className="flex gap-3 rounded-lg border bg-card p-4">
-              <Ikon className="mt-0.5 size-5 shrink-0 text-vurgu" />
-              <div>
-                <div className="font-medium">{ad}</div>
-                <p className="mt-1 text-sm text-muted-foreground">{metin}</p>
-              </div>
+        <dl className="grid gap-x-10 sm:grid-cols-2">
+          {ILKELER.map(({ ad, metin }) => (
+            <div key={ad} className="border-t py-3">
+              <dt className="font-medium">{ad}</dt>
+              <dd className="mt-1 text-sm text-muted-foreground">{metin}</dd>
             </div>
           ))}
-        </div>
+        </dl>
       </section>
 
       <section className="flex flex-col gap-5">
         <Baslik ust="Model">ABD yasama sistemiyle karşılaştırma</Baslik>
-        <div className="overflow-x-auto rounded-lg border bg-card">
+        <div className="overflow-x-auto border-y">
           <table className="w-full min-w-[480px] text-sm">
-            <thead className="bg-muted/50 text-left text-xs text-muted-foreground">
+            <thead className="border-b text-left text-xs text-muted-foreground">
               <tr>
-                <th className="px-4 py-2 font-medium">ABD</th>
-                <th className="px-4 py-2 font-medium">Ortak Akıl</th>
+                <th className="py-2 pr-4 font-medium">ABD</th>
+                <th className="py-2 font-medium">Kurultay</th>
               </tr>
             </thead>
             <tbody className="divide-y">
               {ABD.map(([a, b]) => (
                 <tr key={a}>
-                  <td className="px-4 py-2.5 text-muted-foreground">{a}</td>
-                  <td className="px-4 py-2.5 font-medium">{b}</td>
+                  <td className="py-2.5 pr-4 text-muted-foreground">{a}</td>
+                  <td className="py-2.5 font-medium">{b}</td>
                 </tr>
               ))}
             </tbody>
@@ -314,13 +297,13 @@ export default function HakkindaSayfasi() {
       </section>
 
       <div className="flex flex-wrap gap-4">
-        <Link href="/etki" className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline dark:text-vurgu">
+        <Link href="/etki" className="inline-flex items-center gap-1 text-sm font-medium hover:underline">
           Etki raporu <ArrowRight className="size-4" />
         </Link>
-        <Link href="/kararlar?s=kurallar" className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline dark:text-vurgu">
+        <Link href="/kararlar?s=kurallar" className="inline-flex items-center gap-1 text-sm font-medium hover:underline">
           Güncel yayın ilkeleri <ArrowRight className="size-4" />
         </Link>
-        <Link href="/topluluk" className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline dark:text-vurgu">
+        <Link href="/topluluk" className="inline-flex items-center gap-1 text-sm font-medium hover:underline">
           Yayın Kurulu <ArrowRight className="size-4" />
         </Link>
       </div>

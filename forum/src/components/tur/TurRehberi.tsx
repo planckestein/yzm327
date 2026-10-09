@@ -7,10 +7,12 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { turAdimlari, type TurVerisi } from "./turAdimlari";
 import { GOSTERIM_OLAYI } from "./CanliGosterim";
+import { KilimSerit } from "@/components/motif/Motif";
+import { Isaret } from "@/components/kabuk/Logo";
 
-const DURUM_ANAHTARI = "ortakakil-tur-adim";
-const GORULDU_ANAHTARI = "ortakakil-tur-goruldu";
-export const TUR_OLAYI = "ortakakil:tur-baslat";
+const DURUM_ANAHTARI = "kurultay-tur-adim";
+const GORULDU_ANAHTARI = "kurultay-tur-goruldu";
+export const TUR_OLAYI = "kurultay:tur-baslat";
 
 // Tarayıcı depolaması kapalı olabilir (gizli pencere vb.); tur yine de çalışsın
 function oku(anahtar: string): string | null {
@@ -174,15 +176,16 @@ export function TurRehberi({ veri }: { veri: TurVerisi }) {
       <div
         ref={kartRef}
         className={cn(
-          "fixed flex max-h-[calc(100dvh-32px)] flex-col overflow-y-auto border-2 border-foreground bg-background shadow-2xl transition-[top,left,opacity] duration-300",
+          "fixed flex max-h-[calc(100dvh-32px)] flex-col overflow-y-auto border bg-background shadow-lg transition-[top,left,opacity] duration-300",
           merkez ? "w-[min(560px,calc(100vw-32px))]" : "sm:w-[420px]",
           hazir ? "opacity-100" : "opacity-0",
         )}
         style={kartKonum}
       >
-        <div className="flex items-center justify-between gap-2 border-b border-foreground px-4 py-2">
-          <span className="inline-flex items-center gap-1.5 text-[10px] font-bold tracking-[0.14em] uppercase">
-            <Compass className="size-3.5 text-vurgu" /> Tanıtım turu · {adim + 1}/{adimlar.length}
+        <KilimSerit ilmek={1} />
+        <div className="flex items-center justify-between gap-2 border-b px-4 py-2">
+          <span className="inline-flex items-center gap-1.5 text-xs font-medium">
+            <Isaret className="h-3.5" /> Tanıtım turu · {adim + 1}/{adimlar.length}
           </span>
           <button onClick={kapat} className="text-muted-foreground hover:text-foreground" aria-label="Turu kapat">
             <X className="size-4" />
@@ -191,14 +194,14 @@ export function TurRehberi({ veri }: { veri: TurVerisi }) {
 
         <div className="flex flex-col gap-3 px-4 pt-3 pb-4">
           {a.ister && (
-            <div className="border-l-[3px] border-vurgu pl-3">
-              <div className="text-[10px] font-bold tracking-[0.14em] text-vurgu uppercase">{a.bizim ? "Tasarım kararımız" : "Hocanın isteği"}</div>
-              <p className="mt-1 font-serif text-[15px] leading-snug italic">“{a.ister}”</p>
+            <div className="border-l-2 border-vurgu pl-3">
+              <div className="text-xs font-medium text-vurgu">{a.bizim ? "Tasarım kararımız" : "Hocanın isteği"}</div>
+              <p className="mt-1 text-[15px] leading-snug italic">“{a.ister}”</p>
             </div>
           )}
           <div>
-            {a.ister && <div className="text-[10px] font-bold tracking-[0.14em] text-muted-foreground uppercase">Nasıl karşıladık</div>}
-            <h2 id="tur-baslik" className={cn("font-serif leading-tight font-bold", a.ister ? "mt-0.5 text-xl" : "text-2xl")}>
+            {a.ister && <div className="text-xs font-medium text-muted-foreground">Nasıl karşıladık</div>}
+            <h2 id="tur-baslik" className={cn("leading-tight font-semibold", a.ister ? "mt-0.5 text-xl" : "text-2xl")}>
               {a.baslik}
             </h2>
             <p className="mt-1.5 text-sm leading-relaxed text-foreground/85">{a.metin}</p>
@@ -237,7 +240,6 @@ export function TurRehberi({ veri }: { veri: TurVerisi }) {
                 </Button>
                 <Button
                   size="sm"
-                  className="bg-vurgu text-vurgu-foreground hover:bg-vurgu/90"
                   onClick={() => {
                     kapat();
                     window.dispatchEvent(new Event(GOSTERIM_OLAYI));

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { PenLine, Search } from "lucide-react";
+import { PenLine, Search, Smartphone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { MenuKategorisi } from "@/lib/akis";
 import { MobilMenu } from "./MobilMenu";
@@ -37,6 +37,11 @@ export function UstBar({ kullanici, gorevler, kategoriler, oyBekleyen }: Props) 
               <Search />
             </Link>
           </Button>
+          <Button asChild variant="ghost" size="icon" className="hidden md:inline-flex" title="Telefonda aç">
+            <Link href="/telefon" aria-label="Telefonda aç">
+              <Smartphone />
+            </Link>
+          </Button>
           <TurDugmesi />
           <TemaDugmesi />
           {kullanici ? (
@@ -58,7 +63,7 @@ export function UstBar({ kullanici, gorevler, kategoriler, oyBekleyen }: Props) 
               <Button asChild variant="ghost" size="sm">
                 <Link href="/giris">Giriş</Link>
               </Button>
-              <Button asChild size="sm" className="bg-vurgu text-vurgu-foreground hover:bg-vurgu/90">
+              <Button asChild size="sm">
                 <Link href="/kayit">Katıl</Link>
               </Button>
             </>

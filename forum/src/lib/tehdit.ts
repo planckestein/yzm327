@@ -8,7 +8,12 @@
  *   (a) açık tehdit kalıbı ("seni bulacağım", "canına okuyacağım", "adresini biliyorum"…), veya
  *   (b) birinci tekil şahıs şiddet fiili ("öldürürüm", "keseceğim"…) + aynı cümlede bir hedef ("seni", "aileni"…).
  * Böylece "YZ insanlığı öldürür mü?" gibi tartışmalar engellenmez.
+ *
+ * Neden makine öğrenmesi değil? (Hafta 2, "YZ gerekli mi?" ağacı) Basit bir kural işi görüyor, etiketli Türkçe
+ * tehdit verisi yok ve en pahalı hata yanlış alarm (masum bir sözü sansürlemek). Kural açıklanabilir ve test
+ * edilebilir; bir model ileride bu kuralı "temel çizgi" olarak geçmek zorunda. Ölçüm: npm run olcum.
  */
+import { boslukDaralt, hat, isaretleriAt, kucult } from "./metin";
 
 const ACIK_KALIPLAR = [
   "seni bulaca",
@@ -25,17 +30,14 @@ const ACIK_KALIPLAR = [
   "geberteca",
 ];
 
-// Şiddet fiili kökleri + birinci tekil şahıs gelecek/geniş zaman ekleri
+// Şiddet fiili kökleri + birinci tekil şahıs gelecek/geniş zaman ekleri.
+// Ünlüyle biten kökler ayrı ek alır: "bıçakla-rım", "parçala-yacağım" (ölçümde kaçtığı görülüp düzeltildi).
 const FIIL =
-  /(öldür|kes|vur|bıçakla|yak|döv|boğ|patlat|as|kır|parçala|sık)(ürüm|urum|irim|ırım|erim|arım|eceğim|acağım|ecem|acam|icem|ıcam|ucam|ücem)/u;
+  /(öldür|kes|vur|yak|döv|boğ|patlat|as|kır|sık)(ürüm|urum|irim|ırım|erim|arım|eceğim|acağım|ecem|acam|icem|ıcam|ucam|ücem)|(bıçakla|parçala)(rım|yacağım|yacam)/u;
 const HEDEF = /(^|\s)(seni|sizi|hepinizi|aileni|ailenizi|evini|kafanı|kafanızı|çocuğunu|anneni)(\s|$)/u;
 
-function normallestir(metin: string) {
-  return metin
-    .toLocaleLowerCase("tr-TR")
-    .replace(/[^\p{L}\p{N}\s.!?]/gu, " ")
-    .replace(/\s+/g, " ");
-}
+// Cümle sonları (.!?) korunur: tehdit cümle cümle aranır
+const normallestir = hat(kucult, isaretleriAt(".!?"), boslukDaralt);
 
 /** Tehdit içeren cümleyi döndürür; yoksa null. */
 export function tehditBul(metin: string): string | null {
@@ -49,4 +51,4 @@ export function tehditBul(metin: string): string | null {
 }
 
 export const TEHDIT_MESAJI =
-  "Bu ifade tehdit olarak algılandı. Ortak Akıl’da tehdit dışında her ifade serbesttir; lütfen tehdit içermeyecek şekilde yeniden yaz.";
+  "Bu ifade tehdit olarak algılandı. Kurultay’da tehdit dışında her ifade serbesttir; lütfen tehdit içermeyecek şekilde yeniden yaz.";

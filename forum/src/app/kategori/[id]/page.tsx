@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Motif } from "@/components/motif/Motif";
+import { bolumMotifi } from "@/components/motif/desenler";
 import { notFound } from "next/navigation";
 import { PenSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -27,10 +29,11 @@ export default async function KategoriSayfasi({ params, searchParams }: PageProp
   const altlar = tumKategoriler().filter((k) => k.ust_id === id);
   const kurallar = zincir.map((k) => k.kurallar).filter(Boolean);
   const idler = altAgacIdleri(id);
+  const motif = bolumMotifi(zincir[0].ad);
 
   return (
     <div className="mx-auto flex w-full max-w-4xl flex-col gap-6">
-      <header className="flex flex-col gap-3 border-b-[4px] border-double border-foreground pb-5">
+      <header className="flex flex-col gap-3 border-b pb-5">
         <nav className="ust-etiket">
           <Link href="/kategoriler" className="hover:underline">
             Bölümler
@@ -45,7 +48,10 @@ export default async function KategoriSayfasi({ params, searchParams }: PageProp
           ))}
         </nav>
         <div className="flex flex-wrap items-end justify-between gap-4">
-          <h1 className="font-serif text-[clamp(2rem,4.5vw,3.25rem)] leading-[1.02] font-black tracking-[-0.025em]">{kategori.ad}</h1>
+          <h1 className="flex items-center gap-3 text-[clamp(1.7rem,3vw,2.375rem)] leading-[1.15] font-semibold">
+            <Motif ad={motif.motif} renk={motif.renk} className="size-[1.1em]" />
+            {kategori.ad}
+          </h1>
           {ben && (
             <div className="flex gap-2">
               <TakipDugmesi kategoriId={id} takipte={takipEdiyorMu(ben.id, id)} />
@@ -57,21 +63,21 @@ export default async function KategoriSayfasi({ params, searchParams }: PageProp
             </div>
           )}
         </div>
-        <p className="max-w-2xl font-serif text-[17px] text-muted-foreground">{kategori.aciklama}</p>
-        <div className="flex flex-wrap items-center gap-x-1 gap-y-1 text-[12px] font-semibold tracking-[0.06em] uppercase">
+        <p className="max-w-2xl text-[17px] text-muted-foreground">{kategori.aciklama}</p>
+        <div className="flex flex-wrap items-center gap-x-1 gap-y-1 text-[12px] font-semibold">
           <span className="mr-2 font-normal tracking-normal text-muted-foreground normal-case">{sayi(gorunenTakipci(id, ilgiliUyeSayisi(id)))} vatandaş takip ediyor</span>
           {altlar.map((a, i) => (
             <span key={a.id}>
               {i > 0 && <span className="px-1 text-border">|</span>}
-              <Link href={`/kategori/${a.id}`} className="hover:text-vurgu">
+              <Link href={`/kategori/${a.id}`} className="hover:underline">
                 {a.ad}
               </Link>
             </span>
           ))}
         </div>
         {kurallar.length > 0 && (
-          <p className="border-l-[3px] border-vurgu pl-3 text-sm">
-            <b className="text-[11px] tracking-[0.1em] uppercase">Bölüm ilkesi · </b>
+          <p className="border-l-2 border-foreground/40 pl-3 text-sm">
+            <b className="text-[11px]">Bölüm ilkesi · </b>
             {kurallar.join(" ")}
           </p>
         )}

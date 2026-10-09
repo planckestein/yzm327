@@ -47,7 +47,7 @@ export default async function KararlarSayfasi({ searchParams }: PageProps<"/kara
             key={x.s}
             href={x.s === "acik" ? "/kararlar" : `/kararlar?s=${x.s}`}
             className={cn(
-              "-mb-px border-b-[3px] border-transparent py-2 text-[12px] font-semibold tracking-[0.08em] text-muted-foreground uppercase hover:text-foreground",
+              "-mb-px border-b-[3px] border-transparent py-2 text-[12px] font-semibold text-muted-foreground hover:text-foreground",
               sekme === x.s && "border-vurgu text-foreground",
             )}
           >
@@ -66,10 +66,10 @@ export default async function KararlarSayfasi({ searchParams }: PageProps<"/kara
               {anahtarlar.map((a) => (
                 <tr key={a}>
                   <th className="py-3 pr-4 text-left font-normal text-muted-foreground">{DEGISTIRILEBILIR[a]!.ad}</th>
-                  <td className="py-3 text-right font-serif text-base font-semibold">
+                  <td className="py-3 text-right text-base font-semibold">
                     {kuralDegeriYazi(a, k[a])}
                     {k[a] !== VARSAYILAN[a] && (
-                      <span className="ml-2 font-sans text-[10px] font-bold tracking-[0.1em] text-vurgu uppercase">oylamayla değişti</span>
+                      <span className="ml-2 font-sans text-xs font-medium text-vurgu">oylamayla değişti</span>
                     )}
                   </td>
                 </tr>

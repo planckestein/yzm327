@@ -12,17 +12,17 @@ export function AltMenu({ takmaAd, oyBekleyen }: { takmaAd: string | null; oyBek
   const ogeler = [
     { href: "/", ad: "Gündem", ikon: Newspaper },
     { href: "/kararlar", ad: "Kararlar", ikon: Scale, sayi: oyBekleyen },
-    { href: "/konu/yeni", ad: "Yeni", ikon: Plus, vurgu: true },
+    { href: "/konu/yeni", ad: "Öner", ikon: Plus },
     { href: "/etki", ad: "Etki", ikon: TrendingUp },
     { href: takmaAd ? `/profil/${encodeURIComponent(takmaAd)}` : "/giris", ad: takmaAd ? "Profil" : "Giriş", ikon: User },
   ];
   return (
     <nav
-      className="fixed inset-x-0 bottom-0 z-40 border-t bg-background/95 pb-[env(safe-area-inset-bottom)] backdrop-blur lg:hidden"
+      className="fixed inset-x-0 bottom-0 z-40 border-t bg-background pb-[env(safe-area-inset-bottom)] lg:hidden"
       aria-label="Alt menü"
     >
       <ul className="grid grid-cols-5">
-        {ogeler.map(({ href, ad, ikon: Ikon, sayi, vurgu }) => {
+        {ogeler.map(({ href, ad, ikon: Ikon, sayi }) => {
           const aktif = href !== "/konu/yeni" && aktifMi(yol, href);
           return (
             <li key={ad}>
@@ -30,19 +30,13 @@ export function AltMenu({ takmaAd, oyBekleyen }: { takmaAd: string | null; oyBek
                 href={href}
                 className={cn(
                   "relative flex flex-col items-center gap-0.5 py-2 text-[11px] text-muted-foreground",
-                  aktif && "text-primary",
+                  aktif && "font-medium text-foreground",
                 )}
               >
-                {vurgu ? (
-                  <span className="flex size-8 items-center justify-center rounded-full bg-primary text-primary-foreground">
-                    <Ikon className="size-4" />
-                  </span>
-                ) : (
-                  <Ikon className="size-5" />
-                )}
-                {!vurgu && ad}
+                <Ikon className="size-5" strokeWidth={aktif ? 2.2 : 1.8} />
+                {ad}
                 {!!sayi && (
-                  <span className="absolute top-1 left-1/2 ml-2 rounded-full bg-primary px-1 text-[10px] font-semibold text-primary-foreground">
+                  <span className="absolute top-1 left-1/2 ml-2.5 text-xs font-medium text-vurgu tabular-nums">
                     {sayi}
                   </span>
                 )}

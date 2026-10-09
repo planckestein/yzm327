@@ -184,7 +184,7 @@ export const EK_KONULAR: EkKonu[] = [
     tepki: ["dijital_komisyon", "inceleniyor", "Önerinin, gündemdeki sosyal medya düzenlemesi taslağıyla birlikte değerlendirilmesi Komisyonumuzca kararlaştırılmıştır."],
   },
   {
-    gun: 17, saat: 16, kim: "kaan_dogan", bolum: "Ortak Akıl Hakkında", sonuc: "aktif",
+    gun: 17, saat: 16, kim: "kaan_dogan", bolum: "Kurultay Hakkında", sonuc: "aktif",
     baslik: "Platformda karanlık tema varsayılan olsun (gece nöbetçilerinin gözleri yandı)",
     aciklama: "Gece nöbetten, vardiyadan, sınavdan dönen herkes burada tartışıyor. Açık tema gece üçte bir güneş gibi. Karanlık temanın varsayılan olmasını öneriyorum.",
     mesajlar: [
@@ -555,7 +555,7 @@ export const EK_KONULAR: EkKonu[] = [
     tepki: ["dijital_komisyon", "inceleniyor", "Varsayılan çocuk hesabı önerisi, çocukların çevrim içi korunmasına ilişkin çalışma taslağımızda değerlendirilmektedir. Genel kimlik doğrulama yoluna gidilmemesi yönündeki görüş not alınmıştır."],
   },
   {
-    gun: 27, saat: 16, kim: "oguz_karaca", bolum: "Ortak Akıl Hakkında", sonuc: "aktif",
+    gun: 27, saat: 16, kim: "oguz_karaca", bolum: "Kurultay Hakkında", sonuc: "aktif",
     baslik: "Bu platform tek bir yöne mi kaydı? Her görüşe gerçekten yer açalım",
     aciklama: "Birkaç haftadır burayı okuyorum: manşetlerin, uzlaşmaların ve kurul üyelerinin neredeyse hepsi aynı siyasi çizgiden. Muhafazakâr ya da milliyetçi bir öneri yazarken “acaba gizlenir mi” diye düşünüyoruz. Yayın Kurulu'na farklı görüşlerden aday çıkmasını ve manşetin nasıl seçildiğinin açıkça yazılmasını öneriyorum. Sansürsüz diyorsak, rahatsız eden fikre de yer olmalı.",
     mesajlar: [

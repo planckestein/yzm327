@@ -3,7 +3,8 @@ import { ArrowRight, CheckCircle2, Info } from "lucide-react";
 import type { Kullanici } from "@/lib/auth";
 import { kalanSure, sayi } from "@/lib/bicim";
 import { suan } from "@/lib/saat";
-import { ASAMA_ADLARI, acikOylama, gorunenSayim, oyDurumu, oyListesi, surecGetir, type Surec } from "@/lib/oylama";
+import { acikOylama, gorunenSayim, oyDurumu, oyListesi } from "@/lib/oylama";
+import { ASAMA_ADLARI, surecGetir, type Surec } from "@/lib/surec";
 import { cn } from "@/lib/utils";
 import { MeclisGrafigi } from "@/components/ortak/MeclisGrafigi";
 import { TakipDugmesi } from "@/components/ortak/TakipDugmesi";
@@ -40,10 +41,10 @@ export function OyKarti({ surecId, ben, soru, baslik, ayrinti = true, className 
   const benim = durum?.tur === "oy_verdi" || durum?.tur === "temsil_edildi" ? durum.secim : null;
 
   return (
-    <section className={cn("cizgi-kalin flex flex-col pt-2", className)}>
+    <section className={cn("border-t flex flex-col pt-2", className)}>
       <div className="flex items-center justify-between gap-2">
-        <span className="inline-flex items-center gap-1.5 text-[11px] font-bold tracking-[0.14em] text-vurgu uppercase">
-          <span className="canli-nokta size-1.5 rounded-full bg-current" /> {ASAMA_ADLARI[oylama.asama]}
+        <span className="inline-flex items-center gap-1.5 text-xs font-medium text-vurgu">
+          {ASAMA_ADLARI[oylama.asama]}
         </span>
         <span className="text-xs text-muted-foreground">{kalanSure(oylama.bitis, suan())}</span>
       </div>
@@ -52,7 +53,7 @@ export function OyKarti({ surecId, ben, soru, baslik, ayrinti = true, className 
           {baslik}
         </Link>
       )}
-      <h3 className="mt-1 font-serif text-xl leading-snug font-bold">{soru ?? SORULAR[surec.tur]}</h3>
+      <h3 className="mt-1 text-xl leading-snug font-semibold">{soru ?? SORULAR[surec.tur]}</h3>
 
       <MeclisGrafigi evet={s.evet} hayir={s.hayir} secmen={s.secmen} gereken={s.gereken} benim={benim} className="mx-auto mt-3 w-full max-w-[280px]" />
 
@@ -70,7 +71,7 @@ export function OyKarti({ surecId, ben, soru, baslik, ayrinti = true, className 
         {!ben ? (
           <p className="text-center text-sm text-muted-foreground">
             Oy vermek için{" "}
-            <Link href="/giris" className="font-semibold text-foreground underline decoration-vurgu underline-offset-4">
+            <Link href="/giris" className="font-semibold text-foreground underline underline-offset-4">
               giriş yap
             </Link>
             .
@@ -119,7 +120,7 @@ export function OyKarti({ surecId, ben, soru, baslik, ayrinti = true, className 
             <span />
           )}
           {ayrinti && (
-            <Link href={`/karar/${surec.id}`} className="inline-flex items-center gap-1 font-semibold hover:text-vurgu">
+            <Link href={`/karar/${surec.id}`} className="inline-flex items-center gap-1 font-semibold hover:underline">
               Karar süreci <ArrowRight className="size-3" />
             </Link>
           )}

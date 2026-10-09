@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { ArrowRight, UserPlus } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { db } from "@/lib/db";
@@ -28,7 +28,7 @@ export default async function GirisSayfasi() {
         <Card>
           <CardHeader>
             <CardTitle className="font-heading text-2xl">Giriş yap</CardTitle>
-            <CardDescription>Kendi Ortak Akıl hesabınla devam et.</CardDescription>
+            <CardDescription>Kendi Kurultay hesabınla devam et.</CardDescription>
           </CardHeader>
           <CardContent>
             <GirisFormu />
@@ -36,13 +36,10 @@ export default async function GirisSayfasi() {
         </Card>
         <Link
           href="/kayit"
-          className="group flex items-center gap-4 border-2 border-foreground p-4 transition-colors hover:bg-card"
+          className="group flex items-center gap-4 border p-4 transition-colors hover:bg-card"
         >
-          <span className="flex size-10 shrink-0 items-center justify-center bg-vurgu text-vurgu-foreground">
-            <UserPlus className="size-5" />
-          </span>
           <span className="min-w-0 flex-1">
-            <span className="block font-serif text-lg font-bold">Henüz hesabın yok mu?</span>
+            <span className="block font-semibold">Henüz hesabın yok mu?</span>
             <span className="text-sm text-muted-foreground">Bir dakikada kendi hesabını oluştur, söz al.</span>
           </span>
           <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />

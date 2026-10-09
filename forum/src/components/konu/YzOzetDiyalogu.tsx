@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
-import { Bot, Sparkles } from "lucide-react";
+import { Bot } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { yzOzetiIste } from "@/app/actions/yz";
@@ -14,7 +14,7 @@ export function YzOzetDiyalogu({ konuId, ekleyebilir, children }: { konuId: numb
     <Dialog>
       <DialogTrigger asChild>
         <Button variant="ghost" size="sm">
-          <Sparkles /> YZ Analist özeti
+          <Bot /> YZ Analist özeti
         </Button>
       </DialogTrigger>
       <DialogContent className="max-h-[85dvh] overflow-y-auto sm:max-w-xl">

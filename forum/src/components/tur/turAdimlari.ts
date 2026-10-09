@@ -95,6 +95,23 @@ export function turAdimlari(v: TurVerisi): TurAdimi[] {
       metin: `İstersen oyunu bir bölümde güvendiğin birine emanet edersin; zincirler toplanır (A→B→C ise C üç oy taşır). Güç birikmesin diye bir kişi en fazla ${v.maksOy} oy taşıyabilir. Bu graf oy emanetlerini gösterir; üstteki sekmelerden yanıtlaşma ve seçim desteği ağlarına da geçilebilir.`,
     },
     {
+      sayfa: "/hakkinda",
+      hedef: ["ders"],
+      ister: "Öğrenci desenleri bir ML/veri problemine uygular, bir kod tabanında desen ve anti-desen tespit eder.",
+      baslik: "Ders içeriğine uyum",
+      metin:
+        "Tasarım desenleri dersinin yedi başlığının her biri platformda bir karşılık buldu. Hafta 2’ye uygun olarak da “YZ gerekli mi?” sorusunu sorduk, kurallarımızı temel çizgilerle ölçtük; tablolar bu bölümde.",
+      liste: [
+        "Desen kavramı: desenler kodda adıyla",
+        "SOLID: yeni öneri türü = yeni kayıt",
+        "Yaratımsal: Singleton, Registry",
+        "Yapısal: Facade, Adapter, Proxy",
+        "Davranışsal: State, Strategy, Chain",
+        "YZ’ye özgü: Cascade, temel çizgi",
+        "Anti-desenler: God Object bölündü",
+      ],
+    },
+    {
       sayfa: "/",
       ister: null,
       baslik: "Bütün istekler karşılandı",

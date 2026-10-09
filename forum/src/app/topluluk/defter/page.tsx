@@ -82,7 +82,7 @@ export default async function DefterSayfasi({ searchParams }: PageProps<"/toplul
         {kayitlar.map((k) => (
           <li key={k.sira} className="grid gap-1 py-3 sm:grid-cols-[64px_120px_1fr] sm:items-center sm:gap-3">
             <span className="font-mono text-xs text-muted-foreground">#{k.sira}</span>
-            <span className="text-[10px] font-bold tracking-[0.12em] text-vurgu uppercase">{TUR_ADLARI[k.tur] ?? k.tur}</span>
+            <span className="text-xs font-medium text-vurgu">{TUR_ADLARI[k.tur] ?? k.tur}</span>
             <div className="min-w-0">
               <div className="text-sm">{ozet(k.tur, JSON.parse(k.veri))}</div>
               <div className="truncate font-mono text-[11px] text-muted-foreground" title={`önceki: ${k.onceki_hash}\nbu kayıt: ${k.hash}`}>

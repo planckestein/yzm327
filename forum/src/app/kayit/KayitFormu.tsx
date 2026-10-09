@@ -28,7 +28,7 @@ export default function KayitFormu() {
       <div className="grid gap-2">
         <Label htmlFor="takma_ad">Takma ad</Label>
         <Input id="takma_ad" name="takma_ad" autoComplete="username" required minLength={3} maxLength={20} defaultValue={a.takma_ad} />
-        <p className="text-xs text-muted-foreground">Ortak Akıl’da herkes seni bu adla görür. 3-20 karakter; harf, rakam ve _</p>
+        <p className="text-xs text-muted-foreground">Kurultay’da herkes seni bu adla görür. 3-20 karakter; harf, rakam ve _</p>
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="grid gap-2">

@@ -26,7 +26,7 @@ const KATMANLAR: Record<Katman, { ad: string; aciklama: string; ozet: string }> 
 
 const RENK: Record<Dugum["tur"], string> = {
   yonetici: "var(--vurgu)",
-  temsilci: "oklch(0.52 0.13 255)",
+  temsilci: "oklch(0.56 0.05 250)",
   bilirkisi: "var(--warning)",
   resmi: "var(--foreground)",
   yz: "var(--success)",
@@ -48,7 +48,7 @@ export default async function GrafSayfasi({ searchParams }: PageProps<"/topluluk
   const konum = new Map(g.dugumler.map((d) => [d.id, d]));
   const ozet = grafOzeti(katman, g);
   const yonlu = katman !== "etkilesim";
-  const kenarRengi = katman === "devir" ? "oklch(0.52 0.13 255)" : katman === "destek" ? "var(--vurgu)" : "currentColor";
+  const kenarRengi = katman === "devir" ? "oklch(0.56 0.05 250)" : katman === "destek" ? "var(--vurgu)" : "currentColor";
 
   return (
     <div className="flex flex-col gap-4">
@@ -58,7 +58,7 @@ export default async function GrafSayfasi({ searchParams }: PageProps<"/topluluk
             key={x}
             href={x === "etkilesim" ? "/topluluk/graf" : `/topluluk/graf?katman=${x}`}
             className={cn(
-              "border-b-[3px] border-transparent py-1 text-[12px] font-semibold tracking-[0.08em] text-muted-foreground uppercase hover:text-foreground",
+              "border-b-[3px] border-transparent py-1 text-[12px] font-semibold text-muted-foreground hover:text-foreground",
               x === katman && "border-vurgu text-foreground",
             )}
           >
@@ -123,11 +123,11 @@ export default async function GrafSayfasi({ searchParams }: PageProps<"/topluluk
       {ozet.length > 0 && (
         <div>
           <h2 className="mb-2 text-sm font-semibold">{KATMANLAR[katman].ozet}</h2>
-          <ol className="flex flex-wrap gap-2">
+          <ol className="flex flex-wrap gap-x-6 gap-y-1 text-sm">
             {ozet.map((o, i) => (
               <li key={o.ad}>
-                <Link href={`/profil/${encodeURIComponent(o.ad)}`} className="inline-flex items-center gap-2 rounded-full border px-3 py-1 text-sm hover:bg-muted">
-                  <span className="text-muted-foreground">{i + 1}.</span> @{o.ad} <b>{o.n}</b>
+                <Link href={`/profil/${encodeURIComponent(o.ad)}`} className="inline-flex items-center gap-2 hover:underline">
+                  <span className="text-muted-foreground">{i + 1}.</span> @{o.ad} <span className="text-muted-foreground tabular-nums">{o.n}</span>
                 </Link>
               </li>
             ))}

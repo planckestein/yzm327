@@ -4,7 +4,7 @@ import { defterDogrula, tumDefter } from "@/lib/defter";
 export async function GET() {
   const govde = JSON.stringify(
     {
-      aciklama: "Ortak Akıl dağıtık defteri. hash = SHA-256(onceki_hash|zaman|tur|veri)",
+      aciklama: "Kurultay dağıtık defteri. hash = SHA-256(onceki_hash|zaman|tur|veri)",
       dogrulama: defterDogrula(),
       kayitlar: tumDefter(),
     },

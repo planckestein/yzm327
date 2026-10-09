@@ -38,12 +38,12 @@ export default function UyelerSayfasi() {
             <KullaniciAvatar ad={u.takma_ad} boyut="lg" baglanti={false} rol={u.rol} />
             <div className="min-w-0 flex-1">
               <div className="flex flex-wrap items-center gap-1.5">
-                <span className="font-serif text-lg font-bold group-hover:underline">{u.takma_ad}</span>
-                {u.takma_ad === yonetici && <Damga className="border-vurgu bg-vurgu text-vurgu-foreground">Genel Yayın Yönetmeni</Damga>}
-                {temsilci.has(u.takma_ad) && <Damga className="border-foreground/40">Yayın Kurulu · {temsilci.get(u.takma_ad)}</Damga>}
-                {u.rol === "bilirkisi" && <Damga className="border-warning/60 text-warning">Uzman</Damga>}
-                {u.rol === "resmi" && <Damga className="border-foreground bg-foreground text-background">Kurum</Damga>}
-                {u.rol === "yz" && <Damga className="border-success/50 text-success">YZ Analist</Damga>}
+                <span className="text-lg font-semibold group-hover:underline">{u.takma_ad}</span>
+                {u.takma_ad === yonetici && <Damga className="text-vurgu">Genel Yayın Yönetmeni</Damga>}
+                {temsilci.has(u.takma_ad) && <Damga className="text-foreground">Yayın Kurulu · {temsilci.get(u.takma_ad)}</Damga>}
+                {u.rol === "bilirkisi" && <Damga className="text-warning">Uzman</Damga>}
+                {u.rol === "resmi" && <Damga className="text-foreground">Kurum</Damga>}
+                {u.rol === "yz" && <Damga>YZ Analist</Damga>}
               </div>
               <div className="truncate text-sm text-muted-foreground">
                 {u.ad} {u.soyad}

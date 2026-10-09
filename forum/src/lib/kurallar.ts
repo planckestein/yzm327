@@ -90,8 +90,15 @@ export function kuralUygula(anahtar: string, deger: unknown) {
   ).run(anahtar, JSON.stringify(deger));
 }
 
+// Her eşik bir hesap stratejisidir; yeni bir oran eklemek tabloya bir satır eklemektir.
+const ESIK_HESAPLARI: Record<Oran | "salt", (n: number) => number> = {
+  salt: (n) => Math.floor(n / 2) + 1,
+  "1/2": (n) => Math.floor(n / 2) + 1,
+  "3/5": (n) => Math.ceil((3 * n) / 5),
+  "2/3": (n) => Math.ceil((2 * n) / 3),
+};
+
 /** Oran → n kişilik bir heyette kabul için gereken en az "evet" */
 export function gerekenEvet(oran: Oran | "salt", n: number): number {
-  const k = oran === "salt" || oran === "1/2" ? Math.floor(n / 2) + 1 : oran === "3/5" ? Math.ceil((3 * n) / 5) : Math.ceil((2 * n) / 3);
-  return Math.max(1, k);
+  return Math.max(1, ESIK_HESAPLARI[oran](n));
 }

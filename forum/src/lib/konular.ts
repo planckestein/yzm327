@@ -2,7 +2,7 @@ import "server-only";
 import { db } from "./db";
 import { deftereYaz } from "./defter";
 import { kategoriGetir } from "./ontoloji";
-import { surecBaslat } from "./oylama";
+import { surecBaslat } from "./surec";
 import { suanIso } from "./saat";
 import { uygunlukDenetle, type UygunlukSonucu } from "./uygunluk";
 

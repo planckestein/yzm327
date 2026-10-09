@@ -4,8 +4,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { ANA_BAGLANTILAR, aktifMi } from "./menuVerisi";
+import { Logo } from "./Logo";
 
-/** Masaüstünde künyenin yanındaki yatay bölüm menüsü (gazetenin "Gündem · Kararlar · …" şeridi). */
+/** Masaüstünde logonun yanındaki yatay ana menü. */
 export function AnaMenu({ oyBekleyen }: { oyBekleyen: number }) {
   const yol = usePathname();
   return (
@@ -17,13 +18,13 @@ export function AnaMenu({ oyBekleyen }: { oyBekleyen: number }) {
             key={href}
             href={href}
             className={cn(
-              "relative flex items-center gap-1.5 px-3 text-[12px] font-semibold tracking-[0.1em] text-muted-foreground uppercase transition-colors hover:text-foreground",
-              aktif && "text-foreground after:absolute after:inset-x-3 after:bottom-0 after:h-[3px] after:bg-vurgu",
+              "relative flex items-center gap-1.5 px-3 text-sm text-muted-foreground transition-colors hover:text-foreground",
+              aktif && "font-medium text-foreground after:absolute after:inset-x-3 after:bottom-0 after:h-0.5 after:bg-foreground",
             )}
           >
             {ad}
             {href === "/kararlar" && oyBekleyen > 0 && (
-              <span className="rounded-[2px] bg-vurgu px-1 text-[10px] leading-4 text-vurgu-foreground" title="Oyunu bekleyen kararlar">
+              <span className="text-xs font-semibold text-vurgu tabular-nums" title="Oyunu bekleyen kararlar">
                 {oyBekleyen}
               </span>
             )}
@@ -34,19 +35,13 @@ export function AnaMenu({ oyBekleyen }: { oyBekleyen: number }) {
   );
 }
 
-/** Ana sayfada büyük künye zaten göründüğü için üst çubuktaki küçük logo gizlenir. */
 export function KucukKunye() {
-  const anaSayfa = usePathname() === "/";
   return (
     <>
-      <Link
-        href="/"
-        aria-label="Ortak Akıl ana sayfa"
-        className={cn("yazit font-serif text-[15px] leading-none font-black tracking-tight whitespace-nowrap sm:text-[22px]", anaSayfa && "lg:hidden")}
-      >
-        Ortak Akıl<span className="text-vurgu">.</span>
+      <Link href="/" aria-label="Kurultay ana sayfa" className="whitespace-nowrap">
+        <Logo />
       </Link>
-      <span className={cn("mx-2 hidden h-6 w-px bg-border lg:block", anaSayfa && "lg:hidden")} />
+      <span className="mx-3 hidden h-5 w-px bg-border lg:block" />
     </>
   );
 }

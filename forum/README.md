@@ -1,6 +1,6 @@
-# Ortak Akıl — Bağımsız kamuoyu platformu
+# Kurultay — Bağımsız kamuoyu platformu
 
-**Kamuoyunun sansürsüz sesi.** Ortak Akıl, bağımsız bir medya kuruluşu gibi çalışan ama editörü topluluğun kendisi olan bir tartışma platformudur. Gündemi vatandaşlar belirler, tartışmayı vatandaşlar yürütür, sonucu vatandaşlar oylar. Uzlaşılan fikirler bakanlıkların ve meclis komisyonlarının masasına gider; kurumların verdiği yanıtlar da herkesin gözü önünde, silinmeden kayda geçer.
+**Kamuoyunun sansürsüz sesi.** Kurultay, bağımsız bir medya kuruluşu gibi çalışan ama editörü topluluğun kendisi olan bir tartışma platformudur. Gündemi vatandaşlar belirler, tartışmayı vatandaşlar yürütür, sonucu vatandaşlar oylar. Uzlaşılan fikirler bakanlıkların ve meclis komisyonlarının masasına gider; kurumların verdiği yanıtlar da herkesin gözü önünde, silinmeden kayda geçer.
 
 Karar düzeni **ABD yasama sistemi** örnek alınarak kuruldu. Web sitesi olarak çalışır, telefona uygulama gibi kurulabilir (PWA). Tamamen ücretsizdir: dış API, ücretli servis ya da veritabanı sunucusu yok. Demodaki ülke kurgusaldır; gerçek kişi, parti ya da kurum adı kullanılmaz.
 
@@ -8,12 +8,16 @@ Karar düzeni **ABD yasama sistemi** örnek alınarak kuruldu. Web sitesi olarak
 
 ## Çalıştırma
 
-Gereken tek şey [Node.js](https://nodejs.org) (LTS).
+Gereken tek şey [Node.js](https://nodejs.org) (LTS). En kolayı: proje klasöründeki **`Kurultay.cmd`**'ye (ya da ilk açılıştan sonra masaüstündeki **Kurultay** simgesine) çift tıklamak. Başlatıcı (`scripts/baslat.mjs`) gerekirse paketleri kurar ve uygulamayı derler, veritabanı boşsa demo verisini kurar, sunucuyu açar, telefon için ücretsiz Cloudflare tüneli kurar ve Kurultay'ı tarayıcı çubuğu olmayan kendi penceresinde açar. Seçenekler: `--demo` (demo verisini baştan kur), `--derle`, `--tunelsiz`, `--pencere-yok`.
+
+Geliştirme için:
 
 ```bash
 npm install        # ilk seferde
 npm run demo       # 6 haftalık örnek platform verisi: 50 konu (kendi hesabın korunur; sunucu açıkken de çalışır)
 npm run dev        # http://localhost:3000
+npm test           # birim testleri (geçici bir veritabanında çalışır)
+npm run olcum      # tehdit denetimi ve bölüm önerisinin temel çizgilerle ölçümü
 ```
 
 Komutlar hem `forum/` klasöründe hem de bir üstteki proje klasöründe çalışır (üst klasördeki `package.json` komutları `forum/`'a yönlendirir).
@@ -35,13 +39,13 @@ Komutlar hem `forum/` klasöründe hem de bir üstteki proje klasöründe çalı
 | `levent_aksoy`, `nur_ozcan` | Merkez: iki taraf arasında ortak zemin arayan üyeler (Yayın Kurulu üyeleri) |
 | `yz_bilirkisi` | YZ Analist (giriş yapılamaz) |
 
-> Demodaki süren oylamalar kurulumdan sonra birkaç gün açık kalır; göstermeden kısa süre önce `npm run demo` çalıştırın.
+> Demodaki süren oylamalar kurulumdan sonra birkaç gün açık kalır; göstermeden kısa süre önce `Kurultay (demo verisini yenile).cmd` ile demoyu tazeleyin.
 
-**Tanıtım turu:** Site ilk açıldığında 7 adımlık bir tur başlar. Tur sayfa sayfa gezerek ödevin köşetaşı isteklerini ("Hocanın isteği") ve platformda nasıl karşılandığını ("Nasıl karşıladık") ilgili yeri vurgulayarak gösterir; son adımda tüm isteklerin listesi ve canlı gösterim vardır. Üst çubuktaki pusula düğmesiyle, telefonda menüden ya da "Nasıl işliyor?" sayfasından yeniden başlatılabilir. Aynı sayfada tüm isteklerin tablosu da vardır (`/hakkinda#istekler`).
+**Tanıtım turu:** Site ilk açıldığında 8 adımlık bir tur başlar. Tur sayfa sayfa gezerek ödevin köşetaşı isteklerini ("Hocanın isteği") ve platformda nasıl karşılandığını ("Nasıl karşıladık") ilgili yeri vurgulayarak gösterir; son adımda tüm isteklerin listesi ve canlı gösterim vardır. Üst çubuktaki pusula düğmesiyle, telefonda menüden ya da "Nasıl işliyor?" sayfasından yeniden başlatılabilir. Aynı sayfada tüm isteklerin tablosu da vardır (`/hakkinda#istekler`).
 
-"Nasıl işliyor?" sayfasında isteklerin altında **"Son eklediklerimiz"** bölümü vardır (canlı gösterim, tanıtım turu, gazete tasarımı, meclis yarım dairesi, önerinin yolculuğu, düzenleme kuralı, profil gizliliği, kalabalık görünümü, telefondan erişim); canlı gösterim oradan da başlatılabilir.
+"Nasıl işliyor?" sayfasında isteklerin altında **"Son eklediklerimiz"** bölümü vardır (Kurultay tasarımı, ders içeriğine uyum, canlı gösterim, tanıtım turu, meclis yarım dairesi, önerinin yolculuğu, düzenleme kuralı, profil gizliliği, kalabalık görünümü, telefondan erişim); canlı gösterim oradan da başlatılabilir.
 
-**Canlı gösterim:** Turun son adımındaki "Canlı gösterimi başlat" düğmesi, süren bir uzlaşma oylamasını gözün önünde sonuçlandırır (oyları demo hesapları kullanır). Ardından ilgili bakanlık resmî tepkisini ("Gündeme alındı, uygulayacağız") bildirir. Değişiklikler gerçekten kaydedilir. Gösterimi tekrar yapmak için önce `npm run demo` çalıştırın.
+**Canlı gösterim:** Turun son adımındaki "Canlı gösterimi başlat" düğmesi, süren bir uzlaşma oylamasını gözün önünde sonuçlandırır (oyları demo hesapları kullanır). Ardından ilgili bakanlık resmî tepkisini ("Gündeme alındı, uygulayacağız") bildirir. Değişiklikler gerçekten kaydedilir. Gösterim her açılışta kendi oylamasını hazırlar (`src/lib/gosterim.ts`): süren uygun bir oylama yoksa sıradaki hazır senaryonun konusunda bir uzlaşma önerisi açar ve ilgili kurumu bölüme göre seçer; böylece demo yenilenmeden art arda yapılabilir.
 
 **Görünen kalabalık:** Demo verisinde ~20 üye var. Arayüz, Topluluk Oylaması sayılarını, üye, takipçi ve okunma sayılarını her kayda özgü sabit bir çarpanla binlere çevirerek gösterir (`src/lib/kalabalik.ts`). Oranlar ve kabul eşiği korunur; oylama kuralları her zaman gerçek oylarla çalışır. Yayın Kurulu küçük bir heyet olduğu için gerçek sayısıyla gösterilir.
 
@@ -71,9 +75,9 @@ Komutlar hem `forum/` klasöründe hem de bir üstteki proje klasöründe çalı
 
 ---
 
-## ABD yasama sistemi ↔ Ortak Akıl
+## ABD yasama sistemi ↔ Kurultay
 
-| ABD | Ortak Akıl |
+| ABD | Kurultay |
 |---|---|
 | Temsilciler Meclisi | **Topluluk Oylaması** |
 | Senato (eyalet başına 2) | **Yayın Kurulu** (bölüm başına 2 kurul üyesi) |
@@ -96,14 +100,9 @@ Komutlar hem `forum/` klasöründe hem de bir üstteki proje klasöründe çalı
 
 ## Telefona kurma (PWA)
 
-Telefonun uygulamayı kurabilmesi için site **HTTPS** üzerinden açılmalıdır. Ücretsiz Cloudflare tüneli bunu hesap açmadan sağlar:
+Telefonun uygulamayı kurabilmesi için site **HTTPS** üzerinden açılmalıdır. Başlatıcı bunu ücretsiz, hesapsız Cloudflare tüneliyle kendiliğinden yapar: tünel aracı (`cloudflared`, ~60 MB) ilk açılışta `forum/.araclar/` klasörüne arka planda iner (yarım kalırsa sonraki açılışta kaldığı yerden sürer), ardından `https://….trycloudflare.com` adresi açılır. Uygulamadaki **Telefonda aç** sayfası (`/telefon`) bu adresin ve aynı Wi-Fi için yerel adresin karekodunu gösterir. Karekodu okut → *Ana ekrana ekle*.
 
-1. Bir kere kur: `winget install Cloudflare.cloudflared`
-2. Platformu başlat: `npm run build` ve `npm start`
-3. Başka bir terminalde: `cloudflared tunnel --url http://localhost:3000`
-4. Çıkan `https://….trycloudflare.com` adresini telefonda aç → *Ana ekrana ekle*.
-
-Tünel açıkken adres herkese açıktır; iş bitince terminali kapatın.
+Tünel açıkken adres herkese açıktır (rastgele ve geçici); Kurultay'ın konsol penceresi kapanınca tünel de kapanır. İlk açılışta Windows Güvenlik Duvarı izin isterse, telefonun aynı Wi-Fi'dan bağlanabilmesi için *Özel ağlar*'a izin verin.
 
 ---
 

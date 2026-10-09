@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowDown, FileEdit, Handshake, History, Landmark, Lock, MessageSquareQuote, Trash2 } from "lucide-react";
+import { ArrowDown, FileEdit, Handshake, History, Lock, MessageSquareQuote, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { mevcutKullanici } from "@/lib/auth";
 import { altKonuSatirlari, kategoriEtiketi, konuKararlari } from "@/lib/akis";
 import { tamTarih } from "@/lib/bicim";
 import { konuGetir, ustKonuZinciri } from "@/lib/konular";
-import { hedefSureci, konuUzlasmasi } from "@/lib/oylama";
+import { hedefSureci, konuUzlasmasi } from "@/lib/surec";
 import { konuMesajlari, konuSerhleri, konuSurumleri, serhYazabilirMi } from "@/lib/tartisma";
 import { tartismayiAnalizEt } from "@/lib/yz";
 import { konuTepkileri, kurumAdlari } from "@/lib/etki";
@@ -84,7 +84,7 @@ export default async function KonuSayfasi({ params, searchParams }: PageProps<"/
     <div className="flex flex-col">
       {/* Başlık */}
       <header className="flex flex-col gap-3 pb-5">
-        <nav className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[11px] font-semibold tracking-[0.1em] text-muted-foreground uppercase">
+        <nav className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs font-medium text-muted-foreground">
           <Link href="/" className="hover:text-foreground">
             Gündem
           </Link>
@@ -101,7 +101,7 @@ export default async function KonuSayfasi({ params, searchParams }: PageProps<"/
           <KategoriRozeti {...kategori} />
           {konu.durum !== "aktif" && <KonuDurumRozeti durum={konu.durum} />}
         </div>
-        <h1 className="max-w-4xl font-serif text-[clamp(1.9rem,4vw,3rem)] leading-[1.05] font-bold tracking-[-0.02em]">{konu.baslik}</h1>
+        <h1 className="max-w-4xl text-[clamp(1.7rem,3vw,2.375rem)] leading-[1.15] font-semibold">{konu.baslik}</h1>
         <div className="flex flex-wrap items-center gap-x-3 gap-y-2 text-sm text-muted-foreground">
           <KullaniciAvatar ad={konu.acan_takma_ad} rol={acanKurum ? "resmi" : undefined} boyut="sm" />
           <span>
@@ -113,18 +113,18 @@ export default async function KonuSayfasi({ params, searchParams }: PageProps<"/
             {katilimcilar.length} katılımcı, {mesajlar.length} yanıt
           </span>
           {oylamaSayisi > 0 && (
-            <a href="#oylamalar" className="inline-flex items-center gap-1 font-semibold text-vurgu lg:hidden">
+            <a href="#oylamalar" className="inline-flex items-center gap-1 font-medium text-vurgu lg:hidden">
               <ArrowDown className="size-3.5" /> {oylamaSayisi} süren oylama
             </a>
           )}
         </div>
       </header>
 
-      <div className="cizgi-cift grid gap-10 pt-6 lg:grid-cols-[minmax(0,1fr)_320px]">
+      <div className="border-t grid gap-10 pt-6 lg:grid-cols-[minmax(0,1fr)_320px]">
         {/* Makale ve tartışma */}
         <article className="flex min-w-0 flex-col gap-6">
           {konu.durum === "reddedildi" && (
-            <p className="border-l-2 border-destructive pl-4 font-serif text-muted-foreground italic">
+            <p className="border-l-2 border-destructive pl-4 text-muted-foreground italic">
               Bu öneri oylamada kabul edilmedi, bu yüzden tartışmaya açılmadı.{" "}
               {kabulSureci && (
                 <Link href={`/karar/${kabulSureci.id}`} className="font-sans font-semibold text-foreground not-italic hover:underline">
@@ -134,31 +134,27 @@ export default async function KonuSayfasi({ params, searchParams }: PageProps<"/
             </p>
           )}
           {konu.durum === "silindi" && (
-            <p className="flex items-center gap-2 border-l-2 border-foreground pl-4 font-serif text-muted-foreground italic">
+            <p className="flex items-center gap-2 border-l-2 border-foreground pl-4 text-muted-foreground italic">
               <Lock className="size-4 shrink-0" /> Bu konu oylamayla listelerden kaldırıldı. Şeffaflık için kayıt burada korunuyor.
             </p>
           )}
 
           {uzlasma && (
-            <section className="border-2 border-foreground p-5">
+            <section className="border bg-card p-5">
               <div className="flex items-center justify-between gap-2">
-                <span className="inline-flex items-center gap-2 text-[11px] font-bold tracking-[0.16em] uppercase">
-                  <Handshake className="size-4" /> Varılan uzlaşma
-                </span>
+                <span className="text-xs font-medium">Varılan uzlaşma</span>
                 <Link href={`/karar/${uzlasma.id}`} className="text-xs text-muted-foreground hover:text-foreground">
                   {uzlasma.kapanis && new Date(uzlasma.kapanis).toLocaleDateString("tr-TR", { dateStyle: "long" })} · oylamayla kabul →
                 </Link>
               </div>
-              <p className="metin mt-3 font-serif text-xl leading-snug font-medium">{(JSON.parse(uzlasma.veri) as { metin: string }).metin}</p>
+              <p className="metin mt-2 text-lg leading-snug">{(JSON.parse(uzlasma.veri) as { metin: string }).metin}</p>
             </section>
           )}
 
           {tepkiler && (
             <section>
-              <div className="flex flex-wrap items-center justify-between gap-3 border-b border-foreground pb-1.5">
-                <h2 className="flex items-center gap-2 font-serif text-xl font-bold">
-                  <Landmark className="size-4" /> Kurumların tepkisi
-                </h2>
+              <div className="flex flex-wrap items-center justify-between gap-3 border-b pb-2">
+                <h2 className="text-xl font-semibold">Kurumların tepkisi</h2>
                 {benKurum && ben && <KurumTepkisiDiyalogu konuId={konu.id} kurumAdi={kurumlar.get(ben.takma_ad) ?? ben.takma_ad} />}
               </div>
               {tepkiler.guncel.length ? (
@@ -166,10 +162,10 @@ export default async function KonuSayfasi({ params, searchParams }: PageProps<"/
                   {tepkiler.guncel.map((t) => (
                     <li key={t.id} className="py-3">
                       <div className="flex flex-wrap items-center justify-between gap-2">
-                        <span className="text-[12px] font-bold tracking-[0.08em] uppercase">{kurumlar.get(t.kurum) ?? t.kurum}</span>
+                        <span className="text-sm font-medium">{kurumlar.get(t.kurum) ?? t.kurum}</span>
                         <EtkiRozeti durum={t.durum} />
                       </div>
-                      <p className="metin mt-1 font-serif">{t.aciklama}</p>
+                      <p className="metin mt-1">{t.aciklama}</p>
                       <div className="mt-1 text-xs text-muted-foreground">
                         <Zaman iso={t.zaman} />
                       </div>
@@ -177,7 +173,7 @@ export default async function KonuSayfasi({ params, searchParams }: PageProps<"/
                   ))}
                 </ul>
               ) : (
-                <p className="mt-2 font-serif text-muted-foreground italic">Uzlaşma ilgili kurumlara iletildi; henüz yanıt gelmedi.</p>
+                <p className="mt-2 text-muted-foreground italic">Uzlaşma ilgili kurumlara iletildi; henüz yanıt gelmedi.</p>
               )}
               {tepkiler.gecmis.length > tepkiler.guncel.length && (
                 <p className="text-xs text-muted-foreground">Önceki tepkiler dahil {tepkiler.gecmis.length} kayıt var; hepsi Açık Arşiv’de.</p>
@@ -186,12 +182,12 @@ export default async function KonuSayfasi({ params, searchParams }: PageProps<"/
           )}
 
           {/* Konunun açıklaması: makalenin girişi */}
-          <p className="ilk-harf metin yazi text-[18px]">{konu.aciklama}</p>
+          <p className="metin yazi text-[18px]">{konu.aciklama}</p>
 
           {tartismaVar && (
             <section className="flex flex-col" data-tur="tartisma">
-              <div className="flex items-baseline justify-between border-b border-foreground pb-1.5">
-                <h2 className="font-serif text-xl font-bold">Tartışma</h2>
+              <div className="flex items-baseline justify-between border-b pb-2">
+                <h2 className="text-xl font-semibold">Tartışma</h2>
                 <span className="text-xs text-muted-foreground">{mesajlar.length} yanıt · mesajlar silinmez</span>
               </div>
               {gonderiler.length ? (
@@ -209,7 +205,7 @@ export default async function KonuSayfasi({ params, searchParams }: PageProps<"/
                   ))}
                 </div>
               ) : (
-                <p className="py-6 font-serif text-muted-foreground italic">Henüz kimse söz almadı. İlk sözü sen söyle.</p>
+                <p className="py-6 text-muted-foreground italic">Henüz kimse söz almadı. İlk sözü sen söyle.</p>
               )}
             </section>
           )}
@@ -222,13 +218,13 @@ export default async function KonuSayfasi({ params, searchParams }: PageProps<"/
                 yanit={yanitlanan?.id ? { id: yanitlanan.id, yazan: yanitlanan.yazan, ozet: ozetle(yanitlanan.icerik) } : null}
               />
             ) : (
-              <div className="border-y border-foreground py-4 text-center font-serif">
+              <div className="border-y border-foreground py-4 text-center">
                 Tartışmaya katılmak için{" "}
-                <Link href="/giris" className="font-semibold underline decoration-vurgu underline-offset-4">
+                <Link href="/giris" className="font-semibold underline underline-offset-4">
                   giriş yap
                 </Link>{" "}
                 ya da{" "}
-                <Link href="/kayit" className="font-semibold underline decoration-vurgu underline-offset-4">
+                <Link href="/kayit" className="font-semibold underline underline-offset-4">
                   kayıt ol
                 </Link>
                 .
@@ -239,8 +235,8 @@ export default async function KonuSayfasi({ params, searchParams }: PageProps<"/
 
           {altlar.length > 0 && (
             <section>
-              <div className="border-b border-foreground pb-1.5">
-                <h2 className="font-serif text-xl font-bold">Alt konular</h2>
+              <div className="border-b pb-2">
+                <h2 className="text-xl font-semibold">Alt konular</h2>
               </div>
               <KonuTablosu konular={altlar} bos="" />
             </section>
@@ -255,7 +251,7 @@ export default async function KonuSayfasi({ params, searchParams }: PageProps<"/
               {kabulSureci && (
                 <p>
                   Konu önerisinin oylaması:{" "}
-                  <Link href={`/karar/${kabulSureci.id}`} className="font-semibold underline decoration-vurgu underline-offset-4">
+                  <Link href={`/karar/${kabulSureci.id}`} className="font-semibold underline underline-offset-4">
                     karar sürecini gör
                   </Link>
                 </p>
@@ -272,7 +268,7 @@ export default async function KonuSayfasi({ params, searchParams }: PageProps<"/
                   <ul className="grid gap-3">
                     {surumler.map((s) => (
                       <li key={s.id} className="border-l-2 pl-3">
-                        <b className="font-serif">{s.baslik}</b>
+                        <b>{s.baslik}</b>
                         <p className="metin mt-1 text-muted-foreground">{s.aciklama}</p>
                         <Link href={`/karar/${s.surec_id}`} className="mt-1 inline-block text-xs underline underline-offset-2">
                           {new Date(s.bitis).toLocaleDateString("tr-TR")} tarihinde oylamayla değişti
@@ -294,7 +290,7 @@ export default async function KonuSayfasi({ params, searchParams }: PageProps<"/
           </details>
         </article>
 
-        {/* Yan sütun: oylamalar, künye, işlemler */}
+        {/* Yan sütun: oylamalar, konu bilgisi, işlemler */}
         <aside className="flex flex-col gap-8 lg:border-l lg:pl-8">
           <div className="flex flex-col gap-8">
             {(konu.durum === "oylamada" && kabulSureci) || suren.length > 0 ? (
@@ -305,7 +301,7 @@ export default async function KonuSayfasi({ params, searchParams }: PageProps<"/
                     <OyKarti key={k.id} surecId={k.id} ben={ben} baslik={k.baslik} />
                   ) : (
                     <p key={k.id} className="text-sm">
-                      <Link href={`/karar/${k.id}`} className="font-serif font-semibold hover:underline">
+                      <Link href={`/karar/${k.id}`} className="font-semibold hover:underline">
                         {k.baslik}
                       </Link>{" "}
                       <span className="text-muted-foreground">— {k.asamaAd} aşamasında.</span>
@@ -316,8 +312,8 @@ export default async function KonuSayfasi({ params, searchParams }: PageProps<"/
             ) : null}
 
             <section>
-              <div className="border-b border-foreground pb-1.5">
-                <h2 className="text-[11px] font-bold tracking-[0.16em] uppercase">Künye</h2>
+              <div className="border-b pb-2">
+                <h2 className="text-xs font-medium">Konu bilgisi</h2>
               </div>
               <dl className="divide-y text-sm">
                 <div className="flex justify-between gap-3 py-2">
@@ -347,8 +343,8 @@ export default async function KonuSayfasi({ params, searchParams }: PageProps<"/
 
             {tartismaVar && (
               <section className="flex flex-col gap-2" data-tur="islemler">
-                <div className="border-b border-foreground pb-1.5">
-                  <h2 className="text-[11px] font-bold tracking-[0.16em] uppercase">Bu konuda</h2>
+                <div className="border-b pb-2">
+                  <h2 className="text-xs font-medium">Bu konuda</h2>
                 </div>
                 <div className="flex flex-col items-start gap-1 [&_button]:justify-start">
                   <YzOzetDiyalogu konuId={konu.id} ekleyebilir={!!ben && acik}>
@@ -421,15 +417,13 @@ function AzinlikGorusleri({ konuId, ben }: { konuId: number; ben: { id: number }
   const yazabilir = !!ben && serhYazabilirMi(konuId, ben.id);
   if (!serhler.length && !yazabilir) return null;
   return (
-    <section className="bg-muted/60 p-5">
-      <h2 className="flex items-center gap-2 font-serif text-xl font-bold">
-        <MessageSquareQuote className="size-5 text-vurgu" /> Azınlık görüşleri
-      </h2>
+    <section className="border-t pt-4">
+      <h2 className="text-xl font-semibold">Azınlık görüşleri</h2>
       <p className="mt-1 text-sm text-muted-foreground">Uzlaşmaya katılmayanların görüşleri de kalıcı olarak kayda geçer ve kurumlara iletilir.</p>
       <div className="mt-4 grid gap-4">
         {serhler.map((s) => (
-          <blockquote key={s.id} className="border-l-[3px] border-vurgu pl-4">
-            <p className="metin font-serif text-[17px] leading-relaxed italic">{s.icerik}</p>
+          <blockquote key={s.id} className="border-l-2 pl-4">
+            <p className="metin text-[17px] leading-relaxed italic">{s.icerik}</p>
             <footer className="mt-1 text-xs text-muted-foreground">
               — <KullaniciAdi ad={s.yazan} />, <Zaman iso={s.olusturma} />
             </footer>

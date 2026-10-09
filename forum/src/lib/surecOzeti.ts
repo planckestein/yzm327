@@ -1,7 +1,7 @@
 import "server-only";
 import { db } from "./db";
 import { DEGISTIRILEBILIR, kuralDegeriYazi, type KuralAnahtari } from "./kurallar";
-import { SUREC_TURLERI, type Surec } from "./oylama";
+import { SUREC_TURLERI, type Surec } from "./surec";
 
 const kisalt = (s: string, n = 70) => (s.length > n ? s.slice(0, n) + "…" : s);
 

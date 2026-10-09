@@ -3,6 +3,7 @@ import { db } from "./db";
 import { deftereYaz } from "./defter";
 import { suanIso } from "./saat";
 import { konuMesajlari, mesajYaz, type Mesaj } from "./tartisma";
+import { anmalariAt, hat, isaretleriAt, kucult } from "./metin";
 
 /*
  * YZ Analist — forumdaki yapay zeka üyesi ("bazı kullanıcılar yapay zeka olabilir").
@@ -47,11 +48,9 @@ const DURAK = new Set(
 const KATILMA = ["katılıyorum", "haklısın", "aynen", "iyi fikir", "güzel", "doğru", "mantıklı", "katılırım", "destekliyorum"];
 const ITIRAZ = ["katılmıyorum", "karşıyım", "yanlış", "abartıyorsunuz", "sanmıyorum", "gerek yok", "saçma", "katılmasam"];
 
-const kucuk = (s: string) => s.toLocaleLowerCase("tr-TR");
+const onIsle = hat(kucult, anmalariAt, isaretleriAt());
 const kelimeler = (s: string) =>
-  kucuk(s)
-    .replace(/@\w+/g, " ")
-    .replace(/[^\p{L}\p{N}\s]/gu, " ")
+  onIsle(s)
     .split(/\s+/)
     .filter((w) => w.length >= 3 && !DURAK.has(w) && !/^\d+$/.test(w));
 // Türkçe sondan eklemeli: kaba bir gövdeleme için ilk 5 harf ("testler", "testleri" → "testl")
@@ -120,7 +119,7 @@ export function tartismayiAnalizEt(konuId: number): YzAnalizi | null {
   }
   secilen.sort((a, b) => a.sira - b.sira);
 
-  const say = (liste: string[]) => mesajlar.filter((m) => liste.some((k) => kucuk(m.icerik).includes(k))).length;
+  const say = (liste: string[]) => mesajlar.filter((m) => liste.some((k) => kucult(m.icerik).includes(k))).length;
   const oneCikanlar = secilen.map(({ cumle, yazan }) => ({ cumle, yazan }));
 
   return {
@@ -138,40 +137,73 @@ export function tartismayiAnalizEt(konuId: number): YzAnalizi | null {
   };
 }
 
-// ---------------- İsteğe bağlı yerel model (Ollama) ----------------
+// ---------------- Özetleyiciler (Strategy + Registry) ----------------
+// Her özetleyici aynı arayüzü uygular; hangisinin kullanılacağı yapılandırmadan (.env) okunur.
+// Yeni bir model eklemek = yeni bir kayıt; ozetiPaylas değişmez.
 
-async function ollamaOzeti(mesajlar: Mesaj[]): Promise<string | null> {
-  const model = process.env.OLLAMA_MODEL;
-  if (!model) return null;
-  const adres = process.env.OLLAMA_URL ?? "http://localhost:11434";
-  const metin = mesajlar.map((m) => `@${m.yazan}: ${m.icerik}`).join("\n").slice(-6000);
-  try {
-    const r = await fetch(`${adres}/api/generate`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        model,
-        stream: false,
-        prompt:
-          "Aşağıdaki forum tartışmasını Türkçe, tarafsız ve en fazla 5 madde halinde özetle. " +
-          "Farklı görüşleri ayrı ayrı belirt, kimseyi yargılama.\n\n" +
-          metin,
-      }),
-      signal: AbortSignal.timeout(30_000),
-    });
-    if (!r.ok) return null;
-    const j = (await r.json()) as { response?: string };
-    return j.response?.trim() || null;
-  } catch {
-    return null; // model yoksa ya da yanıt vermezse kural tabanlı özete dönülür
-  }
-}
+type Ozetleyici = {
+  /** Özet notunda gösterilen ad */
+  etiket: string;
+  /** Özet metni; üretemezse null (bir sonraki özetleyiciye düşülür) */
+  ozetle: (mesajlar: Mesaj[], analiz: YzAnalizi) => Promise<string | null>;
+};
 
-// ---------------- Tartışmaya özet mesajı ----------------
+const OZETLEYICILER = new Map<YzAnalizi["model"], Ozetleyici>();
+const kaydet = (ad: YzAnalizi["model"], o: Ozetleyici) => OZETLEYICILER.set(ad, o);
+
+// Kural tabanlı çıkarımsal özet: her zaman çalışır, dış servise bağlı değildir
+kaydet("kural", {
+  etiket: "kural tabanlı",
+  ozetle: async (_, analiz) =>
+    "Öne çıkan görüşler:\n" +
+    analiz.oneCikanlar.map((o) => `• @${o.yazan}: “${o.cumle}”`).join("\n") +
+    (analiz.kavramlar.length ? `\n\nOrtak kavramlar: ${analiz.kavramlar.join(", ")}` : "") +
+    (analiz.itiraz ? `\nİtiraz içeren mesaj: ${analiz.itiraz} · Katılma bildiren mesaj: ${analiz.katilma}` : ""),
+});
+
+// Adapter: Ollama'nın HTTP arayüzünü (POST /api/generate) özetleyici arayüzüne uyarlar.
+// Bilgisayarda ücretsiz Ollama kuruluysa kullanılır (.env: OLLAMA_MODEL=llama3.2).
+kaydet("ollama", {
+  etiket: "yerel dil modeli",
+  ozetle: async (mesajlar) => {
+    const model = process.env.OLLAMA_MODEL;
+    if (!model) return null;
+    const adres = process.env.OLLAMA_URL ?? "http://localhost:11434";
+    const metin = mesajlar.map((m) => `@${m.yazan}: ${m.icerik}`).join("\n").slice(-6000);
+    try {
+      const r = await fetch(`${adres}/api/generate`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model,
+          stream: false,
+          prompt:
+            "Aşağıdaki forum tartışmasını Türkçe, tarafsız ve en fazla 5 madde halinde özetle. " +
+            "Farklı görüşleri ayrı ayrı belirt, kimseyi yargılama.\n\n" +
+            metin,
+        }),
+        signal: AbortSignal.timeout(30_000),
+      });
+      if (!r.ok) return null;
+      const j = (await r.json()) as { response?: string };
+      return j.response?.trim() || null;
+    } catch {
+      return null; // model yoksa ya da yanıt vermezse bir sonraki özetleyiciye düşülür
+    }
+  },
+});
+
+/** Denenecek özetleyiciler, sırayla (Cascade). Kural tabanlı özet her zaman en sondadır, yani özet hiç boş kalmaz. */
+const ozetleyiciSirasi = (): YzAnalizi["model"][] => (process.env.OLLAMA_MODEL ? ["ollama", "kural"] : ["kural"]);
+
+// ---------------- Tartışmaya özet mesajı (Facade) ----------------
 
 const YENI_MESAJ_ESIGI = 4;
 
-/** Son YZ mesajından sonra yeterince yeni mesaj varsa özeti tartışmaya YZ Analist olarak yazar. */
+/**
+ * YZ Analist'in dışarıya açılan tek kapısı: analiz, özetleyici seçimi ve mesaj yazımı burada birleşir.
+ * Son YZ mesajından sonra yeterince yeni mesaj varsa özeti tartışmaya YZ Analist olarak yazar.
+ */
 export async function ozetiPaylas(konuId: number): Promise<{ hata: string } | { id: number }> {
   const tum = konuMesajlari(konuId);
   const sonYz = tum.findLastIndex((m) => m.yazan_rol === "yz");
@@ -182,17 +214,21 @@ export async function ozetiPaylas(konuId: number): Promise<{ hata: string } | { 
   const analiz = tartismayiAnalizEt(konuId);
   if (!analiz) return { hata: "Özet için tartışmada en az 3 mesaj olmalı." };
 
-  const yerel = await ollamaOzeti(tum.filter((m) => !m.gizleyen_surec_id && m.yazan_rol !== "yz"));
-  const govdeMetni = yerel
-    ? yerel
-    : "Öne çıkan görüşler:\n" +
-      analiz.oneCikanlar.map((o) => `• @${o.yazan}: “${o.cumle}”`).join("\n") +
-      (analiz.kavramlar.length ? `\n\nOrtak kavramlar: ${analiz.kavramlar.join(", ")}` : "") +
-      (analiz.itiraz ? `\nİtiraz içeren mesaj: ${analiz.itiraz} · Katılma bildiren mesaj: ${analiz.katilma}` : "");
+  const mesajlar = tum.filter((m) => !m.gizleyen_surec_id && m.yazan_rol !== "yz");
+  let govdeMetni = "";
+  let etiket = "";
+  for (const ad of ozetleyiciSirasi()) {
+    const o = OZETLEYICILER.get(ad)!;
+    const ozet = await o.ozetle(mesajlar, analiz);
+    if (ozet) {
+      [govdeMetni, etiket] = [ozet, o.etiket];
+      break;
+    }
+  }
 
   const icerik =
-    `🤖 Tartışma özeti (${analiz.mesajSayisi} mesaj, ${analiz.katilimci} katılımcı)\n\n${govdeMetni}\n\n` +
-    `Not: Bu özet otomatik oluşturuldu${yerel ? " (yerel dil modeli)" : " (kural tabanlı)"}; hatalı olabilir. ` +
+    `Tartışma özeti (${analiz.mesajSayisi} mesaj, ${analiz.katilimci} katılımcı)\n\n${govdeMetni}\n\n` +
+    `Not: Bu özet otomatik oluşturuldu (${etiket}); hatalı olabilir. ` +
     "YZ Analist danışmandır, oy kullanmaz.";
   return mesajYaz(konuId, yzKullanicisi(), icerik);
 }

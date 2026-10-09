@@ -8,7 +8,7 @@ import { mevcutKullanici, ROLLER, type Kullanici } from "@/lib/auth";
 import { kullaniciKonuSatirlari } from "@/lib/akis";
 import { kurallar } from "@/lib/kurallar";
 import { duzListe, takipEdilenler } from "@/lib/ontoloji";
-import { aldigimDevirler, verdigimDevirler } from "@/lib/oylama";
+import { aldigimDevirler, verdigimDevirler } from "@/lib/devir";
 import { gorevler } from "@/lib/secim";
 import { devriKaldir } from "@/app/actions/oylama";
 import { KullaniciAvatar, KullaniciAdi } from "@/components/ortak/KullaniciAvatar";
@@ -51,11 +51,11 @@ export default async function ProfilSayfasi({ params }: PageProps<"/profil/[takm
   return (
     <div className="mx-auto flex w-full max-w-5xl flex-col gap-8">
       {/* Başkalarına yalnızca ad soyad ve takma ad görünür; adres ve doğum tarihi gizlidir */}
-      <header data-tur="profil" className="flex flex-col gap-5 border-b-[4px] border-double border-foreground pb-6 sm:flex-row sm:items-end">
+      <header data-tur="profil" className="flex flex-col gap-5 border-b pb-6 sm:flex-row sm:items-end">
         <KullaniciAvatar ad={profil.takma_ad} boyut="xl" baglanti={false} rol={profil.rol} />
         <div className="min-w-0 flex-1">
           <div className="ust-etiket">{[ROLLER[profil.rol] ?? "Üye", ...unvanlar].join(" · ")}</div>
-          <h1 className="mt-1 font-serif text-[clamp(2rem,4.5vw,3rem)] leading-none font-black tracking-[-0.02em]">
+          <h1 className="mt-1 text-[clamp(1.7rem,3vw,2.375rem)] leading-tight font-semibold">
             {profil.ad} {profil.soyad}
           </h1>
           <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground">
@@ -68,8 +68,8 @@ export default async function ProfilSayfasi({ params }: PageProps<"/profil/[takm
         <dl className="flex gap-6 sm:gap-8">
           {istatistik.map((s) => (
             <div key={s.ad}>
-              <dd className="font-serif text-4xl leading-none font-bold tabular-nums">{s.n}</dd>
-              <dt className="mt-1 text-[10px] font-bold tracking-[0.12em] text-muted-foreground uppercase">{s.ad}</dt>
+              <dd className="text-4xl leading-none font-semibold tabular-nums">{s.n}</dd>
+              <dt className="mt-1 text-xs font-medium text-muted-foreground">{s.ad}</dt>
             </div>
           ))}
         </dl>
@@ -90,7 +90,7 @@ export default async function ProfilSayfasi({ params }: PageProps<"/profil/[takm
       )}
 
       {yz && (
-        <div className="flex gap-3 border-l-[3px] border-success pl-4 font-serif">
+        <div className="flex gap-3 border-l-2 border-success pl-4">
           <Bot className="mt-1 size-5 shrink-0 text-success" />
           <p>
             Bu üye bir yapay zekadır. Tartışmaları özetler, ortak kavramları çıkarır ve uzlaşma taslağı hazırlar. Danışman olduğu için oy
@@ -109,7 +109,7 @@ export default async function ProfilSayfasi({ params }: PageProps<"/profil/[takm
           </AraBaslik>
           <div className="grid gap-4 text-sm">
             <div>
-              <div className="mb-1 text-[10px] font-bold tracking-[0.12em] text-muted-foreground uppercase">
+              <div className="mb-1 text-xs font-medium text-muted-foreground">
                 {kendim ? "Oyunu emanet ettiklerin" : "Oyunu emanet ettiği kişiler"}
               </div>
               {verdikleri.length ? (
@@ -135,7 +135,7 @@ export default async function ProfilSayfasi({ params }: PageProps<"/profil/[takm
               )}
             </div>
             <div>
-              <div className="mb-1 text-[10px] font-bold tracking-[0.12em] text-muted-foreground uppercase">
+              <div className="mb-1 text-xs font-medium text-muted-foreground">
                 {kendim ? "Sana oyunu emanet edenler" : "Oyunu emanet edenler"}
               </div>
               {aldiklari.length ? (
@@ -156,11 +156,11 @@ export default async function ProfilSayfasi({ params }: PageProps<"/profil/[takm
         <section className="flex flex-col gap-3">
           <AraBaslik>Takip ettiği bölümler</AraBaslik>
           {takipler.length ? (
-            <p className="text-[12px] leading-7 font-semibold tracking-[0.06em] uppercase">
+            <p className="text-[12px] leading-7 font-semibold">
               {takipler.map((k, i) => (
                 <span key={k.id}>
                   {i > 0 && <span className="px-1.5 text-border">|</span>}
-                  <Link href={`/kategori/${k.id}`} className="hover:text-vurgu">
+                  <Link href={`/kategori/${k.id}`} className="hover:underline">
                     {k.ad}
                   </Link>
                 </span>
@@ -179,10 +179,10 @@ export default async function ProfilSayfasi({ params }: PageProps<"/profil/[takm
             {sonMesajlar.map((m) => (
               <li key={m.id}>
                 <Link href={`/konu/${m.konu_id}#m${m.id}`} className="group block py-3">
-                  <div className="text-[11px] font-semibold tracking-[0.06em] text-muted-foreground uppercase">
+                  <div className="text-xs font-medium text-muted-foreground">
                     {m.baslik} · <Zaman iso={m.olusturma} />
                   </div>
-                  <p className="mt-1 line-clamp-2 font-serif group-hover:underline">“{m.icerik}”</p>
+                  <p className="mt-1 line-clamp-2 group-hover:underline">“{m.icerik}”</p>
                 </Link>
               </li>
             ))}

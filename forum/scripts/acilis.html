@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kurultay açılıyor</title>
+<!-- Başlatıcının (baslat.mjs) hemen açtığı pencere: sunucu hazır olunca kendiliğinden Kurultay'a geçer. -->
+<style>
+  :root { --ak: #f6efe2; --kara: #2b221b; --kizil: #b33a2b; --sari: #e2a93b; --civit: #2f3f7a; }
+  @media (prefers-color-scheme: dark) { :root { --ak: #221c17; --kara: #efe6d6; } }
+  html, body { height: 100%; margin: 0; }
+  body {
+    display: grid; place-items: center; background: var(--ak); color: var(--kara);
+    font-family: "Segoe UI", system-ui, sans-serif; text-align: center;
+  }
+  svg.otag { width: 168px; height: auto; image-rendering: pixelated; }
+  h1 { margin: 18px 0 4px; font-size: 34px; letter-spacing: -0.01em; font-stretch: 112%; }
+  p { margin: 0; opacity: .72; font-size: 15px; }
+  .serit { position: fixed; left: 0; right: 0; height: 18px; }
+  .ust { top: 0; } .alt { bottom: 0; }
+  .ilmek { display: inline-block; width: 7px; height: 7px; background: var(--kizil); transform: rotate(45deg); margin: 0 5px; animation: yan 1.2s infinite ease-in-out; }
+  .ilmek:nth-child(2) { animation-delay: .2s; background: var(--sari); } .ilmek:nth-child(3) { animation-delay: .4s; background: var(--civit); }
+  @keyframes yan { 50% { opacity: .2; } }
+</style>
+</head>
+<body>
+<svg class="serit ust" aria-hidden="true"><defs><pattern id="k" width="24" height="18" patternUnits="userSpaceOnUse"><g transform="scale(2)" shape-rendering="crispEdges"><rect width="12" height="9" fill="#b33a2b"/><path d="M0 0h12v1H0zM0 8h12v1H0z" fill="#2b221b"/><path d="M0 1h1v1H0zM2 1h1v1H2zM4 1h1v1H4zM6 1h1v1H6zM8 1h1v1H8zM10 1h1v1h-1zM1 7h1v1H1zM3 7h1v1H3zM5 7h1v1H5zM7 7h1v1H7zM9 7h1v1H9zM11 7h1v1h-1z" fill="#e2a93b"/><path d="M5 2h2v1H5zM4 3h4v1H4zM3 4h2v1H3zM7 4h2v1H7zM4 5h4v1H4zM5 6h2v1H5z" fill="#f6efe2"/><path d="M5 4h2v1H5z" fill="#2b221b"/><path d="M0 3h1v1H0zM11 3h1v1h-1zM0 4h2v1H0zM10 4h2v1h-2zM0 5h1v1H0zM11 5h1v1h-1z" fill="#2f3f7a"/></g></pattern></defs><rect width="100%" height="100%" fill="url(#k)"/></svg>
+<main>
+  <svg class="otag" viewBox="0 0 13 10" shape-rendering="crispEdges" aria-hidden="true">
+    <path fill="currentColor" d="M4 1h1v1H4zM6 1h1v1H6zM8 1h1v1H8zM3 2h7v1H3zM2 3h9v1H2zM0 5h13v1H0zM0 6h1v1H0zM2 6h1v1H2zM4 6h1v1H4zM6 6h1v1H6zM8 6h1v1H8zM10 6h1v1h-1zM12 6h1v1h-1zM0 7h13v1H0zM0 8h5v2H0zM8 8h5v2H8z"/>
+    <path fill="#b33a2b" d="M1 4h11v1H1zM5 8h3v2H5z"/>
+    <path fill="#e2a93b" d="M5 0h3v1H5zM5 1h1v1H5zM7 1h1v1H7z"/>
+  </svg>
+  <h1>Kurultay</h1>
+  <p id="durum">Otağ kuruluyor… İlk açılışta bir iki dakika sürebilir.</p>
+  <p style="margin-top:14px"><span class="ilmek"></span><span class="ilmek"></span><span class="ilmek"></span></p>
+</main>
+<svg class="serit alt" aria-hidden="true"><rect width="100%" height="100%" fill="url(#k)"/></svg>
+<script>
+  // Sunucu hazır mı? Küçük bir resmi yüklemeyi dener; yüklenince Kurultay'a geçer.
+  const port = new URLSearchParams(location.search).get("port") || "3000";
+  const adres = "http://localhost:" + port;
+  let deneme = 0;
+  function dene() {
+    const img = new Image();
+    img.onload = () => location.replace(adres);
+    img.onerror = () => {
+      deneme++;
+      if (deneme === 40) document.getElementById("durum").textContent = "Hâlâ hazırlanıyor (derleme sürüyor olabilir)…";
+      setTimeout(dene, 1500);
+    };
+    img.src = adres + "/ikon/192?t=" + Date.now();
+  }
+  dene();
+</script>
+</body>
+</html>

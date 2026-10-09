@@ -14,11 +14,11 @@ export function Besteci({ konuId, yanit, ben }: Props) {
   const [durum, gonder, bekliyor] = useActionState<TartismaDurumu, FormData>(mesajGonder, {});
 
   return (
-    <form action={gonder} key={String(durum.tamam ?? "ilk")} id="yaz" className="cizgi-kalin scroll-mt-28 bg-card px-4 pt-3 pb-4">
+    <form action={gonder} key={String(durum.tamam ?? "ilk")} id="yaz" className="border-t scroll-mt-28 bg-card px-4 pt-3 pb-4">
       <input type="hidden" name="konu_id" value={konuId} />
       <input type="hidden" name="yanit_id" value={yanit?.id ?? 0} />
       <div className="mb-2 flex items-baseline justify-between gap-2">
-        <span className="font-serif text-lg font-bold">Söz al</span>
+        <span className="text-lg font-semibold">Söz al</span>
         <span className="text-xs text-muted-foreground">@{ben} olarak</span>
       </div>
       {yanit && (
@@ -37,7 +37,7 @@ export function Besteci({ konuId, yanit, ben }: Props) {
         required
         rows={4}
         placeholder="Görüşünü, gerekçesiyle yaz…"
-        className="resize-y rounded-none border-x-0 border-t-0 border-b border-foreground/40 bg-transparent px-0 font-serif text-[16.5px] shadow-none focus-visible:border-foreground focus-visible:ring-0 dark:bg-transparent"
+        className="resize-y rounded-none border-x-0 border-t-0 border-b/40 bg-transparent px-0 text-[16.5px] shadow-none focus-visible:border-foreground focus-visible:ring-0 dark:bg-transparent"
       />
       <div className="mt-3 flex flex-wrap items-center gap-2">
         <span className="text-xs text-muted-foreground">Mesajlar düzenlenemez ve silinemez; yalnızca oylamayla gizlenebilir.</span>

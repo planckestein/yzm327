@@ -5,7 +5,9 @@ import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db";
 import { mevcutKullanici } from "@/lib/auth";
 import { kategoriGetir } from "@/lib/ontoloji";
-import { devirGeriAl, devret, oyKullan, yoneticiKarari, type Secim } from "@/lib/oylama";
+import { oyKullan, type Secim } from "@/lib/oylama";
+import { yoneticiKarari } from "@/lib/surec";
+import { devirGeriAl, devret } from "@/lib/devir";
 
 export type IslemDurumu = { hata?: string; tamam?: number | string };
 

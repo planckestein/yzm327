@@ -20,7 +20,7 @@ export function ToplulukSekmeleri() {
           key={s.href}
           href={s.href}
           className={cn(
-            "-mb-px border-b-[3px] border-transparent py-2 text-[12px] font-semibold tracking-[0.08em] whitespace-nowrap text-muted-foreground uppercase hover:text-foreground",
+            "-mb-px border-b-[3px] border-transparent py-2 text-[12px] font-semibold whitespace-nowrap text-muted-foreground hover:text-foreground",
             yol === s.href && "border-vurgu text-foreground",
           )}
         >

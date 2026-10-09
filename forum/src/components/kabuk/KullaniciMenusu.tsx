@@ -23,10 +23,10 @@ export function KullaniciMenusu({ takmaAd, adSoyad, rol, gorevler }: Props) {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56">
         <DropdownMenuLabel className="font-normal">
-          <div className="font-serif text-base font-semibold">{adSoyad}</div>
+          <div className="text-base font-semibold">{adSoyad}</div>
           <div className="text-xs text-muted-foreground">@{takmaAd}</div>
           {gorevler.map((g) => (
-            <div key={g} className="mt-1 text-[10px] font-bold tracking-[0.12em] text-vurgu uppercase">
+            <div key={g} className="mt-1 text-xs font-medium text-vurgu">
               {g}
             </div>
           ))}

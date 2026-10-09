@@ -8,14 +8,15 @@ import { MeclisGrafigi } from "@/components/ortak/MeclisGrafigi";
 import { sayi } from "@/lib/bicim";
 import { gosterimHazirla, gosterimUygula } from "@/app/actions/gosterim";
 import type { GosterimHedefi } from "@/lib/gosterim";
+import { KilimSerit } from "@/components/motif/Motif";
 
-export const GOSTERIM_OLAYI = "ortakakil:canli-gosterim";
+export const GOSTERIM_OLAYI = "kurultay:canli-gosterim";
 
 /** Canlı gösterimi turdan bağımsız başlatan düğme ("Nasıl işliyor?" sayfasında). */
 export function GosterimDugmesi() {
   return (
-    <Button className="bg-vurgu text-vurgu-foreground hover:bg-vurgu/90" onClick={() => window.dispatchEvent(new Event(GOSTERIM_OLAYI))}>
-      <span className="canli-nokta size-1.5 rounded-full bg-current" /> Canlı gösterimi başlat
+    <Button variant="outline" onClick={() => window.dispatchEvent(new Event(GOSTERIM_OLAYI))}>
+      Canlı gösterimi başlat
     </Button>
   );
 }
@@ -109,24 +110,25 @@ export function CanliGosterim() {
 
   return (
     <div className="fixed inset-0 z-[75] flex items-center justify-center bg-black/65 p-4" role="dialog" aria-modal="true" aria-label="Canlı gösterim">
-      <div className="relative flex max-h-[calc(100dvh-32px)] w-full max-w-2xl flex-col overflow-y-auto border-2 border-foreground bg-background shadow-2xl">
-        <div className="flex items-center justify-between gap-2 bg-vurgu px-4 py-2 text-vurgu-foreground">
-          <span className="inline-flex items-center gap-2 text-[11px] font-bold tracking-[0.16em] uppercase">
-            <span className="canli-nokta size-1.5 rounded-full bg-current" /> Canlı gösterim
+      <div className="relative flex max-h-[calc(100dvh-32px)] w-full max-w-2xl flex-col overflow-y-auto border bg-background shadow-lg">
+        <KilimSerit ilmek={2} />
+        <div className="flex items-center justify-between gap-2 border-b px-4 py-2">
+          <span className="inline-flex items-center gap-2 text-xs font-medium">
+            Canlı gösterim
           </span>
-          <button onClick={kapat} aria-label="Kapat" className="opacity-80 hover:opacity-100">
+          <button onClick={kapat} aria-label="Kapat" className="text-muted-foreground hover:text-foreground">
             <X className="size-4" />
           </button>
         </div>
 
         <div className="flex flex-col gap-4 p-5 sm:p-6">
-          {evre === "hazirlaniyor" && <p className="py-10 text-center font-serif text-lg italic">Meclis toplanıyor…</p>}
+          {evre === "hazirlaniyor" && <p className="py-10 text-center text-lg italic">Meclis toplanıyor…</p>}
 
           {evre === "yok" && (
             <div className="py-6 text-center">
-              <p className="font-serif text-lg">Şu an gösterime uygun, süren bir uzlaşma oylaması yok.</p>
+              <p className="text-lg">Gösterim için uygun bir tartışma kalmadı.</p>
               <p className="mt-2 text-sm text-muted-foreground">
-                Gösterim bir kez yapıldıysa demo verisini <code className="font-mono">npm run demo</code> ile yenileyip tekrar deneyebilirsin.
+                Hazır senaryoların hepsi oynatıldı. Uygulamayı yeniden başlatırken “Demo verisini yenile” seçeneğini kullanabilirsin.
               </p>
             </div>
           )}
@@ -136,15 +138,15 @@ export function CanliGosterim() {
             <>
               <div>
                 <div className="ust-etiket">Topluluk Oylaması · Uzlaşma önerisi</div>
-                <h2 className="mt-1 font-serif text-2xl leading-tight font-bold">{hedef.konuBaslik}</h2>
-                <p className="mt-2 border-l-[3px] border-foreground pl-3 font-serif text-[15px] leading-snug italic">“{hedef.uzlasma}”</p>
+                <h2 className="mt-1 text-2xl leading-tight font-semibold">{hedef.konuBaslik}</h2>
+                <p className="mt-2 border-l-2 border-foreground/40 pl-3 font-serif text-[15px] leading-snug italic">“{hedef.uzlasma}”</p>
               </div>
 
               <div className="relative mx-auto w-full max-w-[340px]">
                 <MeclisGrafigi {...sayim} />
                 {evre !== "oylama" && (
                   <span className="pointer-events-none absolute inset-x-0 top-[22%] flex justify-center">
-                    <span className="animate-in zoom-in-150 fade-in -rotate-6 border-4 border-double border-success bg-background/85 px-4 py-1.5 font-serif text-3xl font-black tracking-wide text-success uppercase duration-300">
+                    <span className="animate-in fade-in bg-background/90 px-3 py-1 text-2xl font-semibold text-success duration-300">
                       Kabul edildi
                     </span>
                   </span>
@@ -162,20 +164,18 @@ export function CanliGosterim() {
               </p>
 
               {(evre === "kurum" || evre === "bitti") && (
-                <section className="animate-in fade-in slide-in-from-bottom-2 border-2 border-foreground p-4 duration-500">
+                <section className="animate-in fade-in slide-in-from-bottom-2 border p-4 duration-500">
                   <div className="flex flex-wrap items-center justify-between gap-2">
-                    <span className="inline-flex items-center gap-2 text-[12px] font-bold tracking-[0.08em] uppercase">
-                      <span className="flex size-6 items-center justify-center rounded-[3px] bg-foreground text-background">
-                        <Landmark className="size-3.5" />
-                      </span>
+                    <span className="inline-flex items-center gap-2 text-sm font-medium">
+                      <Landmark className="size-4 text-muted-foreground" />
                       {hedef.kurumAd}
                       <BadgeCheck className="size-4" />
                     </span>
-                    <span className="inline-flex h-5 items-center rounded-[2px] border border-warning/60 px-1.5 text-[10px] font-bold tracking-[0.1em] text-warning uppercase">
+                    <span className="inline-flex items-center gap-1.5 text-xs font-medium text-warning">
                       Resmî tepki · Gündeme alındı
                     </span>
                   </div>
-                  <p className="mt-3 min-h-[6.5rem] font-serif text-[16px] leading-relaxed">
+                  <p className="mt-3 min-h-[6.5rem] text-[16px] leading-relaxed">
                     {tepki.slice(0, yazilan)}
                     {yazilan < tepki.length && <span className="ml-0.5 inline-block h-4 w-[2px] translate-y-0.5 animate-pulse bg-foreground" />}
                   </p>
