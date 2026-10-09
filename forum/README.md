@@ -41,7 +41,7 @@ Komutlar hem `forum/` klasöründe hem de bir üstteki proje klasöründe çalı
 
 > Demodaki süren oylamalar kurulumdan sonra birkaç gün açık kalır; göstermeden kısa süre önce `Kurultay (demo verisini yenile).cmd` ile demoyu tazeleyin.
 
-**Tanıtım turu:** Site ilk açıldığında 8 adımlık bir tur başlar. Tur sayfa sayfa gezerek ödevin köşetaşı isteklerini ("Hocanın isteği") ve platformda nasıl karşılandığını ("Nasıl karşıladık") ilgili yeri vurgulayarak gösterir; son adımda tüm isteklerin listesi ve canlı gösterim vardır. Üst çubuktaki pusula düğmesiyle, telefonda menüden ya da "Nasıl işliyor?" sayfasından yeniden başlatılabilir. Aynı sayfada tüm isteklerin tablosu da vardır (`/hakkinda#istekler`).
+**Tanıtım turu:** Site ilk açıldığında 9 adımlık bir tur başlar. Tur sayfa sayfa gezerek ödevin köşetaşı isteklerini ve dersin yöntemine (CRISP-ML(Q) döngüsü, tasarım desenleri) uyumu ("Hocanın isteği") ve platformda nasıl karşılandığını ("Nasıl karşıladık") ilgili yeri vurgulayarak gösterir; son adımda tüm isteklerin listesi ve canlı gösterim vardır. Üst çubuktaki pusula düğmesiyle, telefonda menüden ya da "Nasıl işliyor?" sayfasından yeniden başlatılabilir. Aynı sayfada tüm isteklerin tablosu da vardır (`/hakkinda#istekler`).
 
 "Nasıl işliyor?" sayfasında isteklerin altında **"Son eklediklerimiz"** bölümü vardır (Kurultay tasarımı, ders içeriğine uyum, canlı gösterim, tanıtım turu, meclis yarım dairesi, önerinin yolculuğu, düzenleme kuralı, profil gizliliği, kalabalık görünümü, telefondan erişim); canlı gösterim oradan da başlatılabilir.
 

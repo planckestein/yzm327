@@ -5,6 +5,7 @@ import { kuralDegeriYazi, kurallar } from "@/lib/kurallar";
 import { TurDugmesi } from "@/components/tur/TurRehberi";
 import { GosterimDugmesi } from "@/components/tur/CanliGosterim";
 import { DersUyumu } from "./DersUyumu";
+import { DersYontemi } from "./DersYontemi";
 import { TasarimDili } from "./TasarimDili";
 
 export const metadata: Metadata = { title: "Nasıl işliyor?" };
@@ -78,6 +79,11 @@ export default function HakkindaSayfasi() {
       "Büyük bir kitleye hitap etmeli",
     ],
     [
+      "Dersin yöntemi: CRISP-ML(Q)",
+      "Proje, Hafta 1’de verilen altı aşamalı, kalite güvenceli döngüyle yürütüldü: iş ve veriyi anlama, veri hazırlama, model, değerlendirme, dağıtım, izleme. Her aşamada ne yaptığımız ve nasıl kontrol ettiğimiz aşağıda; tanıtım turunda da ayrı bir adım.",
+      "Ders: Hafta 1–2 yöntemi",
+    ],
+    [
       "Ders içeriğine uyum",
       "Tasarım desenleri dersinin yedi başlığı kodda karşılık buldu: karar aşamaları State, YZ Analist Facade ve Registry, uygunluk denetimi Chain of Responsibility. Hafta 2’ye uygun olarak kurallarımızı temel çizgilerle ölçtük ve 15 birim testi ekledik.",
       "Ders: tasarım desenleri · problem çerçeveleme",
@@ -89,7 +95,7 @@ export default function HakkindaSayfasi() {
     ],
     [
       "Tanıtım turu",
-      "8 adımda sayfa sayfa gezerek köşetaşı istekleri ilgili yeri vurgulayarak gösterir, sonunda tüm isteklerin listesini verir: üstte ödevdeki cümle (“Hocanın isteği”), altında çözümümüz. Pusula düğmesiyle yeniden başlatılabilir.",
+      "9 adımda sayfa sayfa gezerek köşetaşı istekleri ve dersin yöntemine (CRISP-ML(Q), tasarım desenleri) uyumu ilgili yeri vurgulayarak gösterir, sonunda tüm isteklerin listesini verir: üstte hocanın cümlesi, altında çözümümüz. Pusula düğmesiyle yeniden başlatılabilir.",
       "Tüm istekler",
     ],
     [
@@ -186,6 +192,11 @@ export default function HakkindaSayfasi() {
             ))}
           </ul>
         </div>
+      </section>
+
+      <section id="yontem" className="flex scroll-mt-28 flex-col gap-5">
+        <Baslik ust="Dersin yöntemi">CRISP-ML(Q) döngüsüne uyduk</Baslik>
+        <DersYontemi />
       </section>
 
       <section id="ders" data-tur="ders" className="flex scroll-mt-28 flex-col gap-5">

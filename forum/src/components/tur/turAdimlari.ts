@@ -1,7 +1,10 @@
+import { CRISP_ASAMALARI, CRISP_TANIMI, DERS_SLOGANI } from "@/lib/dersYontemi";
+
 /*
  * Tanıtım turu: hocamızın ödevde verdiği isterlerin her birini, platformda
- * nerede ve nasıl karşıladığımızı sayfa sayfa gösterir.
- * Her adımda "ister" ödev metnindeki cümledir, "metin" bizim çözümümüz.
+ * nerede ve nasıl karşıladığımızı sayfa sayfa gösterir; ders notlarında istenen
+ * yönteme (CRISP-ML(Q), tasarım desenleri) uyumu da ayrı adımlarda gösterir.
+ * Her adımda "ister" ödev metnindeki ya da ders notlarındaki cümledir, "metin" bizim çözümümüz.
  */
 
 export type TurVerisi = {
@@ -54,7 +57,7 @@ export function turAdimlari(v: TurVerisi): TurAdimi[] {
       ister: null,
       baslik: "Hocamızın isteklerini nasıl karşıladık?",
       metin:
-        "Yazılım Mühendisliği için Yapay Zeka dersinde bizden oylamayla yönetilen bir forum istendi. Bu tur, ödevdeki her isteği platformda nerede ve nasıl karşıladığımızı sırayla gösterir. Model olarak ABD yasama sistemini (Temsilciler Meclisi, Senato, Başkan) örnek aldık.",
+        "Yazılım Mühendisliği için Yapay Zeka dersinde bizden oylamayla yönetilen bir forum istendi. Bu tur, ödevdeki her isteği platformda nerede ve nasıl karşıladığımızı, projeyi de dersin yöntemine (CRISP-ML(Q) döngüsü, tasarım desenleri) uyarak nasıl yürüttüğümüzü sırayla gösterir. Karar düzeninde ABD yasama sistemini (Temsilciler Meclisi, Senato, Başkan) örnek aldık.",
     },
     {
       sayfa: "/",
@@ -96,11 +99,20 @@ export function turAdimlari(v: TurVerisi): TurAdimi[] {
     },
     {
       sayfa: "/hakkinda",
+      hedef: ["yontem"],
+      ister: `${DERS_SLOGANI} ${CRISP_TANIMI}.`,
+      baslik: "Projeyi CRISP-ML(Q) döngüsüyle yürüttük",
+      metin:
+        "Hocamızın derste uymamızı istediği yöntem buydu. Önce problemi çerçeveledik (“YZ gerekli mi?”, kanvas, kısıtlar), sonra kural tabanlı çözümleri temel çizgilerle ölçtük, en son dağıtıp izlemeye aldık. Her aşamanın ortasında kalite güvencesi var: testler, ölçüm betiği ve hash zinciri.",
+      liste: CRISP_ASAMALARI.map((a, i) => `${i + 1}. ${a.ad}: ${a.kisa}`),
+    },
+    {
+      sayfa: "/hakkinda",
       hedef: ["ders"],
       ister: "Öğrenci desenleri bir ML/veri problemine uygular, bir kod tabanında desen ve anti-desen tespit eder.",
-      baslik: "Ders içeriğine uyum",
+      baslik: "Tasarım desenleri",
       metin:
-        "Tasarım desenleri dersinin yedi başlığının her biri platformda bir karşılık buldu. Hafta 2’ye uygun olarak da “YZ gerekli mi?” sorusunu sorduk, kurallarımızı temel çizgilerle ölçtük; tablolar bu bölümde.",
+        "Tasarım desenleri dersinin yedi başlığının her biri platformda bir karşılık buldu; desenler kodda adıyla işaretli. Hafta 2’nin ölçüm tabloları (temel çizgiler, F0.5, makro F1) da bu bölümde, her açılışta yeniden hesaplanır.",
       liste: [
         "Desen kavramı: desenler kodda adıyla",
         "SOLID: yeni öneri türü = yeni kayıt",
@@ -116,8 +128,8 @@ export function turAdimlari(v: TurVerisi): TurAdimi[] {
       ister: null,
       baslik: "Bütün istekler karşılandı",
       metin:
-        "Turda köşetaşlarını gördük; aşağıdaki listedeki her istek platformda çalışır durumda (ayrıntılar “Nasıl işliyor?” sayfasında). Şimdi bunu canlı görelim: süren bir uzlaşma oylaması gözünüzün önünde sonuçlanacak, ardından ilgili bakanlık resmî yanıtını verecek.",
-      liste: ISTER_LISTESI,
+        "Turda köşetaşlarını gördük; aşağıdaki listedeki her istek platformda çalışır durumda ve proje dersin yöntemiyle yürütüldü (ayrıntılar “Nasıl işliyor?” sayfasında). Şimdi bunu canlı görelim: süren bir uzlaşma oylaması gözünüzün önünde sonuçlanacak, ardından ilgili bakanlık resmî yanıtını verecek.",
+      liste: [...ISTER_LISTESI, "Ders yöntemi: CRISP-ML(Q), tasarım desenleri"],
     },
   ];
 }

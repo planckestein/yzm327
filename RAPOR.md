@@ -10,6 +10,7 @@ Hazırlayan: Seyyid A. Bozkurt · 24290381
 
 ## Öne çıkanlar
 
+- **Dersin yöntemiyle.** Proje CRISP-ML(Q) döngüsüyle yürütüldü; her aşamanın kalite kontrolü var.
 - **Her şey oylamayla.** Gündem, alt konu, gizleme, düzenleme, uzlaşma ve ilke değişikliği oylanır; görevliler de seçilir.
 - **Sansür yok.** Tek yasak gerçek tehdittir (ABD 1. Değişikliği). Mesajlar silinmez.
 - **Çoğunluk azınlığı ezemez.** Kurulda her bölüm eşit temsil edilir, kabul için 3/5 gerekir; azınlık görüşü kalıcıdır.
@@ -50,9 +51,24 @@ Hazırlayan: Seyyid A. Bozkurt · 24290381
 
 Salt çoğunlukta *n* oy verenlerin değil konuyla ilgili bütün üyelerin sayısıdır: `salt = ⌊n/2⌋ + 1`, `3/5 = ⌈3n/5⌉`, `2/3 = ⌈2n/3⌉`. Sonuç kesinleşince oylama erken kapanır. Eşiklerin hepsi oylamayla değiştirilebilir.
 
+## Yöntem: CRISP-ML(Q) döngüsü (Hafta 1–2)
+
+Hoca, projenin dersin yöntemiyle yürütülmesini istedi: *"Önce doğru problemi bul, sonra problemi doğru çöz."* Kurultay, Hafta 1'de verilen altı aşamalı, kalite güvenceli döngüyle geliştirildi.
+
+| Aşama | Bu projede yapılan | Kalite güvencesi (Q) |
+| --- | --- | --- |
+| 1. İş ve veriyi anlama | 15 istek bir iş hedefine çevrildi; paydaşlar, kısıtlar, "YZ gerekli mi?", 8 kutulu kanvas, ön-otopsi | Her istek bir özelliğe ve tura bağlandı |
+| 2. Veri hazırlama | 60 cümlelik tehdit seti (yazılı etiket kılavuzu), 63 konuluk bölüm seti; tek Türkçe ön işleme hattı (I/İ tuzağı çözüldü) | Sabit test seti; ön işleme testle korunur |
+| 3. Model geliştirme | Yelpazenin solundan: kural tabanlı, açıklanabilir; YZ Analist'te yerel model → kural (Cascade) | Her kararın gerekçesi gösterilir |
+| 4. Model değerlendirme | Temel çizgi merdiveni, F0.5 ve makro F1, karışıklık matrisi, 3 hata örneği | Ölçüm gerçek bir hatayı yakaladı, düzeltildi |
+| 5. Dağıtım | Tek tıkla başlatıcı, telefon için karekod ve HTTPS tüneli | Değişince yeniden derleme; tünel aracının imzası doğrulanır |
+| 6. İzleme ve bakım | Ölçüm tabloları ve hash zinciri her açılışta yeniden hesaplanır; kaçan tehdidi topluluk gizler | 15 birim testi her değişiklikte çalışır |
+
+Hafta 1'in öteki iki ilkesi de karşılandı: **YZ sistemi ≠ model** (YZ kodu ~670 satır, kod tabanının ~%6'sı; YZ karar vermez) ve **teknik borç** (God Object bölündü, kopya kod birleşti, davranış testlerle korundu). Uygulamanın "Nasıl işliyor?" sayfasında aynı tablo durur; tanıtım turunun yedinci adımı bunu gösterir.
+
 ## Problem çerçeveleme ve ölçüm (Hafta 2)
 
-İki akıllı bileşen için önce "YZ gerekli mi?" soruldu; cevap "önce kural" oldu. Tehdit denetiminde metrik F0.5'tir, çünkü yanlış alarm sansür demektir.
+İki akıllı bileşen için önce "YZ gerekli mi?" soruldu; cevap "önce kural" oldu. Her ikisi de çerçeveleme hunisinden (iş hedefi → karar → tahmin → görev) geçirildi; paydaşlar, kısıtlar, üç katmanlı metrik ve ön-otopsi raporda tablolarıyla yer alır. Eşik bir iş kararıdır: tehdit denetiminde metrik F0.5'tir, çünkü yanlış alarm sansür demektir; kaçan tehdit ise topluluk oylamasıyla geri alınabilir. Bölüm önerisi, Lab 2'deki belediye talep yönlendirme vakasıyla aynı biçimdedir (metin → K birimden biri, makro F1).
 
 | Tehdit denetimi (60 cümle) | Doğruluk | Kesinlik | Duyarlılık | F0.5 |
 | --- | --- | --- | --- | --- |
@@ -67,7 +83,7 @@ Salt çoğunlukta *n* oy verenlerin değil konuyla ilgili bütün üyelerin say�
 | Çoğunluk sınıfı | %19 | 0,03 |
 | **Kurultay kuralı** | **%68** | **0,69** |
 
-Karışıklık matrisi: 14 DP, 6 YN, 2 YP, 38 DN. Kaçan tehditlerin çoğu örtüktür ("Arabana bomba koyacağım."); tek yanlış alarm türü tehdit alıntılayıp kınayan cümlelerdir. Ölçüm, ünlüyle biten fiil köklerini kaçıran bir hatayı ortaya çıkardı; düzeltildi ve testle korundu.
+Karışıklık matrisi: 14 DP, 6 YN, 2 YP, 38 DN. Kaçan tehditlerin çoğu örtüktür ("Arabana bomba koyacağım."); tek yanlış alarm türü tehdit alıntılayıp kınayan cümlelerdir. Ölçüm, ünlüyle biten fiil köklerini kaçıran bir hatayı ortaya çıkardı; düzeltildi ve testle korundu. Lab 2 çıktılarının hepsi (veri özeti, aptal ve kural baseline'ları, sabit test seti, karışıklık matrisi, üç hata örneği, yeşil testler, kanvas, YZ kullanım beyanı) raporda bir kontrol listesiyle gösterilir.
 
 ## Tasarım desenleri
 
@@ -86,7 +102,7 @@ Arayüz kurultayın toplandığı otağın içi gibi tasarlandı: keçe zemin, k
 
 ## Teknik yapı
 
-Next.js 16 (App Router, Server Actions) · TypeScript · Tailwind CSS · `node:sqlite` (17 tablo, WAL) · PWA. İş mantığı `forum/src/lib/` altında arayüzden bağımsız modüllerdedir. Kod 128 dosya, yaklaşık 11.700 satır.
+Next.js 16 (App Router, Server Actions) · TypeScript · Tailwind CSS · `node:sqlite` (17 tablo, WAL) · PWA. İş mantığı `forum/src/lib/` altında arayüzden bağımsız modüllerdedir. Kod 130 dosya, yaklaşık 12.000 satır.
 
 ## Çalıştırma
 
