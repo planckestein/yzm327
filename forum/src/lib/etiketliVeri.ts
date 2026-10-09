@@ -4,7 +4,7 @@
  * Etiket kılavuzu — "tehdit" (true threat): belirli bir kişiye ya da gruba yöneltilmiş, ciddi bir şiddet niyeti
  * beyanı. Hakaret, sert eleştiri, abartı, mecaz, haber dili ve başkasının tehdidini aktarmak tehdit DEĞİLDİR.
  *
- * Sınırlılık: set küçük ve ekibimizce yazıldı. Kuralın kaçıracağını bildiğimiz örtük tehditler ve yanlış alarm
+ * Sınırlılık: set küçük ve tek kişi tarafından yazıldı. Kuralın kaçıracağını bildiğimiz örtük tehditler ve yanlış alarm
  * vereceğini bildiğimiz örnekler de bilerek eklendi; kural bu sete göre ayarlanmadı.
  * Gerçek kullanımda iki kişinin bağımsız etiketlemesi ve aralarındaki uyumun ölçülmesi gerekir (Cohen'in kappası).
  */

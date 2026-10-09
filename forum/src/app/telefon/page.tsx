@@ -9,14 +9,22 @@ import { KilimSerit } from "@/components/motif/Motif";
 
 export const metadata: Metadata = { title: "Telefonda aç" };
 
-/** Başlatıcının (scripts/baslat.mjs) açtığı ücretsiz Cloudflare tünelinin adresi; tünel kapalıysa null. */
-async function tunelAdresi(): Promise<string | null> {
+/**
+ * Başlatıcının (scripts/baslat.mjs) açtığı ücretsiz Cloudflare tüneli: "acik" tünel dışarıdan çalışıyor,
+ * "engelli" tünel kuruldu ama bu ağ Cloudflare'e bağlanmasına izin vermiyor, "kapali" tünel hiç kurulmadı.
+ */
+async function tunelDurumu(): Promise<{ durum: "acik" | "engelli"; adres: string } | { durum: "kapali" }> {
+  let adres: string;
   try {
-    const { adres } = JSON.parse(fs.readFileSync(path.join(process.cwd(), "veri", "tunel.json"), "utf8")) as { adres: string };
-    const r = await fetch(`${adres}/manifest.webmanifest`, { signal: AbortSignal.timeout(4000), cache: "no-store" });
-    return r.ok ? adres : null;
+    adres = (JSON.parse(fs.readFileSync(path.join(process.cwd(), "veri", "tunel.json"), "utf8")) as { adres: string }).adres;
   } catch {
-    return null;
+    return { durum: "kapali" };
+  }
+  try {
+    const r = await fetch(`${adres}/manifest.webmanifest`, { signal: AbortSignal.timeout(4000), cache: "no-store" });
+    return { durum: r.ok ? "acik" : "engelli", adres };
+  } catch {
+    return { durum: "engelli", adres };
   }
 }
 
@@ -34,8 +42,11 @@ const karekod = (metin: string) =>
 
 export default async function TelefonSayfasi() {
   const port = ((await headers()).get("host") ?? "localhost:3000").split(":")[1] ?? "80";
-  const [tunel, yerel] = [await tunelAdresi(), yerelAdresler(port)];
-  const [tunelKod, yerelKod] = await Promise.all([tunel ? karekod(tunel) : null, yerel[0] ? karekod(yerel[0]) : null]);
+  const [tunel, yerel] = [await tunelDurumu(), yerelAdresler(port)];
+  const [tunelKod, yerelKod] = await Promise.all([
+    tunel.durum === "acik" ? karekod(tunel.adres) : null,
+    yerel[0] ? karekod(yerel[0]) : null,
+  ]);
 
   return (
     <div className="mx-auto flex w-full max-w-4xl flex-col gap-8">
@@ -52,17 +63,30 @@ export default async function TelefonSayfasi() {
               <div className="ust-etiket">Önerilen</div>
               <h2 className="text-lg font-semibold">Her yerden (HTTPS)</h2>
               <p className="mt-1 text-sm text-muted-foreground">
-                Okul ya da ev Wi-Fi’ı fark etmez; telefonun interneti yeter. Güvenli bağlantı olduğu için telefona tam uygulama olarak
-                eklenir. Adres her açılışta değişir.
+                Telefonun interneti yeter, aynı ağda olmak gerekmez. Güvenli bağlantı olduğu için telefona tam uygulama olarak eklenir.
+                Adres her açılışta değişir.
               </p>
             </div>
-            {tunelKod ? (
+            {tunel.durum === "acik" && tunelKod ? (
               <>
                 <div className="mx-auto w-56 max-w-full" dangerouslySetInnerHTML={{ __html: tunelKod }} />
-                <a href={tunel!} className="text-center text-sm font-medium break-all text-vurgu hover:underline">
-                  {tunel}
+                <a href={tunel.adres} className="text-center text-sm font-medium break-all text-vurgu hover:underline">
+                  {tunel.adres}
                 </a>
               </>
+            ) : tunel.durum === "engelli" ? (
+              <div className="flex flex-col gap-2 border-l-2 border-al pl-3 text-sm">
+                <p>
+                  Tünel kuruldu ama bu ağ Cloudflare’e bağlanmasına izin vermiyor (bazı okul ağları 7844 portunu kapatır). İki yol var:
+                </p>
+                <ul className="list-disc pl-4 text-muted-foreground">
+                  <li>Sağdaki aynı Wi-Fi karekodunu dene.</li>
+                  <li>
+                    Bilgisayarı telefonun kişisel erişim noktasına (hotspot) bağla, bir dakika sonra bu sayfayı yenile. Karekod çıkmazsa
+                    Kurultay’ı kapatıp masaüstündeki simgeden yeniden aç.
+                  </li>
+                </ul>
+              </div>
             ) : (
               <p className="border-l-2 border-al pl-3 text-sm">
                 Tünel şu an kapalı. Kurultay’ı masaüstündeki simgeden açtığında tünel kendiliğinden kurulur; internet yoksa yalnızca aynı

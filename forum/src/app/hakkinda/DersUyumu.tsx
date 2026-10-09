@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils";
 const DESENLER: [string, string, string][] = [
   [
     "Desen kavramı ve tarihçe",
-    "Kodda her desen adıyla işaretli. Ekip içinde ortak sözlük: “aşamalar State ile yönetiliyor” demek yeterli.",
+    "Kodda her desen adıyla işaretli; desen adları ortak bir sözlük gibidir: “aşamalar State ile yönetiliyor” demek yeterli.",
     "lib/*.ts başlık yorumları",
   ],
   [
@@ -164,7 +164,7 @@ export function DersUyumu() {
             />
             <p className="text-xs leading-relaxed text-muted-foreground">
               Bölümler dengesiz olduğu için makro F1 kullanıyoruz: küçük bölümler de eşit söz sahibi. Sınırlılık: anahtar kelimeleri ve demo
-              konularını aynı ekip yazdı, sonuç iyimserdir. Gerçek kullanıcı konularıyla yeniden ölçülmeli.
+              konularını aynı kişi yazdı, sonuç iyimserdir. Gerçek kullanıcı konularıyla yeniden ölçülmeli.
             </p>
           </div>
         </div>
