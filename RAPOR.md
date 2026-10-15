@@ -1,10 +1,10 @@
 # Kurultay — Teknik Rapor (özet)
 
-YZM327 · Yazılım Mühendisliği için Yapay Zekâ · 2026–2027 Güz · 9 Ekim 2026
+YZM327 · Yazılım Mühendisliği için Yapay Zekâ · 2026–2027 Güz · 16 Ekim 2026
 
 Hazırlayan: Seyyid A. Bozkurt · 24290381
 
-> Raporun tamamı, ekran görüntüleri ve diyagramlarıyla birlikte: **[Kurultay_Teknik_Rapor.pdf](Kurultay_Teknik_Rapor.pdf)**. Bu dosya onun kısa özetidir.
+> Raporun tamamı, ekran görüntüleri ve diyagramlarıyla birlikte: **[Kurultay_Teknik_Rapor.pdf](Kurultay_Teknik_Rapor.pdf)**. Bu dosya onun kısa özetidir. UML diyagramları ayrıca tam boyutlarıyla: **[Kurultay_UML_Diyagramlari.pdf](Kurultay_UML_Diyagramlari.pdf)**.
 
 **Kurultay, gündemi üyelerin belirlediği, tartışmayı üyelerin yürüttüğü ve sonucu üyelerin oyladığı sansürsüz bir kamuoyu platformudur.** Adını, eski Türk devletlerinde kağan seçiminin, törenin ve savaş-barış kararlarının konuşulduğu meclisten alır; Göktürk ve Uygur döneminde aynı meclise *toy* denirdi. Ödevin on beş isteğinin tamamı çalışan bir özellikle karşılandı. Karar düzeni ABD yasama sistemini örnek alır.
 
@@ -15,6 +15,7 @@ Hazırlayan: Seyyid A. Bozkurt · 24290381
 - **Sansür yok.** Tek yasak gerçek tehdittir (ABD 1. Değişikliği). Mesajlar silinmez.
 - **Çoğunluk azınlığı ezemez.** Kurulda her bölüm eşit temsil edilir, kabul için 3/5 gerekir; azınlık görüşü kalıcıdır.
 - **Ölçülmüş kurallar.** Tehdit denetimi F0.5 = 0,83 (naif yöntem 0,44); bölüm önerisi makro F1 = 0,69.
+- **UML diyagramları koddan.** 2 kullanım durumu, 4 sınıf, 7 sıralama diyagramı; uygulamada `/diyagramlar`, raporda 12. bölüm.
 - **Tasarım desenleri adlarıyla.** Dersin yedi başlığı kodda karşılık buldu; karar motoru 15 birim testiyle korunur.
 - **Tek tıkla.** Masaüstündeki simge Kurultay'ı kendi penceresinde açar; telefon karekodla bağlanır.
 - **Sıfır maliyet.** Ücretli servis ya da dış API yok.
@@ -95,6 +96,18 @@ Karışıklık matrisi: 14 DP, 6 YN, 2 YP, 38 DN. Kaçan tehditlerin çoğu ört
 | Davranışsal | State (karar aşamaları), Strategy (eşikler), Chain of Responsibility (uygunluk), Command (süreç kaydı), Memento (eski sürümler). |
 | YZ'ye özgü | Cascade (yerel model → kural), Heuristic Benchmark (ölçüm), Pipeline (Türkçe ön işleme). |
 | Anti-desenler | God Object, kopya normalleştirme ve uzun switch zincirleri giderildi; gereksiz desenler bilerek eklenmedi. |
+
+## UML diyagramları
+
+Derste istenen üç diyagram türü uygulamanın içinde (`/diyagramlar`), raporun 12. bölümünde ve [Kurultay_UML_Diyagramlari.pdf](Kurultay_UML_Diyagramlari.pdf)’te. Hepsi kaynak koddan çıkarıldı: sınıflar veritabanı şemasından ve TypeScript tiplerinden, mesajlar gerçek fonksiyon çağrılarından.
+
+| Tür | Şekiller |
+| --- | --- |
+| Kullanım durumu | 1.1 Üyelik, gündem ve tartışma · 1.2 Karar, oy ve seçim (aktörler: Ziyaretçi, Üye, Uzman, Kurum Hesabı, Yayın Kurulu Üyesi, Genel Yayın Yönetmeni, YZ Analist, Ollama, Zaman) |
+| Sınıf | 2.1–2.2 Alan modeli (17 tablonun 16’sı sınıf, takipler çoka çok ilişki) · 2.3 Karar motoru (State, Registry, Strategy, Command) · 2.4 Denetim zinciri ve YZ Analist (Chain, Pipeline, Facade, Adapter, Cascade, Singleton) |
+| Sıralama | 3.1 Kayıt · 3.2 Gündem önerisi · 3.3 Oy verme ve emanet · 3.4 Sayım ve aşama geçişi · 3.5 İlke değişikliği, veto ve vetonun aşılması · 3.6 YZ özeti · 3.7 Mesaj gizleme |
+
+Üç kullanım durumu senaryosu (gündem öner, oy ver, ilke değişikliği öner) ve diyagramlarla ilgili sık sorulanlar da aynı yerlerde.
 
 ## Tasarım dili: otağ ve kilim
 

@@ -278,6 +278,9 @@ function DersProjesi() {
         <Link href="/hakkinda#istekler" className="text-xs font-semibold hover:underline">
           İstek listesi →
         </Link>
+        <Link href="/diyagramlar" className="text-xs font-semibold hover:underline">
+          UML diyagramları →
+        </Link>
       </div>
     </section>
   );

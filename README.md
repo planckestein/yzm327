@@ -3,6 +3,7 @@
 **Kamuoyunun sansürsüz sesi.** Gündemi vatandaşların belirlediği, tartışmayı vatandaşların yürüttüğü ve sonucu vatandaşların oyladığı bağımsız bir kamuoyu platformu. Karar düzeni ABD yasama sistemini örnek alır.
 
 - 📄 **Teknik rapor:** [Kurultay_Teknik_Rapor.pdf](Kurultay_Teknik_Rapor.pdf) (özeti: [RAPOR.md](RAPOR.md))
+- 📐 **UML diyagramları:** [Kurultay_UML_Diyagramlari.pdf](Kurultay_UML_Diyagramlari.pdf) (uygulamada `/diyagramlar`)
 - 🛠️ **Ayrıntılı kullanım kılavuzu:** [forum/README.md](forum/README.md)
 
 ## Açmak
@@ -33,7 +34,7 @@ Kurultay.cmd    Çift tıkla aç (başlatıcı)
 RAPOR.md        Raporun özeti; tamamı Kurultay_Teknik_Rapor.pdf
 forum/          Next.js uygulaması
   src/lib/      İş mantığı (oylama, seçim, defter, tehdit, YZ...)
-  src/app/      Sayfalar
+  src/app/      Sayfalar (UML diyagramları: src/app/diyagramlar)
   scripts/      Başlatıcı, demo verisi ve ölçüm raporu
   tests/        Birim testleri
 ```

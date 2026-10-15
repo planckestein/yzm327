@@ -74,6 +74,11 @@ export default function HakkindaSayfasi() {
   // [başlık, açıklama, karşıladığı istek]
   const SON_EKLENENLER: [string, string, string][] = [
     [
+      "UML diyagramları",
+      "Kullanım durumu, sınıf ve sıralama diyagramları uygulamanın içinde: 13 şekil, her biri koddan çıkarıldı ve tam boyut açılabiliyor. Altlarında nasıl okunacakları ve dayandıkları dosyalar, ayrıca üç kullanım durumu senaryosu ve sık sorulanlar var. Teknik rapora da yeni bir bölüm olarak eklendi.",
+      "Ders: UML diyagramları",
+    ],
+    [
       "Kurultay: otağ ve kilim tasarımı",
       "Platformun adı ve görünümü eski Türk meclisinden (toy, kurultay) geliyor: keçe zemin, kilim şeritleri, dört yön renkleri, her bölüme bir kilim motifi, her üyeye takma adından üretilen bir tamga. Motifler dokuma ızgarasında ilmek ilmek çizildi. Açık ve gece teması, telefona uygun düzen.",
       "Büyük bir kitleye hitap etmeli",
@@ -95,7 +100,7 @@ export default function HakkindaSayfasi() {
     ],
     [
       "Tanıtım turu",
-      "9 adımda sayfa sayfa gezerek köşetaşı istekleri ve dersin yöntemine (CRISP-ML(Q), tasarım desenleri) uyumu ilgili yeri vurgulayarak gösterir, sonunda tüm isteklerin listesini verir: üstte hocanın cümlesi, altında çözümümüz. Pusula düğmesiyle yeniden başlatılabilir.",
+      "10 adımda sayfa sayfa gezerek köşetaşı istekleri, dersin yöntemine (CRISP-ML(Q), tasarım desenleri) uyumu ve UML diyagramlarını ilgili yeri vurgulayarak gösterir, sonunda tüm isteklerin listesini verir: üstte hocanın cümlesi, altında çözümümüz. Pusula düğmesiyle yeniden başlatılabilir.",
       "Tüm istekler",
     ],
     [
@@ -202,6 +207,28 @@ export default function HakkindaSayfasi() {
       <section id="ders" data-tur="ders" className="flex scroll-mt-28 flex-col gap-5">
         <Baslik ust="Ders içeriği">Tasarım desenleri ve ölçüm</Baslik>
         <DersUyumu />
+      </section>
+
+      <section id="uml" className="flex scroll-mt-28 flex-col gap-5">
+        <Baslik ust="UML">Kullanım durumu, sınıf ve sıralama diyagramları</Baslik>
+        <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+          <p className="max-w-2xl text-[15px] leading-relaxed">
+            Hocamızın derste istediği üç diyagram türü ayrı bir sayfada: iki kullanım durumu, dört sınıf ve yedi sıralama diyagramı.
+            Hepsi kaynak koddan çıkarıldı; sınıflar veritabanı şemasından ve TypeScript tiplerinden, mesajlar gerçek fonksiyon
+            çağrılarından. Her şeklin altında nasıl okunacağı ve dayandığı dosyalar yazıyor.
+          </p>
+          <div className="flex shrink-0 flex-wrap gap-x-4 gap-y-1 text-sm font-semibold">
+            <Link href="/diyagramlar#kullanim" className="hover:underline">
+              Kullanım durumu →
+            </Link>
+            <Link href="/diyagramlar#sinif" className="hover:underline">
+              Sınıf →
+            </Link>
+            <Link href="/diyagramlar#sira" className="hover:underline">
+              Sıralama →
+            </Link>
+          </div>
+        </div>
       </section>
 
       <section id="tasarim" className="flex scroll-mt-28 flex-col gap-5">

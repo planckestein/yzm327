@@ -3,7 +3,7 @@ import { CRISP_ASAMALARI, CRISP_TANIMI, DERS_SLOGANI } from "@/lib/dersYontemi";
 /*
  * Tanıtım turu: hocamızın ödevde verdiği isterlerin her birini, platformda
  * nerede ve nasıl karşıladığımızı sayfa sayfa gösterir; ders notlarında istenen
- * yönteme (CRISP-ML(Q), tasarım desenleri) uyumu da ayrı adımlarda gösterir.
+ * yönteme (CRISP-ML(Q), tasarım desenleri) uyumu ve UML diyagramlarını da ayrı adımlarda gösterir.
  * Her adımda "ister" ödev metnindeki ya da ders notlarındaki cümledir, "metin" bizim çözümümüz.
  */
 
@@ -124,12 +124,26 @@ export function turAdimlari(v: TurVerisi): TurAdimi[] {
       ],
     },
     {
+      sayfa: "/diyagramlar",
+      hedef: ["uml"],
+      ister: "Derste kullanım durumu (use case), sınıf (class) ve sıralama (sequence) diyagramları istenecek.",
+      baslik: "UML diyagramları",
+      metin:
+        "Üç diyagram türünün hepsi uygulamanın içinde ve koddan çıkarıldı: sınıflar veritabanı şemasından ve TypeScript tiplerinden, mesajlar gerçek fonksiyon çağrılarından. Her şekil tam boyut açılabilir; altında nasıl okunacağı ve dayandığı dosyalar yazıyor.",
+      liste: [
+        "Kullanım durumu: üyelik ve tartışma · karar, oy ve seçim",
+        "Sınıf: iki alan modeli · karar motoru · denetim ve YZ",
+        "Sıralama: kayıt, gündem, oy, sayım, ilke ve veto, YZ özeti, gizleme",
+        "Üç kullanım durumu senaryosu ve sık sorulanlar",
+      ],
+    },
+    {
       sayfa: "/",
       ister: null,
       baslik: "Bütün istekler karşılandı",
       metin:
         "Turda köşetaşlarını gördük; aşağıdaki listedeki her istek platformda çalışır durumda ve proje dersin yöntemiyle yürütüldü (ayrıntılar “Nasıl işliyor?” sayfasında). Şimdi bunu canlı görelim: süren bir uzlaşma oylaması gözünüzün önünde sonuçlanacak, ardından ilgili bakanlık resmî yanıtını verecek.",
-      liste: [...ISTER_LISTESI, "Ders yöntemi: CRISP-ML(Q), tasarım desenleri"],
+      liste: [...ISTER_LISTESI, "Ders yöntemi: CRISP-ML(Q), tasarım desenleri", "UML: kullanım durumu, sınıf ve sıralama diyagramları"],
     },
   ];
 }

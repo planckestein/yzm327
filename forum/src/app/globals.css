@@ -255,3 +255,22 @@
     box-shadow: inset 0 0 0 3px var(--card), inset 0 0 0 4px color-mix(in oklch, var(--border) 70%, transparent);
   }
 }
+
+/* UML diyagramları (/diyagramlar): şekil kutusuna sığacak kadar küçülür, tam boyut sayfasında gerçek boyutundadır */
+.uml-kap .uml {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin-inline: auto;
+}
+.uml-tam .uml {
+  max-width: none;
+}
+@media print {
+  .sekil {
+    break-inside: avoid;
+  }
+  .uml-kap {
+    overflow: visible;
+  }
+}

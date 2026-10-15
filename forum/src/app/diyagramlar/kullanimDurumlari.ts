@@ -1,0 +1,121 @@
+import type { KullanimDiyagrami } from "@/components/uml/KullanimDurumuDiyagrami";
+
+/*
+ * Kullanım durumu diyagramları. Her kullanım durumu arayüzdeki bir işleme ve bir server action'a karşılık gelir;
+ * include edilenler (denetimler, karar süreci) her seferinde çalışan lib adımlarıdır.
+ * Koordinatlar elle yerleştirildi: aktörler kenarlarda, sistem sınırı ortada.
+ */
+
+/** Şekil 1.1 — Üyelik, gündem ve tartışma */
+export const GUNDEM_TARTISMA: KullanimDiyagrami = {
+  en: 1180,
+  boy: 760,
+  sistem: { x: 180, y: 16, en: 800, boy: 728, ad: "Kurultay: üyelik, gündem ve tartışma" },
+  aktorler: [
+    { id: "ziyaretci", ad: ["Ziyaretçi"], x: 80, y: 140 },
+    { id: "uye", ad: ["Üye"], x: 80, y: 420 },
+    { id: "uzman", ad: ["Uzman"], x: 80, y: 640 },
+    { id: "kurum", ad: ["Kurum Hesabı"], x: 1095, y: 380 },
+    { id: "yz", ad: ["YZ Analist"], x: 1095, y: 600, sistem: true },
+    { id: "ollama", ad: ["Ollama", "(yerel model)"], x: 1095, y: 700, sistem: true },
+  ],
+  durumlar: [
+    { id: "kayit", ad: ["Kayıt ol"], x: 330, y: 75 },
+    { id: "gor", ad: ["Konuları ve", "kararları görüntüle"], x: 330, y: 140 },
+    { id: "arsiv", ad: ["Açık Arşivi", "doğrula ve indir"], x: 330, y: 205 },
+    { id: "takip", ad: ["Bölüm takip et"], x: 330, y: 290 },
+    { id: "deg", ad: ["Gizleme, kaldırma, düzenleme", "ya da uzlaşma öner"], x: 340, y: 470 },
+    { id: "serh", ad: ["Azınlık görüşü yaz"], x: 330, y: 560 },
+    { id: "giris", ad: ["Giriş yap"], x: 590, y: 58 },
+    { id: "uyg", ad: ["Uygunluk denetimi"], x: 590, y: 300 },
+    { id: "teh", ad: ["Tehdit denetimi"], x: 590, y: 392 },
+    { id: "karar", ad: ["Karar süreci başlat"], x: 645, y: 470 },
+    { id: "ozet", ad: ["YZ özeti iste"], x: 590, y: 600 },
+    { id: "konu", ad: ["Gündem ya da", "alt konu öner"], x: 845, y: 300 },
+    { id: "mesaj", ad: ["Tartışmaya", "mesaj yaz"], x: 845, y: 432 },
+    { id: "tepki", ad: ["Resmî tepki bildir"], x: 845, y: 545 },
+    { id: "yerel", ad: ["Yerel modelle özetle"], x: 845, y: 690 },
+  ],
+  baglar: [
+    { a: "uye", b: "ziyaretci", tur: "kalitim" },
+    { a: "uzman", b: "uye", tur: "kalitim" },
+    { a: "ziyaretci", b: "kayit", tur: "iliski" },
+    { a: "ziyaretci", b: "gor", tur: "iliski" },
+    { a: "ziyaretci", b: "arsiv", tur: "iliski" },
+    { a: "ziyaretci", b: "giris", tur: "iliski" },
+    { a: "uye", b: "takip", tur: "iliski" },
+    { a: "uye", b: "konu", tur: "iliski" },
+    { a: "uye", b: "mesaj", tur: "iliski" },
+    { a: "uye", b: "deg", tur: "iliski" },
+    { a: "uye", b: "serh", tur: "iliski" },
+    { a: "uye", b: "ozet", tur: "iliski" },
+    { a: "kurum", b: "giris", tur: "iliski" },
+    { a: "kurum", b: "konu", tur: "iliski" },
+    { a: "kurum", b: "mesaj", tur: "iliski" },
+    { a: "kurum", b: "tepki", tur: "iliski" },
+    { a: "yz", b: "ozet", tur: "iliski" },
+    { a: "ollama", b: "yerel", tur: "iliski" },
+    { a: "konu", b: "uyg", tur: "include" },
+    { a: "uyg", b: "teh", tur: "include", etiket: [590, 362] },
+    { a: "mesaj", b: "teh", tur: "include", etiket: [760, 420] },
+    { a: "deg", b: "karar", tur: "include", etiket: [508, 470] },
+    { a: "konu", b: "karar", tur: "include", etiket: [790, 335] },
+    { a: "yerel", b: "ozet", tur: "extend", kosul: "[OLLAMA_MODEL tanımlıysa]" },
+  ],
+  notlar: [
+    { x: 196, y: 648, en: 238, satirlar: ["Uzman: Üye ile aynı yetkiler; rozet", "taşır, YZ özetinde mesajı ağırlıklıdır."], bag: [104, 646] },
+  ],
+};
+
+/** Şekil 1.2 — Karar, oy ve seçim */
+export const KARAR_OY: KullanimDiyagrami = {
+  en: 1180,
+  boy: 720,
+  sistem: { x: 180, y: 16, en: 800, boy: 688, ad: "Kurultay: karar, oy ve seçim" },
+  aktorler: [
+    { id: "uye", ad: ["Üye"], x: 80, y: 300 },
+    { id: "kurul", ad: ["Yayın Kurulu", "Üyesi"], x: 80, y: 500 },
+    { id: "gyy", ad: ["Genel Yayın", "Yönetmeni"], x: 80, y: 640 },
+    { id: "zaman", ad: ["Zaman"], x: 1095, y: 430, sistem: true },
+  ],
+  durumlar: [
+    { id: "aday", ad: ["Aday ol ya da", "adaylıktan çekil"], x: 330, y: 70 },
+    { id: "destek", ad: ["Adayı destekle ya da", "desteği çek"], x: 330, y: 150 },
+    { id: "devir", ad: ["Oyunu emanet et", "ya da geri al"], x: 330, y: 230 },
+    { id: "oy", ad: ["Oy ver"], x: 330, y: 330 },
+    { id: "ilke", ad: ["İlke değişikliği öner"], x: 330, y: 425 },
+    { id: "veto", ad: ["İlke önerisini", "onayla ya da veto et"], x: 330, y: 640 },
+    { id: "hak", ad: ["Oy hakkını denetle"], x: 610, y: 230 },
+    { id: "emanet", ad: ["Emanet oylarını", "birlikte kullan"], x: 610, y: 320 },
+    { id: "sonuc", ad: ["Oylamayı sonuçlandır"], x: 610, y: 410 },
+    { id: "karar", ad: ["Karar süreci başlat"], x: 330, y: 505 },
+    { id: "kuroy", ad: ["Kurul oylamasında", "oy ver"], x: 600, y: 570 },
+    { id: "vetoas", ad: ["Vetoyu aşma", "oylaması başlat"], x: 610, y: 655 },
+    { id: "sure", ad: ["Süresi dolan", "oylamaları kapat"], x: 860, y: 410 },
+    { id: "sessiz", ad: ["Sessiz onayı uygula", "(3 gün)"], x: 860, y: 560 },
+  ],
+  baglar: [
+    { a: "kurul", b: "uye", tur: "kalitim" },
+    { a: "gyy", b: "uye", tur: "kalitim", ara: [[30, 600], [30, 330]] },
+    { a: "uye", b: "aday", tur: "iliski" },
+    { a: "uye", b: "destek", tur: "iliski" },
+    { a: "uye", b: "devir", tur: "iliski" },
+    { a: "uye", b: "oy", tur: "iliski" },
+    { a: "uye", b: "ilke", tur: "iliski" },
+    { a: "kurul", b: "kuroy", tur: "iliski" },
+    { a: "gyy", b: "veto", tur: "iliski" },
+    { a: "zaman", b: "sure", tur: "iliski" },
+    { a: "zaman", b: "sessiz", tur: "iliski" },
+    { a: "oy", b: "hak", tur: "include" },
+    { a: "oy", b: "sonuc", tur: "include" },
+    { a: "emanet", b: "oy", tur: "extend", kosul: "[kendisine oy emanet edilmişse]", etiket: [470, 318] },
+    { a: "kuroy", b: "oy", tur: "kalitim" },
+    { a: "ilke", b: "karar", tur: "include" },
+    { a: "sure", b: "sonuc", tur: "include" },
+    { a: "vetoas", b: "veto", tur: "extend", kosul: "[veto edilirse]", etiket: [475, 650] },
+  ],
+  notlar: [
+    { x: 720, y: 60, en: 248, satirlar: ["Kurul oylamasında oy emanet edilemez;", "temsilcinin oyu kişiseldir.", "Yayın Kurulu: bölüm başına 2 üye, 3/5."] },
+    { x: 740, y: 625, en: 228, satirlar: ["Yönetmen 3 gün içinde karar", "vermezse öneri kabul edilir."], bag: [860, 583] },
+  ],
+};
