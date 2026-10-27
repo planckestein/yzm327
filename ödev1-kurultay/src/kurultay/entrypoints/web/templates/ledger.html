@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}Defter{% endblock %}
+{% block content %}
+{% set cons = ledger.consensus %}
+<div class="sayfa-basi">
+  <div>
+    <h1>Defter</h1>
+    <p>Kurultay'da olan her şey (kayıt, teklif, oy, mesaj, gizleme) buraya sırayla eklenir. Her kayıt bir öncekinin özetini taşır: <span class="mono">SHA-256(sıra | zaman | tür | veri | önceki özet)</span>. Geçmişteki tek bir kayıt değişirse zincir kırılır. Kişisel bilgi ve mesaj metni deftere yazılmaz, yalnızca metnin özeti yazılır.</p>
+  </div>
+  <a class="dugme ikincil" href="/defter/indir">⤓ Defteri indir (JSON)</a>
+</div>
+
+<div class="izgara">
+  <section class="kart">
+    <div class="kart-baslik"><h2>Son kayıtlar</h2><small>{{ ledger.total }} kayıt</small></div>
+    <div class="blok-zinciri">
+      {% for e in ledger.entries %}
+        <div class="blok">
+          <div class="no">#{{ e.index }}</div>
+          <div class="icerik">
+            <div class="satir ayrik"><b>{{ e.kind }}</b><small class="mono">{{ e.timestamp|tarih }}</small></div>
+            <pre>{{ e.payload }}</pre>
+            <div class="hash">önceki {{ e.previous_hash[:16] }}… → <b>{{ e.hash[:16] }}…</b></div>
+          </div>
+        </div>
+      {% else %}<p class="bos">Defter boş.</p>{% endfor %}
+    </div>
+  </section>
+
+  <aside class="yigin">
+    <div class="kart vurgulu">
+      <span class="ust-yazi">Uzlaşma raporu</span>
+      <h3>{% if cons.healthy %}✓ Bütün düğümler aynı zinciri taşıyor{% else %}⚠ {{ cons.nodes|length - cons.agreeing }} düğüm çoğunluktan ayrıldı{% endif %}</h3>
+      {% for n in cons.nodes %}
+        <div class="dugum">
+          <span class="isik {{ '' if n.agrees else 'kirmizi' }}"></span>
+          <div><b>{{ n.node }}</b><div class="hash mono" style="font-size:.74rem;color:var(--soluk)">uç {{ n.report.head_hash[:14] }}… · {{ n.report.length }} kayıt</div>
+            {% if not n.report.valid %}<small style="color:var(--kizil)">Zincir #{{ n.report.broken_index }} numaralı kayıtta kırılıyor</small>{% endif %}</div>
+          <small>{{ "uyumlu" if n.agrees else "kurcalanmış" }}</small>
+        </div>
+      {% endfor %}
+      {% if demo_mode %}
+      <div class="satir" style="margin-top:12px">
+        <form method="post" action="/defter/kurcala"><button class="hayir kucuk">Bir düğümü kurcala</button></form>
+        <form method="post" action="/defter/onar"><button class="ikincil kucuk">Çoğunluktan onar</button></form>
+      </div>
+      <p class="soluk" style="font-size:.8rem;margin:8px 0 0">Demo: Düğüm C'deki geçmiş bir kaydın verisi değiştirilir; hash zinciri kırılır ve çoğunluk o düğümü dışlar.</p>
+      {% endif %}
+    </div>
+    <div class="kart">
+      <h3>Kayıt türleri</h3>
+      <table>
+        {% for kind, count in ledger.kinds.most_common() %}<tr><td class="mono">{{ kind }}</td><td style="text-align:right">{{ count }}</td></tr>{% endfor %}
+      </table>
+    </div>
+    <div class="kart">
+      <h3>Veritabanı da izin vermez</h3>
+      <p class="soluk" style="font-size:.88rem;margin:0">Defter, mesajlar, oylar, maskeler ve sürümler tablolarında <span class="mono">UPDATE</span> ve <span class="mono">DELETE</span> tetikleyicilerle (trigger) engellidir. Repository'lerde silme metodu yoktur.</p>
+    </div>
+  </aside>
+</div>
+{% endblock %}

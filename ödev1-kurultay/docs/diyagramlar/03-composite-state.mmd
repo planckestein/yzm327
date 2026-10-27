@@ -1,0 +1,72 @@
+classDiagram
+  direction TB
+  class TopicComponent {
+    <<abstract>>
+    +id: str
+    +author_id: str
+    +parent: Topic
+    +children()* Sequence
+    +is_visible()* bool
+    +visible_message_count()* int
+    +walk() Iterator
+    +root() Topic
+  }
+  class Message {
+    <<leaf>>
+    +text: str
+    +content_hash: ContentHash
+    +mask: Mask
+    +apply_mask(proposal_id, now)
+  }
+  class Topic {
+    <<composite, aggregate root>>
+    +concept_ids: frozenset
+    +state: TopicState
+    +revisions: list~TopicRevision~
+    +add(component)
+    +post_message(author, text, now) Message
+    +attach_subtopic(topic)
+    +revise(title, description, proposal_id, now)
+    +start_voting()
+    +accept()
+    +request_deletion()
+    +confirm_deletion(proposal_id, now)
+    +archive()
+  }
+  class TopicRevision {
+    <<memento>>
+    +title: str
+    +description: str
+  }
+  class TopicState {
+    <<abstract>>
+    +name: str
+    +can_discuss: bool
+    +can_branch: bool
+    +start_voting(topic)
+    +accept(topic)
+    +reject(topic)
+    +request_deletion(topic)
+    +confirm_deletion(topic)
+    +cancel_deletion(topic)
+    +archive(topic)
+  }
+  class Proposed
+  class InVoting
+  class Active
+  class InDeletionVote
+  class Archived
+  class Hidden
+  class Rejected
+  TopicComponent <|-- Message
+  TopicComponent <|-- Topic
+  Topic o-- "0..*" TopicComponent : çocuklar
+  Topic *-- "1..*" TopicRevision
+  Topic --> TopicState : durum
+  TopicState <|-- Proposed
+  TopicState <|-- InVoting
+  TopicState <|-- Active
+  TopicState <|-- InDeletionVote
+  TopicState <|-- Archived
+  TopicState <|-- Hidden
+  TopicState <|-- Rejected

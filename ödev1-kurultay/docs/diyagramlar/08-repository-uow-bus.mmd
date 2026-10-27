@@ -1,0 +1,80 @@
+classDiagram
+  direction LR
+  class AbstractRepository~T~ {
+    <<abstract>>
+    +seen: set~T~
+    +add(aggregate)
+    +get(id) T
+    #_add(aggregate)*
+    #_get(id)*
+    +flush()
+  }
+  class AbstractTopicRepository {
+    <<abstract>>
+    +get_node(id) TopicComponent
+    +roots()* list~Topic~
+  }
+  class AbstractProposalRepository {
+    <<abstract>>
+    +list()* list~Proposal~
+    +list_open() list~Proposal~
+  }
+  class AbstractLedgerRepository {
+    <<abstract>>
+    +append(entry)*
+    +head()* LedgerEntry
+    +all()* list
+  }
+  class SqlAlchemyTopicRepository
+  class SqlAlchemyProposalRepository
+  class SqlAlchemyLedgerRepository
+  class FakeTopicRepository
+  class FakeProposalRepository
+  class FakeLedgerRepository
+  class AbstractUnitOfWork {
+    <<abstract>>
+    +__enter__() Self
+    +__exit__()
+    +commit()
+    +rollback()*
+    +collect_new_events() Iterator~Event~
+  }
+  class SqlAlchemyUnitOfWork {
+    +cache: AppendOnlyReadCache
+  }
+  class AppendOnlyReadCache {
+    +electorates: dict
+    +ballots: dict
+  }
+  class FakeUnitOfWork
+  class MessageBus {
+    +event_handlers: dict
+    +command_handlers: dict
+    +handle(message) Any
+  }
+  class Command {
+    <<frozen dataclass>>
+    +actor_id: str
+  }
+  class Event {
+    <<frozen dataclass>>
+    +ledger_payload() dict
+  }
+  AbstractRepository <|-- AbstractTopicRepository
+  AbstractRepository <|-- AbstractProposalRepository
+  AbstractTopicRepository <|-- SqlAlchemyTopicRepository
+  AbstractTopicRepository <|-- FakeTopicRepository
+  AbstractProposalRepository <|-- SqlAlchemyProposalRepository
+  AbstractProposalRepository <|-- FakeProposalRepository
+  AbstractLedgerRepository <|-- SqlAlchemyLedgerRepository
+  AbstractLedgerRepository <|-- FakeLedgerRepository
+  AbstractUnitOfWork <|-- SqlAlchemyUnitOfWork
+  AbstractUnitOfWork <|-- FakeUnitOfWork
+  AbstractUnitOfWork o-- AbstractTopicRepository
+  AbstractUnitOfWork o-- AbstractProposalRepository
+  AbstractUnitOfWork o-- AbstractLedgerRepository
+  MessageBus --> AbstractUnitOfWork
+  MessageBus ..> Command : tek işleyici
+  MessageBus ..> Event : çok işleyici
+  SqlAlchemyUnitOfWork o-- AppendOnlyReadCache : bootstrap enjekte eder
+  SqlAlchemyProposalRepository ..> AppendOnlyReadCache : değişmez kayıtlar

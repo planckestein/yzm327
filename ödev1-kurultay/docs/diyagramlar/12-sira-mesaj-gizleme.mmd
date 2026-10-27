@@ -1,0 +1,26 @@
+sequenceDiagram
+  autonumber
+  actor U as Üye
+  participant Bus as MessageBus
+  participant H as propose_message_hiding
+  participant P as Proposal (karesel, 3/5)
+  participant V as cast_vote
+  participant E as apply_accepted_proposal
+  participant Msg as Message (yaprak)
+  participant L as Defter
+
+  U->>Bus: ProposeMessageHiding(mesaj, gerekçe)
+  Bus->>H: handle
+  H->>P: Proposal.open(HIDE_MESSAGE)
+  Bus->>L: ProposalOpened, VotingStarted
+  loop seçmenler
+    U->>Bus: CastVote(evet/hayır, k oy = k² kredi)
+    Bus->>V: handle
+    V->>P: cast + try_close
+  end
+  P-->>Bus: ProposalAccepted
+  Bus->>E: handle
+  E->>Msg: apply_mask(proposal_id) — metin silinmez
+  Msg-->>Bus: ContentMasked
+  Bus->>L: ContentMasked (özet zincirde kalır)
+  Bus->>Bus: penalize_masked_message → yazarın itibarı −5

@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Oylamalar{% endblock %}
+{% block content %}
+<div class="forum-ust">
+  <nav class="sekmeler">
+    {% for key, label in [("acik", "Süren"), ("kapali", "Sonuçlananlar"), ("hepsi", "Hepsi")] %}
+      <a href="/teklifler?durum={{ key }}" class="{{ 'etkin' if durum == key }}">{{ label }}</a>
+    {% endfor %}
+  </nav>
+</div>
+<div class="konu-tablo">
+  <div class="konu-tablo-bas">
+    <span>Oylama</span><span class="kt-oy">Sonuç</span><span class="kt-sayi">Oy</span><span class="kt-son">{% if durum == "acik" %}Kalan{% else %}Durum{% endif %}</span>
+  </div>
+  {% for c in cards %}
+    {% set p = c.proposal %}
+    <article class="kt-satir">
+      <div class="kt-konu">
+        <a class="kt-baslik" href="/teklif/{{ p.id }}">{{ p.title }}</a>
+        <div class="kt-alt"><span class="kategori">{{ p.kind.label }}</span><span class="soluk">@{{ c.proposer }}</span></div>
+      </div>
+      <div class="kt-oy">{{ m.mini_cubuk(c) }}<small>{% if c.tally.yes + c.tally.no %}%{{ c.cast_yes_pct|round(0)|int }} evet{% else %}oy yok{% endif %}</small></div>
+      <div class="kt-sayi">{{ c.tally.voted }}</div>
+      <div class="kt-son">{% if p.is_open %}{{ c.remaining }}{% else %}{{ m.teklif_durum(p) }}<small>{{ p.closed_at|once }}</small>{% endif %}</div>
+    </article>
+  {% else %}
+    <p class="bos">Burada oylama yok.</p>
+  {% endfor %}
+</div>
+{% endblock %}

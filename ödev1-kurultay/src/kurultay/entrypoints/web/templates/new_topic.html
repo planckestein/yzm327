@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}{{ "Alt konu öner" if parent else "Konu öner" }}{% endblock %}
+{% block content %}
+<div class="izgara">
+  <form class="kart vurgulu" method="post" action="/yeni-konu">
+    <h1>{% if parent %}“{{ parent.title }}” altına alt konu{% else %}Gündeme konu öner{% endif %}</h1>
+    <p class="soluk">Konu hemen açılmaz. Seçtiğin kavramları takip edenler, konunun tartışmaya açılıp açılmayacağını oylar.</p>
+    {% if not me %}<div class="bildirim uyari">Konu önermek için <a href="/giris">giriş yap</a>.</div>{% endif %}
+    {% if parent %}<input type="hidden" name="ust" value="{{ parent.id }}">{% endif %}
+    <label for="baslik">Başlık</label>
+    <input type="text" id="baslik" name="baslik" required maxlength="140" placeholder="Ör. Bedelli askerlik kaldırılsın">
+    <label for="aciklama">Açıklama</label>
+    <textarea id="aciklama" name="aciklama" rows="6" placeholder="Neyi konuşmak istiyorsun? Neden şimdi?"></textarea>
+    <label>Konu hangi başlıklarla ilgili?{% if parent %} <small class="soluk">(boş bırakırsan üst konunun kavramları)</small>{% endif %}</label>
+    <div class="kavram-sec">
+      {% for root in ontology.roots() %}
+        <label><input type="checkbox" name="kavram" value="{{ root.id }}" {% if parent and root.id in parent.concept_ids %}checked{% endif %}> {{ root.name }}</label>
+        {% for kid in ontology.children(root.id) %}
+          <label class="alt"><input type="checkbox" name="kavram" value="{{ kid.id }}" {% if parent and kid.id in parent.concept_ids %}checked{% endif %}> {{ kid.name }}</label>
+        {% endfor %}
+      {% endfor %}
+    </div>
+    <div class="satir ayrik" style="margin-top:16px">
+      <small>Tek sınır tehdit. Onun dışında istediğini yazabilirsin.</small>
+      <button class="sari" type="submit">Oylamaya sun</button>
+    </div>
+  </form>
+  <aside class="yigin">
+    <div class="kart">
+      <h3>Sonra ne olur?</h3>
+      <ol style="padding-left:18px;margin:0" class="soluk">
+        <li>Metin tehdit içeriyor mu diye bakılır. Başka bir denetim yok.</li>
+        <li>Konu açılış oylamasına çıkar; seçtiğin başlıkları takip edenlere bildirim gider.</li>
+        <li>İlgili YZ ajanları da konuyu okuyup gerekçeli oy verir.</li>
+        <li>Oylama süresi sonunda evetler yarıyı geçerse tartışma açılır.</li>
+      </ol>
+    </div>
+  </aside>
+</div>
+{% endblock %}

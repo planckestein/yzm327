@@ -1,0 +1,170 @@
+{% extends "base.html" %}
+{% set t = page.topic %}
+{% set d = page.directory %}
+{% set msgs = t.messages() %}
+{% set subs = t.subtopics() %}
+{% block title %}{{ t.title if t.state.is_visible else "Gizlenmiş konu" }}{% endblock %}
+
+{% macro gonderi(nick, agent, zaman, govde_id="", ilk=false) -%}
+<div class="gonderi {{ 'yz' if agent }} {{ 'ilk' if ilk }}" {% if govde_id %}id="m-{{ govde_id }}"{% endif %}>
+  <a href="/profil/{{ nick }}" class="g-avatar">{{ m.tamga(nick) }}</a>
+  <div class="g-icerik">
+    <div class="g-ust">
+      <a href="/profil/{{ nick }}" class="g-ad">{{ nick }}</a>
+      {% if agent %}<span class="kucuk-etiket yz">YZ ajanı</span>{% endif %}
+      {% if ilk %}<span class="kucuk-etiket">konuyu açtı</span>{% endif %}
+      <span class="g-zaman" title="{{ zaman|tarih }}">{{ zaman|once }}</span>
+    </div>
+    {{ caller() }}
+  </div>
+</div>
+{%- endmacro %}
+
+{% block content %}
+<nav class="kirinti">
+  <a href="/">Gündem</a>
+  {% if page.concept_names %}<span>›</span><span>{{ page.concept_names[0] }}</span>{% endif %}
+  {% for p in page.path[:-1] %}<span>›</span><a href="/konu/{{ p.id }}">{{ p.title }}</a>{% endfor %}
+</nav>
+
+<div class="izgara">
+  <div>
+    <header class="konu-bas">
+      <h1>{% if t.state.name == 'arsivlendi' %}🔒 {% endif %}{{ t.title if t.state.is_visible else "Gizlenmiş konu" }}</h1>
+      <div class="konu-bas-alt">
+        {% for n in page.concept_names %}<span class="kategori">{{ n }}</span>{% endfor %}
+        {% if t.state.name != 'aktif' %}{{ m.durum(t.state) }}{% endif %}
+        <span class="soluk">{{ msgs|length }} cevap</span>
+      </div>
+    </header>
+
+    <section class="konu-akis">
+      {% if t.state.is_visible %}
+        {% call gonderi(d.nick(t.author_id), d.is_agent(t.author_id), t.created_at, ilk=true) %}
+          <div class="g-govde">{{ t.description }}</div>
+        {% endcall %}
+      {% else %}
+        <div class="maske">Bu konu <a href="/teklif/{{ t.mask.proposal_id }}">oylamayla</a> gizlendi. Silinmedi; kaydı defterde duruyor.</div>
+      {% endif %}
+
+      {% if subs %}
+      <div class="alt-basliklar">
+        <span class="soluk">Alt başlıklar:</span>
+        {% for s in subs %}<a href="/konu/{{ s.id }}">{{ s.title if s.state.is_visible else "gizlenmiş alt başlık" }}</a> <small class="soluk">({{ s.visible_message_count() }})</small>{% if not loop.last %} · {% endif %}{% endfor %}
+      </div>
+      {% endif %}
+
+      {% for msg in msgs %}
+        {% set nick = d.nick(msg.author_id) %}
+        {% call gonderi(nick, d.is_agent(msg.author_id), msg.created_at, msg.id) %}
+          {% if msg.reply_to %}
+            {% for o in msgs if o.id == msg.reply_to %}{% set alinti = o.text if o.mask is none else "gizlenmiş mesaj" %}
+              <a class="alinti" href="#m-{{ o.id }}"><b>{{ d.nick(o.author_id) }}:</b> {{ alinti|truncate(110, true, "…", 0) }}</a>
+            {% endfor %}
+          {% endif %}
+          {% if msg.mask %}
+            <div class="maske">Bu mesaj <a href="/teklif/{{ msg.mask.proposal_id }}">oylamayla</a> gizlendi.</div>
+          {% else %}
+            <div class="g-govde">{{ msg.text }}</div>
+            {% if me and t.state.can_discuss %}
+            <div class="g-eylem">
+              <details><summary>Yanıtla</summary>
+                <form method="post" action="/konu/{{ t.id }}/mesaj">
+                  <input type="hidden" name="yanit" value="{{ msg.id }}">
+                  <textarea name="metin" required placeholder="{{ nick }} kullanıcısına yanıt"></textarea>
+                  <button class="kucuk">Gönder</button>
+                </form>
+              </details>
+              {% if msg.id in page.open_hide_targets %}
+                <span class="soluk">gizleme oylanıyor</span>
+              {% else %}
+              <details><summary>Gizlemeyi öner</summary>
+                <form method="post" action="/mesaj/{{ msg.id }}/gizle">
+                  <textarea name="gerekce" required placeholder="Neden? Karşı görüş olması gizleme sebebi değildir."></textarea>
+                  <button class="kucuk hayir">Oylamaya sun</button>
+                </form>
+              </details>
+              {% endif %}
+            </div>
+            {% endif %}
+          {% endif %}
+        {% endcall %}
+      {% endfor %}
+      <span id="son"></span>
+
+      {% if t.state.can_discuss %}
+        {% if me %}
+        <form class="cevap-kutu" method="post" action="/konu/{{ t.id }}/mesaj">
+          <div class="g-avatar">{{ m.tamga(me.nickname|string) }}</div>
+          <div>
+            <textarea id="metin" name="metin" required placeholder="Cevabını yaz"></textarea>
+            <div class="satir ayrik"><small class="soluk">Gönderdiğin mesaj sonradan silinemez.</small><button>Gönder</button></div>
+          </div>
+        </form>
+        {% else %}
+        <p class="cevap-giris"><a href="/giris">Giriş yap</a> ya da <a href="/kayit">üye ol</a>, sen de yaz.</p>
+        {% endif %}
+      {% elif t.state.name == 'oylamada' %}
+        <p class="cevap-giris">Bu konunun açılması oylanıyor; kabul edilirse cevaplar açılır.</p>
+      {% elif t.state.name == 'arsivlendi' %}
+        <p class="cevap-giris">Konu uzlaşıyla kapandı; yeni cevap yazılamaz.</p>
+      {% endif %}
+    </section>
+  </div>
+
+  <aside class="yan">
+    {% if page.proposals %}
+    <div class="yan-blok">
+      <h3>Bu konudaki oylamalar</h3>
+      {% for c in page.proposals %}
+        <a class="mini-oylama" href="/teklif/{{ c.proposal.id }}">
+          <span class="mo-baslik">{{ c.proposal.kind.label }}{% if not c.proposal.is_open %} · {{ c.proposal.status.label|lower }}{% endif %}</span>
+          {{ m.mini_cubuk(c) }}
+          <small>{{ c.tally.voted }} oy{% if c.proposal.is_open %} · {{ c.remaining }} kaldı{% endif %}</small>
+        </a>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if me and t.state.can_be_changed %}
+    <div class="yan-blok">
+      <h3>Öner</h3>
+      <details class="eylem"><summary>Alt başlık</summary>
+        <div class="ic"><a class="dugme ikincil kucuk" href="/yeni-konu?ust={{ t.id }}">Alt başlık aç</a></div>
+      </details>
+      <details class="eylem"><summary>Başlığı düzenle</summary>
+        <form class="ic" method="post" action="/konu/{{ t.id }}/duzenle">
+          <label>Başlık</label><input type="text" name="baslik" value="{{ t.title }}" required>
+          <label>Açıklama</label><textarea name="aciklama">{{ t.description }}</textarea>
+          <label>Neden?</label><input type="text" name="gerekce">
+          <button class="kucuk" style="margin-top:10px">Oylamaya sun</button>
+        </form>
+      </details>
+      <details class="eylem"><summary>Uzlaşıyla kapat</summary>
+        <form class="ic" method="post" action="/konu/{{ t.id }}/uzlasma">
+          <label>Varılan ortak nokta</label><textarea name="metin" required></textarea>
+          <button class="kucuk" style="margin-top:10px">Oylamaya sun</button>
+        </form>
+      </details>
+      <details class="eylem"><summary>Konuyu gizle</summary>
+        <form class="ic" method="post" action="/konu/{{ t.id }}/sil">
+          <label>Neden?</label><textarea name="gerekce" required></textarea>
+          <button class="kucuk hayir" style="margin-top:10px">Oylamaya sun</button>
+        </form>
+      </details>
+      <p class="soluk" style="font-size:.8rem;margin:8px 0 0">Hepsi konuyu takip edenlerin oyuna sunulur.</p>
+    </div>
+    {% endif %}
+
+    <details class="yan-blok sade">
+      <summary>Konunun geçmişi</summary>
+      <div class="dongu" title="Konunun yaşam döngüsü">
+        {% for name, label, status in page.lifecycle %}<div class="adim {{ status }}"><i></i>{{ label }}</div>{% endfor %}
+      </div>
+      {% for r in t.revisions|reverse %}
+        <div class="surum"><b>{{ r.title }}</b><small>{{ r.created_at|tarih }}{% if r.proposal_id %} · <a href="/teklif/{{ r.proposal_id }}">oylamayla değişti</a>{% else %} · ilk hali{% endif %}</small></div>
+      {% endfor %}
+    </details>
+  </aside>
+</div>
+{% endblock %}

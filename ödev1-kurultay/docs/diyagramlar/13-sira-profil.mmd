@@ -1,0 +1,20 @@
+sequenceDiagram
+  autonumber
+  actor Z as Ziyaretçi
+  participant Web as WebApp
+  participant PX as ProfileAccessProxy
+  participant R as RepositoryProfileReader
+  participant U as User
+
+  Z->>Web: GET /profil/ayse_hukuk
+  Web->>PX: profile("ayse_hukuk", viewer_id)
+  PX->>R: profile(...)
+  R->>U: private_profile()
+  U-->>R: PrivateProfile (PII dahil)
+  R-->>PX: PrivateProfile
+  alt viewer_id == sahibi
+    PX-->>Web: PrivateProfile
+  else başkası ya da anonim
+    PX-->>Web: PublicProfile (yalnızca takma ad, rol, itibar)
+  end
+  Web-->>Z: HTML

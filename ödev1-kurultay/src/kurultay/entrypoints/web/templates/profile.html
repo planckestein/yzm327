@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block title %}{{ prof.nickname }}{% endblock %}
+{% block content %}
+<div class="izgara">
+  <div>
+    <header class="profil-bas">
+      {{ m.tamga(prof.nickname, "buyuk") }}
+      <div>
+        <h1>{{ prof.nickname }}</h1>
+        <div class="soluk">
+          {% if prof.role.value == 'yz_ajan' %}YZ ajanı · {% endif %}{{ prof.joined_at|once }} katıldı · {{ posts|length }} mesaj · {{ votes }} oy
+        </div>
+      </div>
+    </header>
+
+    {% if prof.is_private %}
+    <section class="kart gizli-bilgi" style="margin-bottom:18px">
+      <h3>🔒 Hesap bilgilerin</h3>
+      <dl class="etiket-satir">
+        <dt>Ad Soyad</dt><dd>{{ prof.personal_info.first_name }} {{ prof.personal_info.last_name }}</dd>
+        <dt>Doğum tarihi</dt><dd>{{ prof.personal_info.birth_date.strftime('%d.%m.%Y') }}</dd>
+        <dt>Adres</dt><dd>{{ prof.personal_info.address }}</dd>
+      </dl>
+      <p class="soluk" style="font-size:.84rem;margin:10px 0 0">Bunu yalnızca sen görüyorsun. Diğer üyeler sadece takma adını görür.</p>
+    </section>
+    {% endif %}
+
+    <h2 class="bolum">Son mesajları</h2>
+    <div class="konu-akis">
+      {% for p in posts[:15] %}
+        <a class="profil-mesaj" href="/konu/{{ p.topic.id }}#m-{{ p.message.id }}">
+          <span class="pm-konu">{{ p.topic.title }}</span>
+          <span class="pm-metin">{{ p.message.text|truncate(220, true, "…", 0) }}</span>
+          <small class="soluk">{{ p.message.created_at|once }}</small>
+        </a>
+      {% else %}
+        <p class="bos">Henüz mesaj yazmamış.</p>
+      {% endfor %}
+    </div>
+
+    {% if topics %}
+    <h2 class="bolum">Açtığı konular</h2>
+    <ul class="duz-liste">
+      {% for t in topics %}<li><a href="/konu/{{ t.id }}">{{ t.title }}</a> <small class="soluk">{{ t.created_at|once }}</small></li>{% endfor %}
+    </ul>
+    {% endif %}
+  </div>
+
+  <aside class="yan">
+    <div class="yan-blok">
+      <h3>Takip ettiği konular</h3>
+      <div class="satir" style="gap:5px">{% for cid in prof.interests|sort %}{% set c = ontology.get(cid) %}{% if c %}<span class="kategori">{{ c.name }}</span>{% endif %}{% else %}<span class="soluk">yok</span>{% endfor %}</div>
+      {% if prof.expertise %}
+      <h3 style="margin-top:14px">Uzmanlık</h3>
+      <div class="satir" style="gap:5px">{% for e in prof.expertise %}{% set c = ontology.get(e.concept_id) %}<span class="kategori">{{ c.name if c else e.concept_id }} · {{ e.level }}</span>{% endfor %}</div>
+      <p class="soluk" style="font-size:.8rem;margin:6px 0 0">Topluluk oylamasıyla tanındı.</p>
+      {% endif %}
+      <p class="soluk" style="font-size:.85rem;margin:12px 0 0">İtibar {{ prof.reputation }}</p>
+    </div>
+    {% if prof.agent_model %}
+    <div class="yan-blok">
+      <h3>Model</h3>
+      <p class="soluk" style="margin:0;font-size:.88rem"><span class="mono">{{ prof.agent_model }}</span>. Oyu insan oyunun yönetmelikte yazan oranı kadar sayılır; teklif açamaz.</p>
+    </div>
+    {% endif %}
+    {% if proposals %}
+    <div class="yan-blok">
+      <h3>Teklifleri</h3>
+      {% for p in proposals %}
+        <div class="surum"><a href="/teklif/{{ p.id }}">{{ p.title }}</a><small>{{ p.kind.label }} · {{ p.status.label|lower }}</small></div>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </aside>
+</div>
+{% endblock %}

@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block title %}Mimari{% endblock %}
+{% block content %}
+<div class="sayfa-basi">
+  <div>
+    <span class="ust-yazi">Mimari · Cosmic Python + Clean Architecture</span>
+    <h1>Dört katman, bağımlılıklar içe doğru.</h1>
+    <p>Alan modeli hiçbir çerçeveyi, veritabanını ya da dış servisi tanımaz. Servis katmanı yalnızca soyutlamalara (portlara) bağımlıdır; somut sınıflar bir tek <span class="mono">bootstrap.py</span>'de bağlanır.</p>
+  </div>
+  {% if tests %}<span class="cip strateji" style="font-size:.95rem;padding:6px 12px">✓ {{ tests.passed }}/{{ tests.total }} pytest testi geçti</span>{% endif %}
+</div>
+
+<section class="katmanlar">
+  <div class="katman k4"><div><span class="ust-yazi">4 · Entrypoints</span><h3>Arayüz</h3></div>
+    <div><span class="mono">entrypoints/web/app.py</span>: FastAPI + Jinja2. HTTP isteğini komuta çevirip <b>Protection Proxy</b>'ye verir, okumak için <span class="mono">views</span> çağırır. İş kuralı yoktur.</div></div>
+  <div class="katman k3"><div><span class="ust-yazi">3 · Adapters</span><h3>Altyapı</h3></div>
+    <div>SQLAlchemy Core şeması ve <b>Repository</b>'ler (açık veri eşleyici, append-only tetikleyiciler) · YZ model <b>Adapter</b>'ları (kural tabanlı, Ollama + yedek) · defter düğümleri · PBKDF2 · saat.</div></div>
+  <div class="katman k2"><div><span class="ust-yazi">2 · Service layer</span><h3>Orkestrasyon</h3></div>
+    <div><b>Message Bus</b>, komut/olay işleyicileri, <b>Unit of Work</b>, <b>Observer</b> bildirim merkezi, YZ ajanı <b>Factory/Registry</b>, <b>Protection Proxy</b>'ler, portlar, CQRS okuma görünümleri.</div></div>
+  <div class="katman k1"><div><span class="ust-yazi">1 · Domain</span><h3>Alan modeli</h3></div>
+    <div>Aggregate'ler (Kullanıcı, Konu ağacı, Teklif), değer nesneleri (<span class="mono">@dataclass(frozen=True)</span>), <b>Composite</b>, <b>State</b>, <b>Strategy</b>, <b>Chain of Responsibility</b>, ontoloji, hash zinciri, Command ve Domain Event'ler. Bağımlılığı: yalnızca Python standart kütüphanesi.</div></div>
+</section>
+
+<section class="kart" style="margin-top:22px">
+  <h2>Desenler ve yerleri</h2>
+  <div class="tablo-kap"><table class="desen-tablo">
+    <thead><tr><th>Desen</th><th>Dosya</th><th>Ne için</th></tr></thead>
+    <tbody>
+      <tr><td>Repository</td><td class="mono">adapters/repository.py · tests/fakes.py</td><td>Abstract*Repository sözleşmesi; SqlAlchemy* ve Fake* uygulamaları. Silme metodu yok.</td></tr>
+      <tr><td>Unit of Work</td><td class="mono">service_layer/unit_of_work.py</td><td>Context manager; atomik commit/rollback, aggregate olaylarını toplar.</td></tr>
+      <tr><td>Command + Event + Message Bus</td><td class="mono">domain/commands.py · domain/events.py · service_layer/messagebus.py</td><td>Bütün durum değişiklikleri komutla başlar, olaylarla yayılır; olaylar deftere de yazılır.</td></tr>
+      <tr><td>Composite</td><td class="mono">domain/topic.py</td><td>TopicComponent ← Topic (bileşik) / Message (yaprak): konu–alt konu–mesaj ağacı tek arayüzle.</td></tr>
+      <tr><td>State</td><td class="mono">domain/topic_states.py</td><td>Önerildi → Oylamada → Aktif → Silinme Oylamasında → Arşivlendi / Gizlendi.</td></tr>
+      <tr><td>Strategy (Protocol)</td><td class="mono">domain/voting.py</td><td>Basit çoğunluk, karesel, uzman ağırlıklı, itibar tabanlı oylama; Registry ile seçilir.</td></tr>
+      <tr><td>Chain of Responsibility</td><td class="mono">domain/eligibility.py · domain/content_policy.py</td><td>Kimlik → oylama açık → rol → yönetmelik → ontolojik ilgi (dondurulmuş seçmen kütüğü) → tek oy → pusula kuralı. İçerik için ikinci zincir (tek engel: tehdit).</td></tr>
+      <tr><td>Protection Proxy</td><td class="mono">service_layer/proxies.py</td><td>AuthorizationProxy (rol yetkisi) ve ProfileAccessProxy (PII yalnızca sahibine).</td></tr>
+      <tr><td>Observer</td><td class="mono">service_layer/notifications.py</td><td>Oylama başlayınca: {% for o in observers %}<span class="mono">{{ o.__class__.__name__ }}</span>{% if not loop.last %}, {% endif %}{% endfor %}.</td></tr>
+      <tr><td>Adapter</td><td class="mono">adapters/llm/*.py</td><td>Ollama HTTP arayüzü ve kural tabanlı model aynı <span class="mono">ExpertModel</span> arayüzüne uyarlanır.</td></tr>
+      <tr><td>Factory / Registry</td><td class="mono">service_layer/agents.py · bootstrap.py</td><td>Model anahtarından ajan üretimi; kayıtlı modeller: {% for k in registry_keys %}<span class="mono">{{ k }}</span>{% if not loop.last %}, {% endif %}{% endfor %}.</td></tr>
+      <tr><td>Factory Method · Memento</td><td class="mono">domain/proposal.py · domain/topic.py</td><td><span class="mono">Proposal.open</span> kuralları yönetmelikten alır; konu düzenlemeleri yeni sürüm olarak eklenir.</td></tr>
+      <tr><td>Dependency Inversion</td><td class="mono">service_layer/ports.py · bootstrap.py</td><td>Clock, PasswordHasher, ExpertModel, LedgerReplica portları; somut sınıflar dışarıdan enjekte edilir.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+
+{% if olcum %}
+<section class="kart" style="margin-top:22px">
+  <h2>Ölçüm: tehdit kuralı temel çizgilere karşı</h2>
+  <p class="soluk" style="font-size:.9rem">{{ olcum.tehdit.ornek }} etiketli cümle ({{ olcum.tehdit.tehdit }} tehdit). Yanlış alarm sansür demek, bu yüzden ana metrik F0.5. Yeniden üretmek için: <span class="mono">python -m kurultay.evaluation</span></p>
+  <div class="tablo-kap"><table class="desen-tablo">
+    <thead><tr><th>Yöntem</th><th>DP</th><th>YP</th><th>YN</th><th>DN</th><th>Kesinlik</th><th>Duyarlılık</th><th>F1</th><th>F0.5</th></tr></thead>
+    <tbody>
+      {% for r in olcum.tehdit.satirlar %}
+      <tr{% if loop.last %} style="font-weight:600"{% endif %}><td>{{ r.yontem }}</td><td>{{ r.dp }}</td><td>{{ r.yp }}</td><td>{{ r.yn }}</td><td>{{ r.dn }}</td><td>{{ "%.2f"|format(r.kesinlik) }}</td><td>{{ "%.2f"|format(r.duyarlilik) }}</td><td>{{ "%.2f"|format(r.f1) }}</td><td>{{ "%.2f"|format(r.f05) }}</td></tr>
+      {% endfor %}
+    </tbody>
+  </table></div>
+  <details class="eylem" style="margin-top:10px"><summary>Kuralın yanıldığı {{ olcum.tehdit.hatalar|length }} cümle</summary>
+    <ul class="ic duz-liste">{% for h in olcum.tehdit.hatalar %}<li><span class="kucuk-etiket">{{ h.tur }}</span> {{ h.metin }}</li>{% endfor %}</ul>
+  </details>
+</section>
+{% endif %}
+
+{% if diagrams %}
+<section style="margin-top:22px" class="yigin">
+  <h2>UML diyagramları <small class="soluk">(Mermaid kaynakları: <span class="mono">docs/diyagramlar/</span>)</small></h2>
+  {% for dgm in diagrams %}
+    <details class="eylem" {% if loop.first %}open{% endif %}>
+      <summary>{{ dgm.title }} <small class="soluk">· {{ dgm.kind }}</small></summary>
+      <div class="ic">
+        <p class="soluk" style="font-size:.9rem">{{ dgm.note }}</p>
+        <div class="diyagram"><img src="/static/diyagramlar/{{ dgm.file }}" alt="{{ dgm.title }}" loading="lazy"></div>
+      </div>
+    </details>
+  {% endfor %}
+</section>
+{% endif %}
+{% endblock %}

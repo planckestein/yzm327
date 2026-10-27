@@ -1,0 +1,55 @@
+classDiagram
+  direction LR
+  class LedgerEntry {
+    <<frozen dataclass>>
+    +index: int
+    +timestamp: str
+    +kind: str
+    +payload: str
+    +previous_hash: str
+    +hash: str
+    +compute_hash(...)$ str
+    +next_after(previous, kind, payload, now)$ LedgerEntry
+    +is_intact() bool
+  }
+  class VerificationReport {
+    <<value object>>
+    +valid: bool
+    +length: int
+    +head_hash: str
+    +broken_index: int
+  }
+  class ConsensusReport {
+    <<value object>>
+    +head_hash: str
+    +nodes: tuple~NodeStatus~
+    +healthy: bool
+  }
+  class LedgerFunctions {
+    <<module>>
+    +verify_chain(entries)$ VerificationReport
+    +reach_consensus(reports)$ ConsensusReport
+  }
+  class LedgerReplica {
+    <<interface>>
+    +append(entry)
+    +entries() list
+    +sync(entries)
+  }
+  class JsonLinesLedgerNode
+  class InMemoryLedgerNode
+  class AbstractLedgerRepository {
+    <<abstract>>
+    +append(entry)
+    +all() list
+  }
+  class record_in_ledger {
+    <<event handler>>
+  }
+  LedgerEntry --> LedgerEntry : previous_hash
+  LedgerFunctions ..> VerificationReport
+  LedgerFunctions ..> ConsensusReport
+  LedgerReplica <|.. JsonLinesLedgerNode
+  LedgerReplica <|.. InMemoryLedgerNode
+  record_in_ledger --> AbstractLedgerRepository : ana defter
+  record_in_ledger --> LedgerReplica : çoğaltır (A, B, C)

@@ -1,0 +1,42 @@
+sequenceDiagram
+  autonumber
+  actor Uye as Üye
+  participant Web as WebApp (entrypoint)
+  participant Proxy as AuthorizationProxy
+  participant Bus as MessageBus
+  participant H as propose_topic
+  participant UoW as UnitOfWork
+  participant T as Topic
+  participant P as Proposal
+  participant L as record_in_ledger
+  participant C as VotingNotificationCenter
+  participant A as ExpertAgentNotifier
+  participant M as ExpertModel (Adapter)
+
+  Uye->>Web: POST /yeni-konu
+  Web->>Proxy: dispatch(ProposeTopic)
+  Proxy->>UoW: rol ve oturum denetimi
+  Proxy->>Bus: dispatch (gerçek nesne)
+  Bus->>H: handle(ProposeTopic)
+  H->>UoW: with uow
+  H->>H: içerik zinciri (boş metin, tehdit)
+  H->>T: Topic.propose() [Önerildi]
+  H->>T: start_voting() [Oylamada]
+  H->>P: Proposal.open(regulation) strateji ve eşik alır
+  H->>UoW: users.list() + ontoloji
+  H->>P: freeze_electorate(build_electorate(...)) seçmen kütüğü dondurulur
+  H->>UoW: commit() (teklif + kütük satırları)
+  Bus->>UoW: collect_new_events()
+  UoW-->>Bus: TopicProposed, TopicStateChanged, ProposalOpened, VotingStarted
+  loop her olay
+    Bus->>L: hash zincirine ekle, düğümlere çoğalt
+  end
+  Bus->>C: VotingStarted
+  C->>C: InterestedMemberNotifier.update() kütükteki üyelere toplu bildirim
+  C->>A: update(event)
+  A->>M: assess(AssessmentRequest)
+  M-->>A: Assessment(onay, gerekçe)
+  A-->>Bus: [CastVote(ajan)]
+  Bus->>Bus: CastVote kuyruğa (bkz. oy verme)
+  Bus-->>Web: topic_id
+  Web-->>Uye: 303 /konu/{id}

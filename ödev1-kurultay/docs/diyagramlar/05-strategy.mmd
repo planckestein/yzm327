@@ -1,0 +1,52 @@
+classDiagram
+  direction LR
+  class VotingStrategy {
+    <<Protocol>>
+    +name: str
+    +explanation: str
+    +weight(ballot, voter) float
+    +max_weight(voter) float
+    +validate(intensity, voter)
+  }
+  class SimpleMajority {
+    +weight() 1
+  }
+  class QuadraticVoting {
+    +credits: int
+    +cost(k) k²
+    +weight() k
+  }
+  class ExpertWeighted {
+    +weight() 1 + uzmanlık
+  }
+  class ReputationWeighted {
+    +CAP: 2
+    +weight() 1 + min(2, log₂(1+itibar/10))
+  }
+  class StrategyRegistry {
+    <<registry>>
+    +STRATEGIES: dict
+    +create_strategy(name, regulation)$ VotingStrategy
+  }
+  class Tally {
+    <<value object>>
+    +yes: float
+    +no: float
+    +remaining_max: float
+    +eligible: int
+    +voted: int
+  }
+  class Decision {
+    <<value object>>
+    +outcome: Outcome
+    +reason: str
+  }
+  class Proposal
+  VotingStrategy <|.. SimpleMajority
+  VotingStrategy <|.. QuadraticVoting
+  VotingStrategy <|.. ExpertWeighted
+  VotingStrategy <|.. ReputationWeighted
+  StrategyRegistry ..> VotingStrategy : üretir
+  Proposal ..> VotingStrategy : tally(strategy, ballots, electorate)
+  Proposal ..> Tally
+  Tally ..> Decision : decide(tally, threshold, quorum)

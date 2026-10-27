@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+{% set c = d.card %}
+{% set p = c.proposal %}
+{% block title %}{{ p.title }}{% endblock %}
+{% block content %}
+<nav class="kirinti">
+  <a href="/teklifler">Oylamalar</a>
+  {% if d.topic %}<span>›</span><a href="/konu/{{ d.topic.id }}">{{ d.topic.title }}</a>{% endif %}
+</nav>
+<div class="izgara">
+  <div class="yigin">
+    <article class="kart vurgulu">
+      <div class="satir" style="gap:6px"><span class="kategori">{{ p.kind.label }}</span> {{ m.teklif_durum(p) }}</div>
+      <h1 style="margin-top:10px">{{ p.title }}</h1>
+      <div class="satir soluk" style="font-size:.86rem">{{ m.tamga(c.proposer) }} <a href="/profil/{{ c.proposer }}">{{ c.proposer }}</a> önerdi · <span title="{{ p.opened_at|tarih }}">{{ p.opened_at|once }}</span></div>
+
+      {% if p.kind.value == "duzenleme" %}
+        <div class="fark" style="margin-top:14px">
+          <div class="eski"><small class="soluk" style="text-decoration:none;display:block">Şimdiki</small><b>{{ d.payload.old_title }}</b><br>{{ d.payload.old_description }}</div>
+          <div class="yeni"><small class="soluk" style="display:block">Önerilen</small><b>{{ d.payload.title }}</b><br>{{ d.payload.description }}</div>
+        </div>
+        {% if p.rationale %}<p style="margin-top:12px"><b>Gerekçe:</b> {{ p.rationale }}</p>{% endif %}
+      {% elif p.kind.value == "mesaj_gizleme" %}
+        <div class="maske" style="margin-top:14px"><small>Gizlenmesi önerilen mesaj</small>
+          <div style="color:var(--murekkep);margin-top:4px">“{{ d.payload.message_text }}”</div>
+          {% if d.target_message %}<small><a href="/konu/{{ d.topic.id }}#m-{{ d.target_message.id }}">tartışmada gör</a></small>{% endif %}
+        </div>
+        <p style="margin-top:12px"><b>Gerekçe:</b> {{ p.rationale }}</p>
+      {% elif p.kind.value == "yonetmelik" %}
+        <dl class="etiket-satir" style="margin-top:14px">
+          <dt>Kural</dt><dd>{{ d.payload.key }}</dd>
+          <dt>Şimdiki değer</dt><dd>{{ d.payload.old_value }}</dd>
+          <dt>Önerilen</dt><dd>{{ d.payload.value }}</dd>
+        </dl>
+        <p style="margin-top:12px"><b>Gerekçe:</b> {{ p.rationale }}</p>
+      {% else %}
+        <p style="margin-top:14px;white-space:pre-wrap">{{ p.rationale }}</p>
+      {% endif %}
+    </article>
+
+    <section class="kart">
+      <div class="kart-baslik"><h2>Sayım <a class="dugme ikincil kucuk" style="margin-left:8px;vertical-align:middle" href="/canli?teklif={{ p.id }}">Meclis görünümü</a></h2><small>{% if p.is_open %}⏳ {{ c.remaining }} kaldı · bitiş {{ p.deadline|tarih }}{% else %}{{ p.closed_at|tarih }}{% endif %}</small></div>
+      <div style="margin-top:18px">{{ m.oy_cubugu(c) }}</div>
+      {% if p.result %}<div class="bildirim {{ 'basari' if p.status.value == 'kabul' else 'hata' }}" style="margin:14px 0 0"><b>{{ p.status.label }}.</b> {{ p.result.reason }} (evet {{ p.result.yes|round(1) }} · hayır {{ p.result.no|round(1) }})</div>{% endif %}
+      <div class="tablo-kap" style="margin-top:14px">
+        <table>
+          <thead><tr><th>Seçmen</th><th>Oy</th><th>{% if d.quadratic %}Oy × kredi{% else %}Ağırlık{% endif %}</th><th>Gerekçe</th></tr></thead>
+          <tbody>
+          {% for b in d.ballots %}
+            <tr>
+              <td class="secmen"><span class="satir" style="gap:6px;flex-wrap:nowrap">{{ m.tamga(b.nickname) }}<a href="/profil/{{ b.nickname }}">@{{ b.nickname }}</a>{% if b.is_agent %}<span class="cip yz">YZ</span>{% endif %}</span></td>
+              <td><span class="rozet r-{{ 'kabul' if b.choice == 'evet' else 'red' }}">{{ b.choice|capitalize }}</span></td>
+              <td class="mono">{% if d.quadratic %}{{ b.intensity }} oy · {{ b.cost }} kr{% endif %} → {{ b.weight }}</td>
+              <td style="font-size:.86rem">{{ b.rationale }}</td>
+            </tr>
+          {% else %}
+            <tr><td colspan="4" class="bos">Henüz oy yok.</td></tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% if d.ballots_total > d.ballots|length %}<p class="soluk" style="font-size:.84rem;margin:10px 0 0">Toplam {{ d.ballots_total }} oy. Burada gerekçe yazılan oylar ve en son verilen 40 oy var; hepsi <a href="/defter">defterde</a>.</p>{% endif %}
+    </section>
+  </div>
+
+  <aside class="yigin">
+    <div class="kart">
+      <span class="ust-yazi">Strateji</span>
+      <h3>{{ c.strategy_label }}</h3>
+      <p class="soluk" style="font-size:.9rem">{{ d.strategy_explanation }}</p>
+      <dl class="etiket-satir">
+        <dt>Eşik</dt><dd>{{ c.threshold_label }} ({{ p.threshold }})</dd>
+        <dt>Seçmen</dt><dd>{{ d.electorate_size }} kişi <small class="soluk">(oylama açıldığında belirlendi)</small></dd>
+        <dt>Yeter sayı</dt><dd>%{{ c.quorum_pct|int }} katılım</dd>
+        <dt>YZ ajanları</dt><dd>{% for a in d.agents_in_electorate %}<span class="cip yz">@{{ a }}</span> {% else %}yok{% endfor %}</dd>
+      </dl>
+    </div>
+
+    <div class="kart">
+      <span class="ust-yazi">Oy hakkın var mı?</span>
+      {% if not me %}
+        <p class="soluk">Oy kullanmak için <a href="/giris">giriş yap</a>.</p>
+      {% else %}
+        {% set dec = d.my_decision %}
+        <div class="zincir">
+          {% for label in d.chain_labels %}
+            {% if label in dec.trail %}<span class="halka gecti">✓ {{ label }}</span>
+            {% elif not dec.allowed and loop.index0 == dec.trail|length %}<span class="halka takildi">✕ {{ label }}</span>
+            {% else %}<span class="halka bekliyor">{{ label }}</span>{% endif %}
+            {% if not loop.last %}<span class="ok">→</span>{% endif %}
+          {% endfor %}
+        </div>
+        {% if d.my_ballot %}
+          <p>Oyun: <b>{{ d.my_ballot.choice }}</b> ({{ d.my_ballot.weight }} ağırlık).</p>
+        {% elif dec.allowed %}
+          <form method="post" action="/teklif/{{ p.id }}/oy">
+            {% if d.quadratic %}
+              <label for="yogunluk">Kaç oy? İlk oy bedava; kalan ek kredin {{ d.credits_left }}/{{ d.quadratic.budget }}</label>
+              <select id="yogunluk" name="yogunluk">
+                {% for k in range(1, d.quadratic.max_votes + 1) %}{% set ek = d.quadratic.extra_cost(k) %}<option value="{{ k }}" {{ 'disabled' if ek > d.credits_left }}>{{ k }} oy · {{ ek }} ek kredi{% if ek > d.credits_left %} (yetmiyor){% endif %}</option>{% endfor %}
+              </select>
+            {% else %}<input type="hidden" name="yogunluk" value="1">{% endif %}
+            <label for="gerekce">Gerekçe (isteğe bağlı)</label>
+            <input type="text" id="gerekce" name="gerekce" placeholder="Kısaca neden?">
+            <div class="satir" style="margin-top:12px">
+              <button class="evet" name="secim" value="evet">Evet</button>
+              <button class="hayir" name="secim" value="hayir">Hayır</button>
+            </div>
+          </form>
+        {% else %}
+          <p class="soluk" style="font-size:.9rem;margin:0">{{ dec.reason }}</p>
+          {% if "kavram" in dec.reason %}<p style="margin-top:8px"><a href="/ontoloji">Ontolojiden ilgi alanı ekle →</a></p>{% endif %}
+        {% endif %}
+      {% endif %}
+    </div>
+  </aside>
+</div>
+{% endblock %}

@@ -1,0 +1,130 @@
+classDiagram
+  direction LR
+  class User {
+    +id: str
+    +nickname: Nickname
+    +personal_info: PersonalInfo
+    +password_hash: PasswordHash
+    +role: Role
+    +interests: frozenset~str~
+    +expertise: tuple~Expertise~
+    +reputation: int
+    +public_profile() PublicProfile
+    +private_profile() PrivateProfile
+    +grant_expertise(concept_id, level)
+    +set_interest(concept_id, following)
+  }
+  class Nickname {
+    <<value object>>
+    +value: str
+  }
+  class PersonalInfo {
+    <<value object>>
+    +first_name: str
+    +last_name: str
+    +birth_date: date
+    +address: str
+    +age_on(today) int
+  }
+  class PublicProfile {
+    <<value object>>
+    +nickname: str
+    +role: Role
+    +reputation: int
+  }
+  class PrivateProfile {
+    <<value object>>
+    +personal_info: PersonalInfo
+  }
+  class Expertise {
+    <<value object>>
+    +concept_id: str
+    +level: int
+  }
+  class Role {
+    <<enumeration>>
+    UYE
+    UZMAN
+    YZ_AJAN
+  }
+  class Ontology {
+    +concepts: dict
+    +relations: list
+    +ancestors(id) list~Concept~
+    +neighbourhood(ids) frozenset
+    +is_relevant_to(user_concepts, topic_concepts) bool
+    +suggest(text) list
+  }
+  class Concept {
+    <<value object>>
+    +id: str
+    +name: str
+    +keywords: tuple
+    +parent_id: str
+  }
+  class ConceptRelation {
+    <<value object>>
+    +source: str
+    +target: str
+  }
+  class Proposal {
+    <<aggregate root>>
+    +kind: ProposalKind
+    +strategy_name: str
+    +threshold: str
+    +concept_ids: frozenset
+    +deadline: datetime
+    +status: ProposalStatus
+    +electorate: Electorate
+    +open(...)$ Proposal
+    +freeze_electorate(electorate)
+    +cast(ballot, decision)
+    +try_close(strategy, electorate, regulation, now)
+    +supersede(reason, now)
+  }
+  class Electorate {
+    <<value object>>
+    +voters: tuple~VoterProfile~
+    +agent_weight: Fraction
+    +get(user_id) VoterProfile
+    +total_max_weight(strategy) float
+  }
+  class VoterProfile {
+    <<value object>>
+    +user_id: str
+    +reputation: int
+    +expertise_level: int
+    +is_agent: bool
+  }
+  class Ballot {
+    <<value object>>
+    +voter_id: str
+    +choice: Choice
+    +intensity: int
+    +is_agent: bool
+    +rationale: str
+  }
+  class Regulation {
+    <<value object>>
+    +version: int
+    +minimum_age: int
+    +quorum_percent: int
+    +agent_weight_percent: int
+    +strategies
+    +thresholds
+    +with_change(key, value) Regulation
+  }
+  User *-- Nickname
+  User *-- PersonalInfo
+  User *-- "0..*" Expertise
+  User --> Role
+  PublicProfile <|-- PrivateProfile
+  User ..> PublicProfile : üretir
+  Ontology *-- "1..*" Concept
+  Ontology *-- "0..*" ConceptRelation
+  Proposal *-- "0..*" Ballot
+  Proposal *-- "1" Electorate : oylama açılınca dondurulur
+  Electorate *-- "0..*" VoterProfile
+  Proposal ..> Regulation : kuralı alır
+  User ..> Ontology : ilgi alanları
+  Proposal ..> Ontology : kavramları

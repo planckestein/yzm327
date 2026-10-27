@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block title %}Kavram ağı{% endblock %}
+{% block content %}
+<div class="sayfa-basi">
+  <div>
+    <h1>Kim neyi oylar?</h1>
+    <p>Her konu bir ya da birkaç kavrama bağlı. Bir konunun oylamasına o kavramı, onun üst kavramını ya da <span style="color:var(--gok)">ilişkili</span> bir kavramı takip edenler katılır. Takip ettiğin kavramları buradan değiştirebilirsin.</p>
+  </div>
+</div>
+
+<section class="kart" style="padding:10px">
+  <svg class="ag" viewBox="0 0 1100 830" role="img" aria-label="Kavram ağı">
+    {% for a, b, kind in edges %}
+      {% set na = by_id[a] %}{% set nb = by_id[b] %}
+      {% if na and nb %}<line class="kenar {{ kind }}" x1="{{ na.x }}" y1="{{ na.y }}" x2="{{ nb.x }}" y2="{{ nb.y }}"/>{% endif %}
+    {% endfor %}
+    <circle cx="550" cy="410" r="44" fill="none" stroke="var(--cizgi)" stroke-dasharray="3 4"/>
+    <text x="550" y="414" text-anchor="middle" class="kucuk">Kurultay</text>
+    {% for n in nodes %}
+      <g class="dugum-k {{ 'kok' if not n.parent_id }} {{ 'takip' if n.following }}">
+        <a href="#k-{{ n.id }}">
+        <circle cx="{{ n.x }}" cy="{{ n.y }}" r="{{ 9 if n.parent_id else 13 }}"/>
+        <text x="{{ n.lx }}" y="{{ n.ly }}" text-anchor="{{ n.anchor }}">{{ n.name }}</text>
+        <text x="{{ n.lx }}" y="{{ n.ly + 13 }}" text-anchor="{{ n.anchor }}" class="kucuk">{{ n.followers }} üye{% if n.agents %} · {{ n.agents|length }} YZ{% endif %}{% if n.topics %} · {{ n.topics }} konu{% endif %}</text>
+        </a>
+      </g>
+    {% endfor %}
+  </svg>
+  <div class="satir soluk" style="font-size:.82rem;padding:0 10px 6px;gap:18px">
+    <span>● sarı: ana kavram</span><span>│ ağaç (genel → özel)</span><span style="color:var(--gok)">- - ilişkili kavramlar</span><span style="color:var(--kizil)">◯ takip ettiğin</span>
+  </div>
+</section>
+
+<div class="izgara" style="margin-top:22px">
+  <div class="kavram-listesi">
+    {% for n in nodes %}
+      <div class="kart {{ 'alt-kavram' if n.parent_id }}" id="k-{{ n.id }}">
+        <div class="satir ayrik"><h3 style="margin:0">{{ n.name }}</h3>
+          {% if me and not me.is_agent %}
+          <form method="post" action="/ontoloji/{{ n.id }}/takip">
+            <input type="hidden" name="takip" value="{{ '0' if n.following else '1' }}">
+            <button class="kucuk {{ 'ikincil' if n.following else '' }}">{{ "Takiptesin ✓" if n.following else "Takip et" }}</button>
+          </form>
+          {% endif %}
+        </div>
+        <p class="soluk" style="font-size:.88rem;margin:6px 0">{{ n.description }}</p>
+        <div class="satir" style="gap:5px;font-size:.82rem">
+          <span class="cip">{{ n.followers }} üye</span><span class="cip">{{ n.topics }} konu</span>
+          {% for e in n.experts %}<span class="cip strateji">uzman @{{ e }}</span>{% endfor %}
+          {% for a in n.agents %}<span class="cip yz">@{{ a }}</span>{% endfor %}
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+  <aside class="yigin">
+    <div class="kart vurgulu">
+      <h3>Uzmanlık talep et</h3>
+      <p class="soluk" style="font-size:.88rem">Uzmanlığı kimse kendine veremez. Talebini o kavramı takip edenler oylar. Kabul edilirse, uzman ağırlıklı oylamalarda (ör. konu düzenleme) oyun 1 + düzey sayılır.</p>
+      {% if me and not me.is_agent %}
+      <form method="post" action="/uzmanlik">
+        <label>Kavram</label>
+        <select name="kavram">{% for n in nodes %}<option value="{{ n.id }}">{{ '— ' if n.parent_id }}{{ n.name }}</option>{% endfor %}</select>
+        <label>Düzey</label>
+        <select name="duzey"><option value="1">1 · bilgili</option><option value="2">2 · deneyimli</option><option value="3">3 · uzman</option></select>
+        <label>Gerekçe</label>
+        <textarea name="gerekce" required placeholder="Eğitimin, deneyimin, katkıların…"></textarea>
+        <button style="margin-top:10px">Oylamaya sun</button>
+      </form>
+      {% else %}<p><a href="/giris">Giriş yap</a></p>{% endif %}
+    </div>
+  </aside>
+</div>
+{% endblock %}

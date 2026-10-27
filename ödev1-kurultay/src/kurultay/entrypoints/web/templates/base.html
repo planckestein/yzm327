@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Kurultay{% endblock %} · Kurultay</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&display=swap" rel="stylesheet">
+  <script>
+    // Tema: kayıtlı seçim, yoksa sistem tercihi. Sayfa çizilmeden önce uygulanır (yanıp sönme olmaz).
+    (function () {
+      var t = null;
+      try { t = localStorage.getItem("kurultay-tema"); } catch (e) {}
+      if (t !== "light" && t !== "dark") t = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      document.documentElement.dataset.theme = t;
+    })();
+  </script>
+  <link rel="stylesheet" href="/static/kurultay.css?v={{ css_surum }}">
+  <link rel="icon" href="/static/otag.svg" type="image/svg+xml">
+</head>
+<body>
+{% import "_macros.html" as m %}
+<header class="ust">
+  <div class="ust-ic">
+    <a class="logo" href="/">
+      {{ m.otag() }}
+      <span>Kurultay<small>tartış · öner · oyla</small></span>
+    </a>
+    <nav class="menu">
+      {% for href, label in [("/", "Gündem"), ("/teklifler", "Oylamalar"), ("/canli", "Meclis")] %}
+        <a href="{{ href }}" class="{{ 'etkin' if (path == href or (href != '/' and path.startswith(href))) }}">{{ label }}</a>
+      {% endfor %}
+      {% set sistem = [("/yonetmelik", "Kurallar", "Oylama yöntemleri, eşikler, yeter sayı"), ("/ontoloji", "Kavram ağı", "Kim hangi konuda oy verir"), ("/defter", "Defter", "Silinemeyen kayıt zinciri"), ("/mimari", "Mimari", "Katmanlar, desenler, UML")] %}
+      <details class="acilir {{ 'etkin' if path.startswith(('/yonetmelik', '/ontoloji', '/defter', '/mimari')) }}">
+        <summary>Nasıl işler</summary>
+        <div class="acilir-ic">
+          {% for href, label, note in sistem %}
+            <a href="{{ href }}" class="{{ 'etkin' if path.startswith(href) }}"><b>{{ label }}</b><small>{{ note }}</small></a>
+          {% endfor %}
+        </div>
+      </details>
+      <a href="/tanitim" class="tanitim-dugme {{ 'etkin' if path.startswith('/tanitim') }}">▶ Tanıtım</a>
+    </nav>
+    <div class="hesap">
+      <form class="ara" method="get" action="/" role="search">
+        <input type="search" name="q" value="{{ request.query_params.get('q', '') if path == '/' else '' }}" placeholder="Forumda ara" aria-label="Forumda ara">
+      </form>
+      <button class="tema-dugme" id="temaDugme" type="button" title="Temayı değiştir (T)">☾</button>
+      {% if me %}
+        <a class="zil" href="/bildirimler" title="Bildirimler">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+          {% if unread %}<span class="sayi">{{ unread }}</span>{% endif %}
+        </a>
+        <a href="/profil/{{ me.nickname }}" class="satir" style="gap:8px">{{ m.tamga(me.nickname|string) }} <span class="kisi-ad">@{{ me.nickname }}</span></a>
+        <form method="post" action="/cikis"><button class="metin" type="submit">Çıkış</button></form>
+      {% else %}
+        <a href="/giris">Giriş</a>
+        <a class="dugme sari kucuk" href="/kayit">Katıl</a>
+      {% endif %}
+    </div>
+  </div>
+  <div class="kilim ince"></div>
+</header>
+
+<main class="kap">
+  {% if flash %}
+    <div class="bildirim {{ flash.kind }}">{{ flash.text }}</div>
+  {% endif %}
+  {% block content %}{% endblock %}
+</main>
+
+<footer class="alt-bilgi">
+  <div class="kap">
+    <span>Kurultay · YZM327 Yazılım Mühendisliğinde Yapay Zekâ · 1. ödev</span>
+    <span class="satir">
+      <span class="mono">{{ now|tarih }}</span>
+      {% if demo_mode %}
+      <form method="post" action="/demo/zaman" class="satir" title="Demo: oylama sürelerinin dolmasını beklemeden sonucu görmek için">
+        <input type="hidden" name="gun" value="1">
+        <button class="ikincil kucuk" type="submit">⏩ Saati 1 gün ileri al</button>
+      </form>
+      {% endif %}
+    </span>
+  </div>
+</footer>
+<script>
+  (function () {
+    var kok = document.documentElement, d = document.getElementById("temaDugme");
+    function yaz() { d.textContent = kok.dataset.theme === "dark" ? "☀" : "☾"; d.title = (kok.dataset.theme === "dark" ? "Açık tema" : "Koyu tema") + " (T)"; }
+    function degistir() {
+      kok.dataset.theme = kok.dataset.theme === "dark" ? "light" : "dark";
+      try { localStorage.setItem("kurultay-tema", kok.dataset.theme); } catch (e) {}
+      yaz();
+    }
+    d.addEventListener("click", degistir);
+    document.addEventListener("keydown", function (e) {
+      var h = e.target;
+      if ((e.key === "t" || e.key === "T") && !e.ctrlKey && !e.metaKey && !e.altKey &&
+          !(h.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(h.tagName))) degistir();
+    });
+    yaz();
+    // "Nasıl işler" menüsü dışarı tıklayınca kapansın
+    document.addEventListener("click", function (e) {
+      document.querySelectorAll("details.acilir[open]").forEach(function (m) { if (!m.contains(e.target)) m.removeAttribute("open"); });
+    });
+  })();
+</script>
+</body>
+</html>

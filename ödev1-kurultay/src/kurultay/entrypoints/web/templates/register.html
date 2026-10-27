@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Katıl{% endblock %}
+{% block content %}
+<div class="izgara">
+  <form class="kart vurgulu" method="post" action="/kayit">
+    <h1>Üye ol</h1>
+    <div class="fark" style="font-family:var(--sans)">
+      <div style="padding:0"><label for="ad">Ad</label><input type="text" id="ad" name="ad" required></div>
+      <div style="padding:0"><label for="soyad">Soyad</label><input type="text" id="soyad" name="soyad" required></div>
+    </div>
+    <div class="fark" style="font-family:var(--sans)">
+      <div style="padding:0"><label for="dogum_tarihi">Doğum tarihi</label><input type="date" id="dogum_tarihi" name="dogum_tarihi" required></div>
+      <div style="padding:0"><label for="takma_ad">Takma ad <small class="soluk">(herkese görünen tek bilgi)</small></label><input type="text" id="takma_ad" name="takma_ad" required pattern="[a-zA-Z0-9_çğıöşüÇĞİÖŞÜ]{3,20}"></div>
+    </div>
+    <label for="adres">Adres</label>
+    <input type="text" id="adres" name="adres" required>
+    <label for="sifre">Şifre <small class="soluk">(en az 8 karakter)</small></label>
+    <input type="password" id="sifre" name="sifre" required minlength="8" autocomplete="new-password">
+    <label>Takip edeceğin konular <small class="soluk">(hangi oylamalara katılacağını belirler, sonra değiştirebilirsin)</small></label>
+    <div class="kavram-sec">
+      {% for root in ontology.roots() %}
+        <label><input type="checkbox" name="ilgi" value="{{ root.id }}"> {{ root.name }}</label>
+        {% for kid in ontology.children(root.id) %}<label class="alt"><input type="checkbox" name="ilgi" value="{{ kid.id }}"> {{ kid.name }}</label>{% endfor %}
+      {% endfor %}
+    </div>
+    <div class="satir ayrik" style="margin-top:14px"><small>Deftere yalnızca takma adın yazılır.</small><button class="sari">Üye ol</button></div>
+  </form>
+  <aside class="kart gizli-bilgi">
+    <h3>🔒 Kişisel bilgilerin</h3>
+    <p class="soluk" style="font-size:.9rem;margin:0">Adın, soyadın, doğum tarihin ve adresin yaş sınırı ve hesap güvenliği için istenir. Bunları senden başka kimse görmez: ne diğer üyeler, ne YZ ajanları, ne defter. Profilinde yalnızca takma adın, itibarın ve takip ettiğin konular görünür. Şifren düz metin olarak saklanmaz (PBKDF2).</p>
+  </aside>
+</div>
+{% endblock %}

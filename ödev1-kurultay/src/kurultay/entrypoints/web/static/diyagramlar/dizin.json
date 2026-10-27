@@ -1,0 +1,86 @@
+[
+ {
+  "file": "01-katmanlar.svg",
+  "title": "Katmanlar ve bağımlılığın tersine çevrilmesi",
+  "kind": "Sınıf diyagramı",
+  "note": "Entrypoints → Service Layer → Domain; Adapters yalnızca portları (arayüzleri) gerçekler. Domain hiçbir katmanı bilmez."
+ },
+ {
+  "file": "02-alan-modeli.svg",
+  "title": "Alan modeli: kullanıcı, ontoloji, teklif",
+  "kind": "Sınıf diyagramı",
+  "note": "Değer nesneleri frozen dataclass'tır. PublicProfile'da kişisel veri alanı yoktur; PrivateProfile yalnızca sahibine verilir."
+ },
+ {
+  "file": "03-composite-state.svg",
+  "title": "Composite ve State: konu ağacı ve yaşam döngüsü",
+  "kind": "Sınıf diyagramı",
+  "note": "Topic (bileşik) ve Message (yaprak) aynı TopicComponent arayüzünü uygular. Konunun davranışı durum nesnesine devredilir."
+ },
+ {
+  "file": "04-yasam-dongusu.svg",
+  "title": "Konu yaşam döngüsü",
+  "kind": "Durum diyagramı",
+  "note": "Önerildi → Oylamada → Aktif → Silinme Oylamasında → Arşivlendi / Gizlendi. Gizlenen kayıt silinmez."
+ },
+ {
+  "file": "05-strategy.svg",
+  "title": "Strategy: oylama algoritmaları",
+  "kind": "Sınıf diyagramı",
+  "note": "Basit çoğunluk, karesel, uzman ağırlıklı ve itibar tabanlı oylama aynı Protocol'ü uygular; Registry ile seçilir."
+ },
+ {
+  "file": "06-chain-proxy.svg",
+  "title": "Chain of Responsibility ve Protection Proxy",
+  "kind": "Sınıf diyagramı",
+  "note": "Oy hakkı yedi halkalı zincirle denetlenir. Komutlar ve profiller vekiller (proxy) üzerinden geçer."
+ },
+ {
+  "file": "07-observer-adapter.svg",
+  "title": "Observer, Adapter ve Factory/Registry: YZ uzman ajanları",
+  "kind": "Sınıf diyagramı",
+  "note": "Oylama başlayınca gözlemciler haberdar edilir; YZ ajanı modelini Registry'den alır, modeller Adapter'dır."
+ },
+ {
+  "file": "08-repository-uow-bus.svg",
+  "title": "Repository, Unit of Work ve Message Bus",
+  "kind": "Sınıf diyagramı",
+  "note": "Her soyut repository'nin SQLAlchemy ve Fake uygulaması vardır. Hiçbir repository silme metodu sunmaz."
+ },
+ {
+  "file": "09-defter.svg",
+  "title": "Dağıtık defter",
+  "kind": "Sınıf diyagramı",
+  "note": "Hash zinciri, düğüm kopyaları ve çoğunluk uzlaşması."
+ },
+ {
+  "file": "10-sira-konu-onerisi.svg",
+  "title": "Konu önerisi",
+  "kind": "Sıralama diyagramı",
+  "note": "Komut → Proxy → Message Bus → işleyici → olaylar → defter → Observer → YZ ajanının oyu."
+ },
+ {
+  "file": "11-sira-oy-verme.svg",
+  "title": "Oy verme ve sonuçlanma",
+  "kind": "Sıralama diyagramı",
+  "note": "Yetki zinciri, strateji, erken karar ve kabul edilen teklifin etkisi."
+ },
+ {
+  "file": "12-sira-mesaj-gizleme.svg",
+  "title": "Mesaj gizleme (karesel oylama)",
+  "kind": "Sıralama diyagramı",
+  "note": "Mesaj silinmez, maskelenir; içerik özeti defterde kalır."
+ },
+ {
+  "file": "13-sira-profil.svg",
+  "title": "Profil görüntüleme (PII koruması)",
+  "kind": "Sıralama diyagramı",
+  "note": "Protection Proxy, hesap sahibi olmayanlara yalnızca takma adlı profil verir."
+ },
+ {
+  "file": "14-sira-defter.svg",
+  "title": "Defter kaydı, çoğaltma ve doğrulama",
+  "kind": "Sıralama diyagramı",
+  "note": "Her olay zincire eklenir, üç düğüme çoğaltılır; uzlaşma raporu kurcalanan düğümü bulur."
+ }
+]

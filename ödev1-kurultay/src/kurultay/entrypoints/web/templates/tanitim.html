@@ -1,0 +1,216 @@
+{% extends "base.html" %}
+{% block title %}Tanıtım{% endblock %}
+{% block content %}
+{% set d = "/static/diyagramlar/" %}
+<div class="sunum" id="sunum">
+  <div class="sunum-ust">
+    <span class="ust-yazi">Tanıtım · Kurultay ve dersin mimari şartları</span>
+    <div class="ilerleme"><span id="ilerleme-cubuk"></span></div>
+    <span class="soluk mono" id="sayac">1 / 1</span>
+  </div>
+
+  {# ------------------------------------------------------------------ 0 #}
+  <section class="slayt kapak">
+    <div>
+      {{ m.otag() }}
+      <h1>Kurultay</h1>
+      <p class="kapak-alt">Herkesin konu açabildiği, her kararın oylandığı bir tartışma platformu. Fikir serbest, tek yasak tehdit. Dersin mimari kurallarına göre (<b>Cosmic Python</b>) Python'da yeniden yazıldı.</p>
+      <div class="istatistik" style="max-width:960px;margin:22px auto">
+        <div class="kart"><b>4</b><span>katman</span></div>
+        <div class="kart"><b>11</b><span>tasarım deseni</span></div>
+        <div class="kart"><b>{{ "{:,}".format(stats.uye).replace(",", ".") }}</b><span>üye + {{ stats.ajan }} YZ ajanı</span></div>
+        <div class="kart"><b>{{ "{:,}".format(stats.oy).replace(",", ".") }}</b><span>oy, hepsi defterde</span></div>
+        <div class="kart"><b>{{ tests.passed if tests else "—" }}</b><span>pytest testi ✓</span></div>
+        <div class="kart"><b>14</b><span>UML diyagramı</span></div>
+      </div>
+      <p class="soluk">← → tuşlarıyla ya da aşağıdaki düğmelerle ilerle. Her slaytta hocanın şartı, Kurultay'daki karşılığı ve kodda nerede olduğu var.</p>
+    </div>
+  </section>
+
+  {% macro slayt(no, baslik, sart, gorsel=None, alt=None) -%}
+  <section class="slayt">
+    <div class="slayt-metin">
+      <span class="ust-yazi">Şart {{ no }}</span>
+      <h2>{{ baslik }}</h2>
+      <blockquote class="sart"><span>Hocanın şartı</span>{{ sart }}</blockquote>
+      {{ caller() }}
+    </div>
+    {% if gorsel %}<a class="slayt-gorsel" href="{{ gorsel }}" target="_blank" title="Büyüt"><img src="{{ gorsel }}" alt="{{ alt or baslik }}"></a>{% endif %}
+  </section>
+  {%- endmacro %}
+
+  {% call slayt(1, "Dört katman, bağımlılıklar içe doğru", "Domain, Service Layer, Adapters ve Entrypoints olarak 4 katman; Dependency Inversion katı uygulanmalı, Domain hiçbir ORM'e, veritabanına ya da dış API'ye bağımlı olmamalı.", d ~ "01-katmanlar.svg") %}
+    <ul class="karsilik">
+      <li><b>domain/</b> yalnızca Python standart kütüphanesini kullanır; <code>mypy --strict</code> temiz.</li>
+      <li>Servis katmanı portlara bağlı (<code>Clock</code>, <code>PasswordHasher</code>, <code>ExpertModel</code>, <code>LedgerReplica</code>); somut sınıflar tek yerde, <code>bootstrap.py</code>'de bağlanır.</li>
+      <li>Kuralın kendisi test edilir: domain bir çerçeve import ederse <code>test_architecture.py</code> kırılır.</li>
+    </ul>
+    <div class="dosyalar"><code>src/kurultay/domain</code><code>service_layer</code><code>adapters</code><code>entrypoints</code><code>bootstrap.py</code></div>
+  {% endcall %}
+
+  {% call slayt(2, "Repository ve Unit of Work", "Veri erişimi için Repository (AbstractRepository ve FakeRepository dahil); atomik işlemler ve olay yayımı için context manager tabanlı Unit of Work.", d ~ "08-repository-uow-bus.svg") %}
+    <ul class="karsilik">
+      <li>Her aggregate için soyut repository; SQLite uygulaması ve bellek içi <b>Fake</b> uygulaması aynı sözleşmeyi taşır.</li>
+      <li><code>with uow: … uow.commit()</code>: commit edilmeyen her şey geri alınır; olaylar aggregate'lerden toplanır.</li>
+      <li>Hiçbir repository'de silme metodu yok (testle korunur).</li>
+    </ul>
+    <div class="dosyalar"><code>adapters/repository.py</code><code>service_layer/unit_of_work.py</code><code>tests/fakes.py</code></div>
+  {% endcall %}
+
+  {% call slayt(3, "Command → Message Bus → Domain Event", "Sistemdeki tüm durum değişiklikleri Command ve Domain Event nesneleri üzerinden merkezi bir Message Bus ile işlenmeli.", d ~ "10-sira-konu-onerisi.svg") %}
+    <ul class="karsilik">
+      <li>13 komut, 15 olay. Arayüz yalnızca komut gönderir; kural yoktur.</li>
+      <li>Komutun tek işleyicisi, olayın çok işleyicisi var; olay işleyicisi yeni komut üretebilir (ör. YZ ajanının oyu).</li>
+      <li>Her olay ayrıca hash zincirine yazılır.</li>
+    </ul>
+    <div class="dosyalar"><code>domain/commands.py</code><code>domain/events.py</code><code>service_layer/messagebus.py</code><code>handlers.py</code></div>
+    <a class="dugme ikincil kucuk" href="/canli">Canlı meclis panelinde Message Bus günlüğünü izle →</a>
+  {% endcall %}
+
+  {% call slayt(4, "Composite: konu ağacı", "Konu ve alt konuların ağaç yapısı ve ontolojik hiyerarşisi için Composite Pattern.", d ~ "03-composite-state.svg") %}
+    <ul class="karsilik">
+      <li><code>TopicComponent</code> ortak arayüz; <code>Topic</code> bileşik (alt konu + mesaj taşır), <code>Message</code> yaprak.</li>
+      <li>Mesaj sayımı, gizleme, kavram toplama ve gezinti bütün ağaçta tek çağrıyla çalışır; bir konu gizlenince alt ağacı da görünmez olur.</li>
+      <li>Ontoloji de bir ağaçtır (genel → özel) ve "ilişkili" kenarlarla ağa dönüşür.</li>
+    </ul>
+    <div class="dosyalar"><code>domain/topic.py</code><code>domain/ontology.py</code></div>
+    <a class="dugme ikincil kucuk" href="/">Gündemde alt konulu bir konuyu aç →</a>
+  {% endcall %}
+
+  {% call slayt(5, "State: konunun yaşam döngüsü", "Önerildi → Oylamada → Aktif → Silinme Oylamasında → Arşivlendi/Gizlendi yaşam döngüsü State Pattern ile yönetilmeli.", d ~ "04-yasam-dongusu.svg") %}
+    <ul class="karsilik">
+      <li>Yedi durum sınıfı; her biri yalnızca kendisinden mümkün geçişleri bilir. Geçersiz geçiş hata verir.</li>
+      <li>Silinme oylaması sürerken tartışma devam eder; red gelirse konu Aktif'e döner, kabul gelirse yalnızca gizlenir.</li>
+      <li>Her konu sayfasında durum çizgisi görünür.</li>
+    </ul>
+    <div class="dosyalar"><code>domain/topic_states.py</code></div>
+  {% endcall %}
+
+  {% call slayt(6, "Strategy: çoğunluk azınlığı ezemez", "Farklı oylama algoritmaları (Karesel Oylama, Uzman Ağırlıklı, İtibar Tabanlı) Strategy Pattern (typing.Protocol / abc.ABC) ile kurgulanmalı.", d ~ "05-strategy.svg") %}
+    <table class="mini">
+      <tr><th>Strateji</th><th>Oy ağırlığı</th><th>Varsayılan kullanım</th></tr>
+      <tr><td>Basit çoğunluk</td><td>1</td><td>yeni konu, alt konu</td></tr>
+      <tr><td><b>Karesel</b></td><td>k oy = k² kredi; ilk oy bedava, 8 ek kredi açık oylamalar arasında paylaşılır</td><td>silme, gizleme, yönetmelik</td></tr>
+      <tr><td><b>Uzman ağırlıklı</b></td><td>1 + uzmanlık düzeyi</td><td>düzenleme, uzmanlık</td></tr>
+      <tr><td><b>İtibar tabanlı</b></td><td>1 + log₂(1 + itibar/10), tavan 3</td><td>uzlaşma</td></tr>
+    </table>
+    <p class="soluk" style="margin-top:10px">Hepsi aynı <code>VotingStrategy</code> Protocol'ü; hangi teklifin hangi stratejiyle oylanacağı yönetmelikte yazılı ve oylamayla değişir.</p>
+    <div class="dosyalar"><code>domain/voting.py</code><code>domain/regulation.py</code></div>
+  {% endcall %}
+
+  {% call slayt(7, "Ontoloji, seçmen kısıtı ve Chain of Responsibility", "Rollerin, yönetmeliklerin ve ontolojik ilgi alanı kontrollerinin ardışık denetimi Chain of Responsibility ile; yalnızca konuyu ilgilendirenler oy kullanabilmeli.", d ~ "06-chain-proxy.svg") %}
+    <div class="zincir" style="margin:4px 0 12px">
+      {% for h in ["Kimlik", "Oylama açık", "Rol", "Yönetmelik", "Ontolojik ilgi", "Tek oy", "Pusula kuralı"] %}<span class="halka gecti">✓ {{ h }}</span>{% if not loop.last %}<span class="ok">→</span>{% endif %}{% endfor %}
+    </div>
+    <ul class="karsilik">
+      <li>19 kavramlık ağ: kavram, üst kavramı ya da "ilişkili" kavramı takip eden ya da orada uzman olan oylar.</li>
+      <li><b>Seçmen kütüğü</b> oylama açıldığı an dondurulur: oylama sürerken üye olan ya da ilgi alanını sonradan değiştiren o teklifte oy veremez. Böylece bir oylamaya dışarıdan kalabalık taşınamaz.</li>
+      <li>Teklif sayfası, oy veremeyen kişiye zincirin hangi halkasında takıldığını gösterir.</li>
+      <li>Uzmanlık beyanla değil, o kavramın topluluğunun oyuyla verilir.</li>
+    </ul>
+    <div class="dosyalar"><code>domain/eligibility.py</code><code>domain/ontology.py</code></div>
+    <a class="dugme ikincil kucuk" href="/ontoloji">Kavram ağını aç →</a>
+  {% endcall %}
+
+  {% call slayt(8, "YZ uzman ajanları: Adapter, Factory/Registry, Observer", "LLM'ler “Bilgili Kullanıcı (Expert Agent)” olarak Adapter Pattern ile entegre edilmeli, model seçimi Factory/Registry ile yapılmalı; oylama başlayınca ilgili kullanıcılara ve YZ ajanlarına Observer ile bildirim gitmeli.", d ~ "07-observer-adapter.svg") %}
+    <ul class="karsilik">
+      <li>Oylama başlayınca bildirim merkezi gözlemcilere haber verir: üyelere bildirim, ilgili ajanlara inceleme görevi.</li>
+      <li>Ajan modelini <code>ExpertModelRegistry</code>'den alır: kural tabanlı model ya da yerel <b>Ollama</b> (Adapter). Ollama yoksa kendiliğinden kurala düşer. Hiçbir ücretli servis kullanılmaz.</li>
+      <li>Ajan gerekçeli oy verir; oyu yönetmelikle yarım sayılır, teklif açamaz.</li>
+    </ul>
+    <div class="dosyalar"><code>service_layer/notifications.py</code><code>service_layer/agents.py</code><code>adapters/llm/</code></div>
+  {% endcall %}
+
+  {% call slayt(9, "Gizlilik: yalnızca takma ad", "Ad, Soyad, Doğum Tarihi, Adres, Şifre ve Takma Ad tutulur; arayüzde ve genel profilde SADECE takma ad görünmeli.", d ~ "13-sira-profil.svg") %}
+    <ul class="karsilik">
+      <li>Kişisel veriler <code>PersonalInfo</code> değer nesnesinde; <code>repr</code> bile içeriğini yazmaz. Şifre PBKDF2 ile özetlenir.</li>
+      <li><code>PublicProfile</code> sınıfında kişisel veri alanı <b>yok</b>. <code>ProfileAccessProxy</code> (Protection Proxy) tam profili yalnızca sahibine verir.</li>
+      <li><code>AuthorizationProxy</code> her komutu rol yetkisine göre süzer.</li>
+    </ul>
+    <div class="dosyalar"><code>domain/user.py</code><code>service_layer/proxies.py</code></div>
+  {% endcall %}
+
+  {% call slayt(10, "Her şey bir teklif", "Herkes konu açabilir, alt konu önerebilir, düzenleme ya da silme teklif edebilir; hiçbir işlem doğrudan gerçekleşmez, her şey Proposal olarak oylamaya sunulur.", d ~ "11-sira-oy-verme.svg") %}
+    <div class="satir" style="gap:6px;margin-bottom:12px">
+      {% for k in KIND_LABELS.values() %}<span class="cip tur">{{ k }}</span>{% endfor %}
+    </div>
+    <ul class="karsilik">
+      <li>Sekiz teklif türü tek bir <code>Proposal</code> aggregate'i; açılırken stratejisini ve eşiğini yönetmelikten alır.</li>
+      <li>Kabul edilince etkisi bir kayıttan (<code>ACCEPT_EFFECTS</code>) uygulanır.</li>
+    </ul>
+    <div class="dosyalar"><code>domain/proposal.py</code><code>service_layer/handlers.py</code></div>
+    <a class="dugme ikincil kucuk" href="/teklifler">Süren teklifler →</a>
+  {% endcall %}
+
+  {% call slayt(11, "Değişmezlik ve dağıtık defter", "Tartışmalar fiziksel olarak silinemez (append-only); teklifler, oylar ve mesajlar hash zincirli dağıtık defterde; silinmesi kabul edilen kısımlar yalnızca maskelenir.", d ~ "14-sira-defter.svg") %}
+    <ul class="karsilik">
+      <li>Mesaj, oy, maske, sürüm ve defter tablolarında UPDATE/DELETE veritabanı tetikleyicileriyle yasak.</li>
+      <li>Her olay <code>SHA-256(sıra | zaman | tür | veri | önceki)</code> zincirine eklenir, üç düğüme çoğaltılır; çoğunluk uzlaşması kurcalanan düğümü bulur.</li>
+      <li>Gizlenen mesajın metni silinmez; defterde yalnızca özeti durur.</li>
+    </ul>
+    <div class="dosyalar"><code>domain/ledger.py</code><code>adapters/orm.py</code><code>adapters/ledger_nodes.py</code></div>
+    <a class="dugme ikincil kucuk" href="/defter">Defter: bir düğümü kurcala, uzlaşma yakalasın →</a>
+  {% endcall %}
+
+  {% call slayt(12, "Testler, tipler, diyagramlar", "Her modül için Fake bileşenlerle pytest birim testleri; her mimari değişiklik için Mermaid sınıf ve sıralama diyagramları; type hint ve @dataclass(frozen=True).") %}
+    <table class="mini kontrol">
+      <tr><td>✓</td><td>{{ tests.passed if tests else "" }} pytest testi: birim (Fake UoW/Repository/Model), entegrasyon (SQLite), uçtan uca (web)</td></tr>
+      <tr><td>✓</td><td>Domain <code>mypy --strict</code> temiz; değer nesneleri <code>@dataclass(frozen=True)</code></td></tr>
+      <tr><td>✓</td><td>14 Mermaid diyagramı: 8 sınıf, 1 durum, 5 sıralama (<a href="/mimari">Mimari sayfası</a>)</td></tr>
+      <tr><td>✓</td><td>Demo verisi: 40 günlük geçmiş, {{ "{:,}".format(stats.uye).replace(",", ".") }} üye, {{ "{:,}".format(stats.oy).replace(",", ".") }} oy. Hiçbiri veritabanına elle yazılmadı; hepsi Message Bus'tan geçen gerçek komutlar.</td></tr>
+      <tr><td>✓</td><td>4 katman · Repository · Unit of Work · Command/Event · Message Bus</td></tr>
+      <tr><td>✓</td><td>Composite · State · Strategy · Adapter · Factory/Registry · Chain of Responsibility · Protection Proxy · Observer</td></tr>
+      <tr><td>✓</td><td>PII gizliliği · her şey teklif · ontoloji ve seçmen kısıtı · append-only dağıtık defter</td></tr>
+    </table>
+  {% endcall %}
+
+  {# ------------------------------------------------------------------ son #}
+  <section class="slayt kapak">
+    <div>
+      <span class="ust-yazi">Canlı gösterim</span>
+      <h1>Şimdi meclis toplansın.</h1>
+      <p class="kapak-alt">Aşağıdaki senaryolardan birini başlat: gerçek hesaplar gerçek komutlarla oy verir, koltuklar dolar, sonuç deftere işlenir.</p>
+      <div class="senaryolar" style="text-align:left;margin-top:22px">
+        {% for s in scenarios %}
+          <form class="kart senaryo" method="post" action="/canli/baslat">
+            <input type="hidden" name="senaryo" value="{{ s.key }}">
+            <span class="cip strateji">{{ s.pattern }}</span>
+            <h3>{{ s.title }}</h3>
+            <p class="soluk">{{ s.summary }}</p>
+            <button class="sari">▶ Meclisi topla</button>
+          </form>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  <div class="sunum-alt">
+    <button class="ikincil" id="geri">← Geri</button>
+    <button class="sari" id="ileri">İleri →</button>
+  </div>
+</div>
+
+<script>
+(() => {
+  const slaytlar = [...document.querySelectorAll("#sunum .slayt")];
+  let i = Math.min(slaytlar.length - 1, Math.max(0, parseInt(location.hash.slice(1) || "0", 10) || 0));
+  function goster() {
+    slaytlar.forEach((s, k) => s.classList.toggle("etkin", k === i));
+    document.getElementById("sayac").textContent = `${i + 1} / ${slaytlar.length}`;
+    document.getElementById("ilerleme-cubuk").style.width = `${100 * (i + 1) / slaytlar.length}%`;
+    document.getElementById("geri").disabled = i === 0;
+    document.getElementById("ileri").style.visibility = i === slaytlar.length - 1 ? "hidden" : "visible";
+    history.replaceState(null, "", "#" + i);
+  }
+  const git = d => { i = Math.min(slaytlar.length - 1, Math.max(0, i + d)); goster(); window.scrollTo({ top: 0 }); };
+  document.getElementById("geri").onclick = () => git(-1);
+  document.getElementById("ileri").onclick = () => git(1);
+  document.addEventListener("keydown", e => {
+    if (["INPUT", "TEXTAREA"].includes(document.activeElement.tagName)) return;
+    if (e.key === "ArrowRight" || e.key === "PageDown" || e.key === " ") { e.preventDefault(); git(1); }
+    if (e.key === "ArrowLeft" || e.key === "PageUp") { e.preventDefault(); git(-1); }
+  });
+  goster();
+})();
+</script>
+{% endblock %}

@@ -1,0 +1,27 @@
+sequenceDiagram
+  autonumber
+  participant Bus as MessageBus
+  participant L as record_in_ledger
+  participant R as LedgerRepository (SQLite)
+  participant A as Düğüm A
+  participant B as Düğüm B
+  participant C as Düğüm C
+  actor D as Denetçi
+  participant V as views.ledger_view
+
+  Bus->>L: her olay
+  L->>R: head()
+  L->>L: LedgerEntry.next_after(önceki, tür, veri)
+  L->>R: append(entry) (UPDATE/DELETE tetikleyiciyle yasak)
+  par çoğaltma
+    L->>A: append(entry)
+    L->>B: append(entry)
+    L->>C: append(entry)
+  end
+  D->>V: GET /defter
+  V->>R: all() → verify_chain()
+  V->>A: entries() → verify_chain()
+  V->>B: entries() → verify_chain()
+  V->>C: entries() → verify_chain()
+  V->>V: reach_consensus(raporlar)
+  V-->>D: Uzlaşma raporu (kurcalanan düğüm kırmızı)

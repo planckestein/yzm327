@@ -1,44 +1,21 @@
-# Kurultay — YZM327
+# YZM327 · Yazılım Mühendisliği için Yapay Zekâ
 
-**Kamuoyunun sansürsüz sesi.** Gündemi vatandaşların belirlediği, tartışmayı vatandaşların yürüttüğü ve sonucu vatandaşların oyladığı bağımsız bir kamuoyu platformu. Karar düzeni ABD yasama sistemini örnek alır.
+2026–2027 Güz · Seyyid A. Bozkurt · 24290381
 
-- 📄 **Teknik rapor:** [Kurultay_Teknik_Rapor.pdf](Kurultay_Teknik_Rapor.pdf) (özeti: [RAPOR.md](RAPOR.md))
-- 📐 **UML diyagramları:** [Kurultay_UML_Diyagramlari.pdf](Kurultay_UML_Diyagramlari.pdf) (uygulamada `/diyagramlar`)
-- 🛠️ **Ayrıntılı kullanım kılavuzu:** [forum/README.md](forum/README.md)
+Bu depo dersin ödevlerini toplar. Her ödev kendi klasöründedir ve kendi başına açılıp çalıştırılır.
 
-## Açmak
+## Ödevler
 
-Gereken tek şey [Node.js](https://nodejs.org) (LTS). Proje klasöründeki **`Kurultay.cmd`** dosyasına çift tıkla. İlk açılışta paketleri kurar, uygulamayı derler, demo verisini hazırlar, masaüstüne otağ simgeli **Kurultay** kısayolunu ekler ve Kurultay'ı kendi penceresinde açar. Sonraki açılışlarda masaüstündeki simge yeter.
+| # | Ödev | Klasör | Durum |
+| --- | --- | --- | --- |
+| 1 | **Kurultay:** oylamayla yönetilen, sansürsüz kamuoyu platformu (forum). Teknik rapor ve UML diyagramları içinde. | [ödev1-kurultay](ödev1-kurultay/) | Sunuldu, 16 Ekim 2026 |
 
-- **Telefonda:** uygulamada sağ üstteki telefon simgesi (*Telefonda aç*) karekod gösterir; okut, açılınca tarayıcı menüsünden *Ana ekrana ekle*.
-- **Demoyu sıfırlamak:** `Kurultay (demo verisini yenile).cmd`. Kendi açtığın hesaplar korunur.
-- Konsol penceresi açık kaldıkça Kurultay çalışır; kapatınca Kurultay da kapanır.
-
-## Geliştirici komutları
-
-```bash
-npm run baslat     # Kurultay.cmd ile aynı: kur, derle, aç
-npm run kurulum    # bağımlılıkları kurar (ilk seferde)
-npm run demo       # 6 haftalık örnek platform verisi
-npm run dev        # http://localhost:3000
-npm test           # birim testleri
-npm run olcum      # kuralların temel çizgilerle ölçümü
-```
-
-Demo hesaplarının hepsinin şifresi `demo1234`. Giriş ekranındaki "Demo hesapları" panelinden tek tıkla girilir.
-
-## Klasör yapısı
+## Düzen
 
 ```
-Kurultay.cmd    Çift tıkla aç (başlatıcı)
-RAPOR.md        Raporun özeti; tamamı Kurultay_Teknik_Rapor.pdf
-forum/          Next.js uygulaması
-  src/lib/      İş mantığı (oylama, seçim, defter, tehdit, YZ...)
-  src/app/      Sayfalar (UML diyagramları: src/app/diyagramlar)
-  scripts/      Başlatıcı, demo verisi ve ölçüm raporu
-  tests/        Birim testleri
+README.md            bu sayfa: ödev listesi
+ödev1-kurultay/      1. ödev (açmak için içindeki Kurultay.cmd)
+ödev2-…/             sıradaki ödev buraya, aynı adlandırmayla
 ```
 
-## Teknolojiler
-
-Next.js 16 · TypeScript · Tailwind CSS 4 · shadcn/ui · SQLite (`node:sqlite`) · PWA
+Yeni bir ödev gelince `ödevN-kısa-ad/` klasörü açılır, içine kendi `README.md`'si konur ve yukarıdaki tabloya bir satır eklenir.

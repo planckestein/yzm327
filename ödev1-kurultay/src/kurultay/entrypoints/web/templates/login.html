@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Giriş{% endblock %}
+{% block content %}
+<div class="izgara">
+  <form class="kart vurgulu" method="post" action="/giris" style="max-width:520px">
+    <h1>Giriş</h1>
+    <label for="takma_ad">Takma ad</label>
+    <input type="text" id="takma_ad" name="takma_ad" required autocomplete="username">
+    <label for="sifre">Şifre</label>
+    <input type="password" id="sifre" name="sifre" required autocomplete="current-password">
+    <div class="satir ayrik" style="margin-top:14px"><a href="/kayit">Hesabın yok mu? Katıl</a><button>Giriş yap</button></div>
+  </form>
+  {% if demo_users %}
+  <aside class="kart">
+    <h3>Demo hesapları</h3>
+    <p class="soluk" style="font-size:.88rem">Şifre hepsinde <span class="mono">{{ demo_password }}</span>.</p>
+    {% for p in demo_users %}
+      <form method="post" action="/giris" class="satir ayrik" style="padding:6px 0;border-bottom:1px dashed var(--cizgi)">
+        <input type="hidden" name="takma_ad" value="{{ p.nickname }}"><input type="hidden" name="sifre" value="{{ demo_password }}">
+        <span class="satir" style="gap:8px">{{ m.tamga(p.nickname) }} @{{ p.nickname }} <small>· {{ p.role.label }}</small></span>
+        <button class="ikincil kucuk">Gir</button>
+      </form>
+    {% endfor %}
+  </aside>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,62 @@
+classDiagram
+  direction LR
+  class EligibilityHandler {
+    <<abstract>>
+    -_next: EligibilityHandler
+    +set_next(handler) EligibilityHandler
+    +handle(ctx, trail) EligibilityDecision
+    +check(ctx)* str
+  }
+  class AuthenticationHandler
+  class ProposalOpenHandler
+  class RoleHandler
+  class RegulationHandler
+  class OntologyInterestHandler
+  class NotAlreadyVotedHandler
+  class BallotRuleHandler
+  class EligibilityDecision {
+    <<value object>>
+    +allowed: bool
+    +reason: str
+    +trail: tuple
+  }
+  EligibilityHandler <|-- AuthenticationHandler
+  EligibilityHandler <|-- ProposalOpenHandler
+  EligibilityHandler <|-- RoleHandler
+  EligibilityHandler <|-- RegulationHandler
+  EligibilityHandler <|-- OntologyInterestHandler
+  EligibilityHandler <|-- NotAlreadyVotedHandler
+  EligibilityHandler <|-- BallotRuleHandler
+  EligibilityHandler o--> EligibilityHandler : sonraki halka
+  EligibilityHandler ..> EligibilityDecision
+
+  class CommandGateway {
+    <<interface>>
+    +dispatch(command)
+  }
+  class AuthorizationProxy {
+    -inner: CommandGateway
+    -_authorize(command)
+    +dispatch(command)
+  }
+  class MessageBusGateway {
+    +dispatch(command)
+  }
+  CommandGateway <|.. AuthorizationProxy
+  CommandGateway <|.. MessageBusGateway
+  AuthorizationProxy o--> CommandGateway : gerçek nesne
+
+  class ProfileReader {
+    <<interface>>
+    +profile(nickname, viewer_id) PublicProfile
+  }
+  class RepositoryProfileReader {
+    +profile() PrivateProfile
+  }
+  class ProfileAccessProxy {
+    -inner: ProfileReader
+    +profile() PublicProfile | PrivateProfile
+  }
+  ProfileReader <|.. RepositoryProfileReader
+  ProfileReader <|.. ProfileAccessProxy
+  ProfileAccessProxy o--> ProfileReader : gerçek nesne

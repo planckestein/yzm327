@@ -1,0 +1,196 @@
+{% extends "base.html" %}
+{% block title %}Canlı oylama{% endblock %}
+{% block content %}
+<div class="sayfa-basi">
+  <div>
+    <h1>Bir oylamayı koltuk koltuk izle</h1>
+    <p>Her koltuk o teklifte oy hakkı olan bir seçmen. Oylar gerçek komutlarla verilir, Message Bus'tan geçer ve deftere yazılır. Tanıtım için aşağıdaki senaryolardan birini başlatabilirsin.</p>
+  </div>
+  {% if proposal_id %}<a class="dugme ikincil" href="/teklif/{{ proposal_id }}">Teklif sayfası →</a>{% endif %}
+</div>
+
+{% if demo_mode %}
+<div class="senaryolar">
+  {% for s in scenarios %}
+    <form class="kart senaryo" method="post" action="/canli/baslat">
+      <input type="hidden" name="senaryo" value="{{ s.key }}">
+      <span class="cip strateji">{{ s.pattern }}</span>
+      <h3>{{ s.title }}</h3>
+      <p class="soluk">{{ s.summary }}</p>
+      <button class="sari" {{ 'disabled' if running }}>▶ Canlı başlat</button>
+    </form>
+  {% endfor %}
+</div>
+{% endif %}
+
+{% if proposal_id %}
+<div class="meclis-izgara">
+  <section class="sahne" id="sahne" data-teklif="{{ proposal_id }}">
+    <div class="sahne-ust">
+      <div>
+        <span class="sahne-tur" id="tur">…</span>
+        <h2 id="baslik">Yükleniyor…</h2>
+      </div>
+      <div class="sahne-rozetler"><span class="cip strateji" id="strateji"></span> <span class="rozet" id="durum"></span></div>
+    </div>
+    <svg id="meclis" viewBox="0 0 900 480" role="img" aria-label="Meclis görünümü"></svg>
+    <div class="oy-kap" style="margin:26px 4px 0">
+      <div class="oy-cubugu buyuk"><span class="evet" id="cubuk-evet"></span><span class="hayir" id="cubuk-hayir"></span><span class="kalan" id="cubuk-kalan"></span></div>
+      <span class="oy-esik" id="esik" data-etiket=""></span>
+    </div>
+    <div class="oy-ozet"><span id="kafa"></span><span id="katilim"></span></div>
+    <p class="soluk" id="koltuk-notu" style="font-size:.8rem;margin:8px 0 0" hidden></p>
+    <div class="sonuc" id="sonuc" hidden></div>
+    <div class="lejant">
+      <span><i class="nokta evet"></i>Evet</span><span><i class="nokta hayir"></i>Hayır</span><span><i class="nokta nokta-bos"></i>Henüz oy vermedi</span>
+      <span><i class="nokta yz"></i>YZ ajanı (oyu yarım sayılır)</span><span id="sayi-notu">Koltuktaki sayı: karesel oylamada kullanılan oy</span>
+    </div>
+  </section>
+
+  <aside class="akis-panel">
+    <div class="kart">
+      <span class="ust-yazi">Mimari akış · her oy</span>
+      <ol class="akis" id="akis">
+        <li data-k="giris"><b>Entrypoint</b><small>FastAPI isteği → <code>CastVote</code> komutu</small></li>
+        <li data-k="vekil"><b>Protection Proxy</b><small>AuthorizationProxy: oturum ve rol</small></li>
+        <li data-k="bus"><b>Message Bus</b><small>komut → tek işleyici, olaylar → çok işleyici</small></li>
+        <li data-k="zincir"><b>Chain of Responsibility</b><small>Kimlik → Açık → Rol → Yönetmelik → Ontoloji → Tek oy → Pusula</small></li>
+        <li data-k="alan"><b>Domain</b><small><code>Proposal.cast</code> · Strategy ağırlığı · <code>try_close</code></small></li>
+        <li data-k="uow"><b>Unit of Work</b><small>atomik commit, olaylar toplanır</small></li>
+        <li data-k="defter"><b>Dağıtık defter</b><small><span id="defter-sayi">0</span> kayıt · uç <code id="defter-uc">…</code></small></li>
+      </ol>
+    </div>
+    <div class="kart">
+      <span class="ust-yazi">Message Bus günlüğü</span>
+      <ul class="gunluk" id="gunluk"><li class="soluk">Canlı gösterimi başlatınca komut ve olaylar burada akar.</li></ul>
+    </div>
+  </aside>
+</div>
+{% else %}
+<div class="kart bos">Şu an süren oylama yok. Yukarıdan bir senaryo başlat.</div>
+{% endif %}
+
+<script>
+(() => {
+  const sahne = document.getElementById("sahne");
+  if (!sahne) return;
+  const id = sahne.dataset.teklif;
+  const svg = document.getElementById("meclis");
+  const NS = "http://www.w3.org/2000/svg";
+  let koltuklar = [], kaynak = [], sonLog = 0, bitti = 0;
+
+  function yerlesim(n) {
+    const sira = Math.max(3, Math.min(10, Math.round(Math.sqrt(n / 1.5))));
+    const ic = 0.42, dis = 1.0;
+    const yaricap = [...Array(sira)].map((_, i) => ic + (dis - ic) * (sira === 1 ? 1 : i / (sira - 1)));
+    const toplam = yaricap.reduce((a, b) => a + b, 0);
+    const adet = yaricap.map(r => Math.floor(n * r / toplam));
+    let kalan = n - adet.reduce((a, b) => a + b, 0);
+    for (let i = sira - 1; kalan > 0; i = (i - 1 + sira) % sira) { adet[i]++; kalan--; }
+    const noktalar = [];
+    yaricap.forEach((r, i) => {
+      const c = adet[i];
+      for (let k = 0; k < c; k++) {
+        const a = c === 1 ? Math.PI / 2 : Math.PI * (1 - k / (c - 1));
+        noktalar.push({ x: 450 + Math.cos(a) * r * 410, y: 450 - Math.sin(a) * r * 410, a });
+      }
+    });
+    noktalar.sort((p, q) => q.a - p.a);
+    const aralik = (dis - ic) / Math.max(1, sira - 1) * 410;
+    const yay = Math.PI * ic * 410 / Math.max(1, adet[0]);
+    return { noktalar, r: Math.max(4, Math.min(24, 0.44 * Math.min(aralik, yay))) };
+  }
+
+  function kur(n) {
+    svg.innerHTML = "";
+    const { noktalar, r } = yerlesim(n);
+    koltuklar = noktalar.map(p => {
+      const g = document.createElementNS(NS, "g");
+      g.setAttribute("class", "koltuk bos");
+      g.setAttribute("transform", `translate(${p.x.toFixed(1)},${p.y.toFixed(1)})`);
+      const c = document.createElementNS(NS, "circle"); c.setAttribute("r", r.toFixed(1));
+      const t = document.createElementNS(NS, "text"); t.setAttribute("dy", "0.35em"); t.setAttribute("text-anchor", "middle");
+      t.setAttribute("font-size", (r * 1.05).toFixed(1));
+      const ttl = document.createElementNS(NS, "title");
+      g.append(c, t, ttl); svg.append(g);
+      return g;
+    });
+    const skor = document.createElementNS(NS, "g");
+    skor.innerHTML = `<text x="390" y="405" text-anchor="middle" class="skor-sayi evet" id="evet">0</text>
+      <text x="390" y="432" text-anchor="middle" class="skor-ad">EVET</text>
+      <text x="510" y="405" text-anchor="middle" class="skor-sayi hayir" id="hayir">0</text>
+      <text x="510" y="432" text-anchor="middle" class="skor-ad">HAYIR</text>`;
+    svg.append(skor);
+    kaynak = [];
+  }
+
+  function guncelle(v) {
+    const seats = [...v.seats];
+    const sira = s => s.choice === "evet" ? 0 : s.choice === null ? 1 : 2;
+    seats.sort((a, b) => sira(a) - sira(b) || (b.weight - a.weight) || (a.agent - b.agent));
+    if (seats.length !== koltuklar.length) kur(seats.length);
+    seats.forEach((s, i) => {
+      const g = koltuklar[i];
+      const sinif = "koltuk " + (s.choice === "evet" ? "evet" : s.choice === "hayir" ? "hayir" : "bos") + (s.agent ? " yz" : "");
+      if (g.getAttribute("class") !== sinif) {
+        g.setAttribute("class", sinif + (kaynak[i] && kaynak[i] !== s.nick ? "" : " yeni"));
+        setTimeout(() => g.classList.remove("yeni"), 700);
+      }
+      kaynak[i] = s.nick;
+      g.querySelector("text").textContent = s.intensity > 1 ? s.intensity : (s.agent ? "YZ" : "");
+      g.querySelector("title").textContent = v.per_seat > 1 && !s.agent ? `${s.nick}: ${s.choice ?? "oy vermedi"}` : `@${s.nick}${s.agent ? " (YZ ajanı)" : ""}: ${s.choice ?? "oy vermedi"}${s.weight ? " · ağırlık " + s.weight : ""}`;
+    });
+    const p = v.proposal, t = v.tally;
+    document.getElementById("tur").textContent = p.kind;
+    document.getElementById("baslik").textContent = p.title;
+    document.getElementById("strateji").textContent = `${p.strategy} · eşik ${p.threshold}`;
+    const d = document.getElementById("durum");
+    d.textContent = p.status_label; d.className = "rozet r-" + p.status;
+    document.getElementById("evet").textContent = +t.yes.toFixed(1);
+    document.getElementById("hayir").textContent = +t.no.toFixed(1);
+    document.getElementById("cubuk-evet").style.width = t.yes_pct + "%";
+    document.getElementById("cubuk-hayir").style.width = t.no_pct + "%";
+    document.getElementById("cubuk-kalan").style.width = Math.max(0, 100 - t.yes_pct - t.no_pct) + "%";
+    const esik = document.getElementById("esik");
+    esik.style.left = t.threshold_pct + "%"; esik.dataset.etiket = "eşik " + p.threshold;
+    document.getElementById("kafa").textContent = `Kişi sayısı: ${t.yes_heads} evet · ${t.no_heads} hayır`;
+    document.getElementById("katilim").textContent = `${t.voted}/${t.eligible} seçmen oy verdi`;
+    const not = document.getElementById("koltuk-notu");
+    if (v.per_seat > 1) { not.hidden = false; not.textContent = `Seçmen çok olduğu için her koltuk yaklaşık ${v.per_seat} üyeyi temsil ediyor; renkler oyların dağılımını gösteriyor.`; document.getElementById("sayi-notu").hidden = true; }
+    else { not.hidden = true; document.getElementById("sayi-notu").hidden = false; }
+    document.getElementById("defter-sayi").textContent = v.ledger.count;
+    document.getElementById("defter-uc").textContent = v.ledger.head + "…";
+
+    const log = v.session.log;
+    if (log.length && log[log.length - 1].at !== sonLog) {
+      sonLog = log[log.length - 1].at;
+      const ul = document.getElementById("gunluk");
+      ul.innerHTML = log.slice().reverse().map(e =>
+        `<li><span class="cip ${e.kind === "komut" ? "komut" : "olay"}">${e.kind}</span> <b>${e.name}</b> <small>${e.detail}</small><em>${e.layer}</em></li>`).join("");
+      const adimlar = [...document.querySelectorAll("#akis li")];
+      adimlar.forEach((li, i) => { li.classList.remove("akti"); setTimeout(() => li.classList.add("akti"), 70 * i); setTimeout(() => li.classList.remove("akti"), 70 * i + 520); });
+    }
+    const sonuc = document.getElementById("sonuc");
+    if (p.status !== "acik") {
+      const azinlik = t.no_heads < t.yes_heads && p.status === "red"
+        ? `<p>Kişi sayısında <b>${t.yes_heads}–${t.no_heads}</b> “evet” önde, ama ağırlıkta <b>${+t.yes.toFixed(1)}–${+t.no.toFixed(1)}</b>: karesel oylamada azınlığın yoğun itirazı çoğunluğu durdurdu.</p>` : "";
+      const durum = p.topic_state && p.kind_key !== "mesaj_gizleme" && p.kind_key !== "duzenleme" ? `<p>Konunun yeni durumu: <b>${p.topic_state}</b> (State deseni)</p>` : "";
+      sonuc.innerHTML = `<b class="sonuc-baslik">${p.status === "kabul" ? "✓ Kabul edildi" : "✕ Reddedildi"}</b><p>${p.reason}</p>${azinlik}${durum}<p class="soluk">Sonuç ve bütün oylar dağıtık deftere işlendi (${v.ledger.count} kayıt).</p>`;
+      sonuc.className = "sonuc " + p.status; sonuc.hidden = false;
+    } else sonuc.hidden = true;
+    const bitmis = p.status !== "acik" && !v.session.running;
+    if (bitmis) document.querySelectorAll(".senaryo button").forEach(b => b.disabled = false);
+    return bitmis;
+  }
+
+  async function dongu() {
+    try {
+      const r = await fetch(`/api/canli/${id}`, { cache: "no-store" });
+      if (r.ok && guncelle(await r.json())) bitti++;
+    } catch (_) {}
+    if (bitti < 6) setTimeout(dongu, 650);
+  }
+  dongu();
+})();
+</script>
+{% endblock %}

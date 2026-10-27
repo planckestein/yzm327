@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Bildirimler{% endblock %}
+{% block content %}
+<div class="sayfa-basi">
+  <div>
+    <h1>Bildirimler</h1>
+    <p>Takip ettiğin kavramlarda yeni bir oylama başladığında burada görürsün.</p>
+  </div>
+</div>
+<section class="kart">
+  {% for n in items %}
+    <div class="satir ayrik" style="padding:12px 0;border-bottom:1px dashed var(--cizgi)">
+      <span>{% if not n.is_read %}<span class="rozet r-oylamada">yeni</span> {% endif %}<a href="{{ n.link }}">{{ n.text }}</a></span>
+      <small>{{ n.created_at|tarih }}</small>
+    </div>
+  {% else %}
+    <p class="bos">Henüz bildirim yok. <a href="/ontoloji">İlgi alanı ekleyerek</a> başlayabilirsin.</p>
+  {% endfor %}
+</section>
+{% endblock %}

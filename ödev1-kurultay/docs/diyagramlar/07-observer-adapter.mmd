@@ -1,0 +1,61 @@
+classDiagram
+  direction LR
+  class VotingNotificationCenter {
+    <<subject>>
+    -_observers: list
+    +attach(observer)
+    +detach(observer)
+    +notify(event, uow) list~Command~
+  }
+  class VotingObserver {
+    <<interface>>
+    +update(event, uow) list~Command~
+  }
+  class InterestedMemberNotifier {
+    +update() bildirim yazar
+  }
+  class ExpertAgentNotifier {
+    -factory: ExpertAgentFactory
+    +update() CastVote komutları
+  }
+  class ExpertAgent {
+    +user: User
+    +model: ExpertModel
+    +review(proposal, ontology, topic, proposer) AgentVerdict
+  }
+  class ExpertAgentFactory {
+    <<factory>>
+    +create(user) ExpertAgent
+  }
+  class ExpertModelRegistry {
+    <<registry>>
+    +register(prefix, factory, default)
+    +create(key) ExpertModel
+  }
+  class ExpertModel {
+    <<interface>>
+    +label: str
+    +assess(request) Assessment
+  }
+  class RuleBasedExpertModel
+  class OllamaExpertModel {
+    <<adapter>>
+    -url: str
+    +assess() POST /api/generate
+    +parse(text)$ Assessment
+  }
+  class FallbackExpertModel {
+    -primary: ExpertModel
+    -fallback: ExpertModel
+  }
+  VotingNotificationCenter o--> "0..*" VotingObserver
+  VotingObserver <|.. InterestedMemberNotifier
+  VotingObserver <|.. ExpertAgentNotifier
+  ExpertAgentNotifier --> ExpertAgentFactory
+  ExpertAgentFactory --> ExpertModelRegistry
+  ExpertAgentFactory ..> ExpertAgent : üretir
+  ExpertAgent --> ExpertModel
+  ExpertModel <|.. RuleBasedExpertModel
+  ExpertModel <|.. OllamaExpertModel
+  ExpertModel <|.. FallbackExpertModel
+  FallbackExpertModel o--> ExpertModel

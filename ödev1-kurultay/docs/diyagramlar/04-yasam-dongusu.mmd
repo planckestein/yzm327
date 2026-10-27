@@ -1,0 +1,17 @@
+stateDiagram-v2
+  direction LR
+  [*] --> Onerildi : ProposeTopic
+  Onerildi --> Oylamada : start_voting()
+  Oylamada --> Aktif : kabul
+  Oylamada --> Reddedildi : red
+  Aktif --> SilinmeOylamasinda : ProposeTopicDeletion
+  SilinmeOylamasinda --> Aktif : silme reddedildi
+  SilinmeOylamasinda --> Gizlendi : silme kabul (maskelenir)
+  Aktif --> Arsivlendi : uzlaşma kabul
+  Gizlendi --> [*]
+  Arsivlendi --> [*]
+  Reddedildi --> [*]
+  note right of Gizlendi
+    Kayıt silinmez, maskelenir.
+    Defterdeki hash zinciri bozulmaz.
+  end note

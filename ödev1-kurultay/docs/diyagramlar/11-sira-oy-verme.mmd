@@ -1,0 +1,35 @@
+sequenceDiagram
+  autonumber
+  actor S as Seçmen
+  participant Web as WebApp
+  participant Proxy as AuthorizationProxy
+  participant H as cast_vote
+  participant Ch as Yetki zinciri
+  participant St as VotingStrategy
+  participant P as Proposal
+  participant E as apply_accepted_proposal
+  participant T as Topic
+
+  S->>Web: POST /teklif/{id}/oy (seçim, yoğunluk)
+  Web->>Proxy: dispatch(CastVote)
+  Proxy->>H: (yetkili)
+  H->>P: uow.proposals.get(id) (oylar + dondurulmuş kütük, önbellekten)
+  H->>St: create_strategy(proposal.strategy_name)
+  H->>Ch: handle(ctx)
+  Ch->>Ch: Kimlik → Oylama açık → Rol → Yönetmelik
+  Ch->>Ch: Ontolojik ilgi (dondurulmuş kütükte mi?) → Tek oy → Pusula kuralı
+  Ch-->>H: EligibilityDecision(allowed, trail)
+  alt izin yok
+    H-->>Web: NotEligible(gerekçe)
+  else izin var
+    H->>P: cast(ballot, decision)
+    H->>P: try_close(strategy, proposal.electorate, regulation, now)
+    P->>St: weight() / max_weight()
+    P->>P: decide(tally, eşik, yeter sayı)
+    opt sonuç kesinleşti
+      P-->>H: ProposalAccepted
+      H->>E: (Message Bus üzerinden)
+      E->>T: accept() [Oylamada → Aktif]
+      E->>E: önerenin itibarı +10
+    end
+  end

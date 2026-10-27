@@ -1,0 +1,64 @@
+{% macro otag() -%}
+<svg viewBox="0 0 64 64" aria-hidden="true">
+  <path d="M6 44 C10 22 22 12 32 12 C42 12 54 22 58 44 Z" fill="#d6a033"/>
+  <path d="M6 44 C10 22 22 12 32 12 C42 12 54 22 58 44" fill="none" stroke="#f7f1e6" stroke-width="2"/>
+  <path d="M14 34 H50 M10 40 H54" stroke="#b4432c" stroke-width="3"/>
+  <path d="M27 44 V31 Q32 26 37 31 V44 Z" fill="#2a221d"/>
+  <rect x="4" y="44" width="56" height="5" rx="1.5" fill="#34478f"/>
+  <circle cx="32" cy="9" r="3" fill="#b4432c"/>
+</svg>
+{%- endmacro %}
+
+{% macro tamga(nick, size="") -%}
+<span class="tamga {{ size }}" style="background: {{ nick|renk }}">{{ nick[:1]|upper }}</span>
+{%- endmacro %}
+
+{% macro durum(state) -%}
+<span class="rozet r-{{ state.name }}">{{ state.label }}</span>
+{%- endmacro %}
+
+{% macro teklif_durum(p) -%}
+<span class="rozet r-{{ p.status.value }}">{{ p.status.label }}</span>
+{%- endmacro %}
+
+{% macro oy_cubugu(c) -%}
+{% set cast = c.tally.yes + c.tally.no %}
+<div class="oy-kap"><div class="oy-cubugu" title="Kullanılan oyların {{ c.cast_yes_pct }}%'i evet">
+  {% if cast %}<span class="evet" style="width: {{ c.cast_yes_pct }}%"></span><span class="hayir" style="width: {{ 100 - c.cast_yes_pct }}%"></span>{% else %}<span class="kalan" style="width:100%"></span>{% endif %}
+</div><span class="oy-esik" style="left: {{ c.threshold_pct }}%" data-etiket="eşik {{ c.proposal.threshold }}"></span></div>
+<div class="oy-ozet">
+  <span><b class="evet">%{{ c.cast_yes_pct|round(0)|int }} evet</b> · <b class="hayir">%{{ (100 - c.cast_yes_pct)|round(0)|int if cast else 0 }} hayır</b></span>
+  <span>{{ c.tally.voted }}/{{ c.tally.eligible }} oy verdi (%{{ c.turnout_pct|round(0)|int }})</span>
+</div>
+<div class="katilim" title="Katılım %{{ c.turnout_pct }} · yeter sayı %{{ c.quorum_pct|int }}">
+  <div class="oy-kap"><div class="oy-cubugu"><span class="doluluk" style="width: {{ [c.turnout_pct, 100]|min }}%"></span></div>
+  <span class="oy-esik" style="left: {{ c.quorum_pct }}%" data-etiket=""></span></div>
+</div>
+{%- endmacro %}
+
+{% macro mini_cubuk(c) -%}
+{% set cast = c.tally.yes + c.tally.no %}
+<span class="mini-cubuk" title="%{{ c.cast_yes_pct|round(0)|int }} evet · eşik {{ c.proposal.threshold }}">
+  {% if cast %}<i class="evet" style="width: {{ c.cast_yes_pct }}%"></i><i class="hayir" style="width: {{ 100 - c.cast_yes_pct }}%"></i>{% endif %}
+  <b style="left: {{ c.threshold_pct }}%"></b>
+</span>
+{%- endmacro %}
+
+{% macro teklif_karti(c) -%}
+<a class="kart teklif-kart" href="/teklif/{{ c.proposal.id }}">
+  <div class="satir ayrik">
+    <span class="tur-yazi">{{ c.proposal.kind.label }}</span>
+    {% if c.proposal.is_open %}<small>{{ c.remaining }} kaldı</small>{% else %}{{ teklif_durum(c.proposal) }}{% endif %}
+  </div>
+  <h3>{{ c.proposal.title }}</h3>
+  {{ mini_cubuk(c) }}
+  <div class="oy-ozet">
+    {% if c.tally.yes + c.tally.no %}<span><b class="evet">%{{ c.cast_yes_pct|round(0)|int }} evet</b> · <b class="hayir">%{{ (100 - c.cast_yes_pct)|round(0)|int }} hayır</b></span>{% else %}<span>henüz oy yok</span>{% endif %}
+    <span>{{ c.tally.voted }} oy</span>
+  </div>
+</a>
+{%- endmacro %}
+
+{% macro kavramlar(names) -%}
+{% for n in names %}<span class="cip">{{ n }}</span> {% endfor %}
+{%- endmacro %}

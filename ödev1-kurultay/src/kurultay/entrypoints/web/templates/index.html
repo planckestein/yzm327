@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% block title %}{{ kavram_adi or "Gündem" }}{% endblock %}
+{% block content %}
+{% set temel = "/?" ~ ("kavram=" ~ kavram ~ "&" if kavram else "") ~ ("q=" ~ q|urlencode ~ "&" if q else "") %}
+<div class="forum">
+  <section>
+    <div class="forum-ust">
+      <nav class="sekmeler">
+        {% for key, label in [("son", "Son hareketler"), ("yeni", "Yeni"), ("populer", "En çok konuşulan")] %}
+          <a href="{{ temel }}sira={{ key }}" class="{{ 'etkin' if sira == key and not durum }}">{{ label }}</a>
+        {% endfor %}
+      </nav>
+      <a class="dugme sari" href="/yeni-konu">Yeni konu</a>
+    </div>
+
+    {% if q or kavram or durum %}
+      <p class="filtre-not">
+        {% if durum == "oylamada" %}Açılması oylanan konular
+        {% elif durum == "gizli" %}Gizlenen ya da açılması reddedilen konular
+        {% elif q %}“{{ q }}” için {{ rows|length }} konu
+        {% else %}{{ kavram_adi }}{% endif %}
+        {% if kavram and q %} · {{ kavram_adi }}{% endif %}
+        · <a href="/">temizle</a>
+      </p>
+    {% endif %}
+
+    <div class="konu-tablo">
+      <div class="konu-tablo-bas">
+        <span>Konu</span><span class="kt-kisiler">Katılanlar</span><span class="kt-sayi">Cevap</span><span class="kt-son">Son mesaj</span>
+      </div>
+      {% for r in rows %}
+        <article class="kt-satir {{ 'kapali' if r.topic.state.name == 'arsivlendi' }}">
+          <div class="kt-konu">
+            <a class="kt-baslik" href="/konu/{{ r.topic.id }}">{% if r.topic.state.name == 'arsivlendi' %}<span class="kilit" title="Uzlaşıyla kapandı">🔒</span> {% endif %}{{ r.topic.title }}</a>
+            <div class="kt-alt">
+              {% if r.category %}<span class="kategori">{{ r.category }}</span>{% endif %}
+              {% if r.topic.state.name == 'silinme_oylamasinda' %}<span class="kucuk-etiket uyari">gizleme oylanıyor</span>
+              {% elif r.open_vote %}<span class="kucuk-etiket">oylama var</span>{% endif %}
+              <span class="soluk">@{{ r.author }}</span>
+            </div>
+          </div>
+          <div class="kt-kisiler">{% for n in r.participants %}{{ m.tamga(n, "mini") }}{% endfor %}</div>
+          <div class="kt-sayi">{{ r.replies }}</div>
+          <div class="kt-son"><a href="/konu/{{ r.topic.id }}#son">{{ r.last_activity|once }}</a><small>@{{ r.last_author }}</small></div>
+        </article>
+      {% else %}
+        <p class="bos">{% if q %}Aramana uyan konu yok.{% else %}Burada henüz konu yok.{% endif %}</p>
+      {% endfor %}
+    </div>
+
+    {% if not durum %}
+    <p class="tablo-dip">
+      {% if waiting %}<a href="/?durum=oylamada">Açılması oylanan {{ waiting }} konu</a> · {% endif %}<a href="/?durum=gizli">Gizlenen konular</a>
+    </p>
+    {% endif %}
+  </section>
+
+  <aside class="yan">
+    <div class="yan-blok">
+      <h3>Kategoriler</h3>
+      <ul class="kategori-liste">
+        <li><a href="/" class="{{ 'etkin' if not kavram }}">Hepsi</a></li>
+        {% for c in categories %}
+          <li><a href="/?kavram={{ c.id }}" class="{{ 'etkin' if kavram == c.id }}">{{ c.name }}</a><span>{{ c.topics or "" }}</span></li>
+        {% endfor %}
+      </ul>
+    </div>
+
+    <div class="yan-blok">
+      <div class="satir ayrik"><h3>Oylamada</h3><a href="/teklifler">hepsi</a></div>
+      {% for c in open_cards %}
+        <a class="mini-oylama" href="/teklif/{{ c.proposal.id }}">
+          <span class="mo-baslik">{{ c.proposal.title }}</span>
+          {{ m.mini_cubuk(c) }}
+          <small>{{ c.tally.voted }} oy · {{ c.remaining }} kaldı</small>
+        </a>
+      {% else %}
+        <p class="soluk">Şu an oylama yok.</p>
+      {% endfor %}
+    </div>
+
+    <p class="yan-not">Burada fikir yüzünden kimse susturulmaz; tek yasak tehdit. <a href="/yonetmelik">Kurallar</a></p>
+  </aside>
+</div>
+{% endblock %}

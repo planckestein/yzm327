@@ -1,0 +1,122 @@
+{
+  "tehdit": {
+    "ornek": 60,
+    "tehdit": 20,
+    "satirlar": [
+      {
+        "yontem": "Rastgele (oranla)",
+        "aciklama": "Sınıf oranına göre yazı tura",
+        "dp": 6,
+        "yp": 16,
+        "yn": 14,
+        "dn": 24,
+        "dogruluk": 0.5,
+        "kesinlik": 0.2727272727272727,
+        "duyarlilik": 0.3,
+        "f1": 0.28571428571428564,
+        "f05": 0.2777777777777778,
+        "maliyet": 46.0
+      },
+      {
+        "yontem": "Çoğunluk sınıfı",
+        "aciklama": "Her şeye “tehdit değil” der",
+        "dp": 0,
+        "yp": 0,
+        "yn": 20,
+        "dn": 40,
+        "dogruluk": 0.6666666666666666,
+        "kesinlik": 0.0,
+        "duyarlilik": 0.0,
+        "f1": 0.0,
+        "f05": 0.0,
+        "maliyet": 20.0
+      },
+      {
+        "yontem": "Naif anahtar kelime",
+        "aciklama": "Şiddet kökü geçiyorsa tehdit",
+        "dp": 13,
+        "yp": 19,
+        "yn": 7,
+        "dn": 21,
+        "dogruluk": 0.5666666666666667,
+        "kesinlik": 0.40625,
+        "duyarlilik": 0.65,
+        "f1": 0.5000000000000001,
+        "f05": 0.4391891891891892,
+        "maliyet": 45.0
+      },
+      {
+        "yontem": "Bizim kural",
+        "aciklama": "Açık kalıp ya da 1. tekil şiddet fiili + hedef",
+        "dp": 14,
+        "yp": 2,
+        "yn": 6,
+        "dn": 38,
+        "dogruluk": 0.8666666666666667,
+        "kesinlik": 0.875,
+        "duyarlilik": 0.7,
+        "f1": 0.7777777777777777,
+        "f05": 0.8333333333333334,
+        "maliyet": 10.0
+      }
+    ],
+    "hatalar": [
+      {
+        "metin": "Ailenizi tek tek bulup gebertiriz.",
+        "tur": "YN"
+      },
+      {
+        "metin": "Senin gibileri asarım ben, sıran gelecek.",
+        "tur": "YN"
+      },
+      {
+        "metin": "Yarın okulun önünde bekliyor olacağım, çocuğunu bir daha göremezsin.",
+        "tur": "YN"
+      },
+      {
+        "metin": "Kafana sıkacağım.",
+        "tur": "YN"
+      },
+      {
+        "metin": "Arabana bomba koyacağım.",
+        "tur": "YN"
+      },
+      {
+        "metin": "Mahallede seni gören dövecek, ben söyledim.",
+        "tur": "YN"
+      },
+      {
+        "metin": "Seni tavlada döverim, gel bir el atalım.",
+        "tur": "YP"
+      },
+      {
+        "metin": "“Seni öldürürüm” diye yazan hesabı kınıyorum.",
+        "tur": "YP"
+      }
+    ]
+  },
+  "ontoloji": {
+    "ornek": 25,
+    "sinif": 11,
+    "satirlar": [
+      {
+        "yontem": "Rastgele (oranla)",
+        "aciklama": "Bölüm oranlarına göre rastgele",
+        "dogruluk": 0.12,
+        "makro_f1": 0.11688311688311687
+      },
+      {
+        "yontem": "Çoğunluk sınıfı",
+        "aciklama": "Her konuya “ekonomi” der",
+        "dogruluk": 0.2,
+        "makro_f1": 0.030303030303030307
+      },
+      {
+        "yontem": "Bizim kural",
+        "aciklama": "Anahtar kelime örtüşmesi (Ontology.suggest)",
+        "dogruluk": 0.68,
+        "makro_f1": 0.6047785547785548
+      }
+    ]
+  }
+}

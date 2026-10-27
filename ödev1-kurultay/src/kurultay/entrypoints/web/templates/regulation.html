@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}Kurallar{% endblock %}
+{% block content %}
+<div class="sayfa-basi">
+  <div>
+    <h1>Kurallar <small class="soluk" style="font-size:.9rem;font-weight:500">sürüm {{ regulation.version }}</small></h1>
+    <p>Aşağıdaki her kural üyelerin oyuyla değişebilir (karesel oylama, 3'te 2). Her değişiklik yeni bir sürüm olarak eklenir, eskisi silinmez.</p>
+  </div>
+</div>
+<section class="kart kural-kutu" style="margin-bottom:22px">
+  <h2 style="margin-top:0">Değişmeyen tek ilke: fikir serbest, tehdit yasak</h2>
+  <p>Kurultay'da hiçbir görüş, siyasi ya da değil, sırf rahatsız edici bulunduğu için kaldırılmaz. Aşırı sağdan aşırı sola herkes yazabilir; hakaret ve sert eleştiri de bu özgürlüğün içinde kalır. Gönderilmesi engellenen tek şey bir kişiye zarar vermekle tehdit eden mesajdır. Bunu bir kural zinciri denetler ve mesajı göndermeden önce uyarır.</p>
+  <p class="soluk">Reklam, konu dışı içerik ya da başka bir sebeple bir mesajı gizlemek isteyen bunu teklif eder; konuyu takip edenler karesel oylamayla karar verir. Gizlenen mesaj silinmez, defterde kalır.</p>
+</section>
+<div class="izgara">
+  <div class="yigin">
+    <section class="kart">
+      <h2>Teklif türlerine göre oylama</h2>
+      <p class="soluk" style="font-size:.9rem">Azınlığı en çok etkileyen işlemler (gizleme, silme, kural değişikliği) çoğunluğun tek başına karar veremeyeceği yöntemlerle oylanır.</p>
+      <div class="tablo-kap"><table>
+        <thead><tr><th>Teklif türü</th><th>Strateji</th><th>Eşik</th></tr></thead>
+        <tbody>
+        {% for kind, label, strategy, threshold in per_kind %}
+          <tr><td>{{ label }}</td><td><span class="cip strateji">{{ strategy_labels[strategy] }}</span></td><td>{{ threshold_labels[threshold] }} <small class="mono">({{ threshold }})</small></td></tr>
+        {% endfor %}
+        </tbody>
+      </table></div>
+    </section>
+    <section class="kart">
+      <h2>Genel kurallar</h2>
+      <div class="tablo-kap"><table>
+        <tbody>
+        {% for key, label, value, rule in general %}
+          <tr><td>{{ label }}</td><td style="text-align:right"><b>{{ value }}</b></td></tr>
+        {% endfor %}
+        </tbody>
+      </table></div>
+    </section>
+    <section class="kart">
+      <h2>Sürüm geçmişi</h2>
+      {% for reg, proposal_id, created in history %}
+        <div class="satir ayrik" style="padding:8px 0;border-bottom:1px dashed var(--cizgi)">
+          <span><b>Sürüm {{ reg.version }}</b> · {{ created|tarih }}</span>
+          {% if proposal_id %}<a href="/teklif/{{ proposal_id }}">kabul edilen teklif →</a>{% else %}<small>kuruluş</small>{% endif %}
+        </div>
+      {% endfor %}
+    </section>
+  </div>
+  <aside>
+    <form class="kart vurgulu" method="post" action="/yonetmelik">
+      <h3>Değişiklik öner</h3>
+      {% if not me %}<p><a href="/giris">Giriş yap</a></p>{% endif %}
+      <label>Kural</label>
+      <select name="anahtar" id="anahtar">
+        {% for key, rule in changeable.items() %}<option value="{{ key }}">{{ rule.label }} (şu an: {{ regulation.current_value(key) }})</option>{% endfor %}
+      </select>
+      <label>Yeni değer</label>
+      <input type="text" name="deger" required placeholder="ör. 40 · evet · karesel · 3/5">
+      <small class="soluk">Seçenekler: stratejiler <span class="mono">basit, karesel, uzman, itibar</span>; eşikler <span class="mono">1/2, 3/5, 2/3</span>; açık/kapalı <span class="mono">evet, hayir</span>.</small>
+      <label>Gerekçe</label>
+      <textarea name="gerekce" required></textarea>
+      <button style="margin-top:10px">Oylamaya sun</button>
+    </form>
+  </aside>
+</div>
+{% endblock %}

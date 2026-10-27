@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Üyeler{% endblock %}
+{% block content %}
+<div class="sayfa-basi">
+  <div>
+    <h1>Üyeler</h1>
+    <p>{{ "{:,}".format(page.total).replace(",", ".") }} {% if page.query %}sonuç{% else %}üye{% endif %}. Herkes yalnızca takma adıyla görünür; ad, soyad, doğum tarihi ve adresi yalnızca kendisi görür.</p>
+  </div>
+  <form method="get" action="/uyeler" class="satir" style="gap:6px">
+    <input type="search" name="q" value="{{ page.query }}" placeholder="Takma ad ara" style="width:220px">
+    <button class="ikincil">Ara</button>
+  </form>
+</div>
+<div class="uye-izgara">
+  {% for p in page.profiles %}
+    <a class="kart" href="/profil/{{ p.nickname }}" style="color:inherit;text-decoration:none">
+      <div class="satir" style="gap:10px;flex-wrap:nowrap">{{ m.tamga(p.nickname) }}<div style="min-width:0"><b style="overflow-wrap:anywhere">@{{ p.nickname }}</b><br>
+        <small>{% if p.role.value == 'yz_ajan' %}<span class="cip yz">YZ ajanı</span>{% else %}itibar {{ p.reputation }}{% endif %}</small></div></div>
+      <div class="satir" style="gap:4px;margin-top:8px">
+        {% for cid in p.interests|sort %}{% set c = ontology.get(cid) %}{% if c and loop.index <= 3 %}<span class="cip" style="font-size:.7rem">{{ c.name }}</span>{% endif %}{% endfor %}
+      </div>
+    </a>
+  {% else %}
+    <p class="bos">Bu takma adla üye yok.</p>
+  {% endfor %}
+</div>
+{% if page.pages > 1 %}
+<nav class="sayfalama">
+  {% set q = "&q=" ~ page.query if page.query else "" %}
+  {% if page.page > 1 %}<a href="/uyeler?sayfa={{ page.page - 1 }}{{ q }}">← önceki</a>{% endif %}
+  {% for n in range(1, page.pages + 1) %}
+    {% if n == page.page %}<span class="etkin">{{ n }}</span>
+    {% elif n <= 2 or n > page.pages - 2 or (n - page.page)|abs <= 2 %}<a href="/uyeler?sayfa={{ n }}{{ q }}">{{ n }}</a>
+    {% elif n == 3 or n == page.pages - 2 %}<span>…</span>{% endif %}
+  {% endfor %}
+  {% if page.page < page.pages %}<a href="/uyeler?sayfa={{ page.page + 1 }}{{ q }}">sonraki →</a>{% endif %}
+</nav>
+{% endif %}
+{% endblock %}

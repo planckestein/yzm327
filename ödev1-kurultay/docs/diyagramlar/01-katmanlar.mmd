@@ -1,0 +1,72 @@
+classDiagram
+  direction TB
+  namespace Entrypoints {
+    class WebApp {
+      +create_app(veri_klasoru) FastAPI
+      -act(request, komut) Redirect
+    }
+  }
+  namespace ServiceLayer {
+    class CommandGateway {
+      <<interface>>
+      +dispatch(command) Any
+    }
+    class AuthorizationProxy
+    class MessageBusGateway
+    class MessageBus {
+      +handle(message) Any
+    }
+    class AbstractUnitOfWork {
+      <<abstract>>
+      +users
+      +topics
+      +proposals
+      +ledger
+      +commit()
+      +rollback()
+      +collect_new_events() Iterator~Event~
+    }
+    class Clock {
+      <<interface>>
+      +now() datetime
+    }
+    class ExpertModel {
+      <<interface>>
+      +assess(request) Assessment
+    }
+    class LedgerReplica {
+      <<interface>>
+      +append(entry)
+      +entries() list
+    }
+  }
+  namespace Domain {
+    class Topic
+    class Proposal
+    class User
+    class Ontology
+  }
+  namespace Adapters {
+    class SqlAlchemyUnitOfWork
+    class SqlAlchemyTopicRepository
+    class OllamaExpertModel
+    class RuleBasedExpertModel
+    class JsonLinesLedgerNode
+    class SystemClock
+  }
+  WebApp ..> CommandGateway : komut gönderir
+  CommandGateway <|.. AuthorizationProxy
+  CommandGateway <|.. MessageBusGateway
+  AuthorizationProxy o--> MessageBusGateway : vekil
+  MessageBusGateway --> MessageBus
+  MessageBus --> AbstractUnitOfWork
+  AbstractUnitOfWork ..> Topic
+  AbstractUnitOfWork ..> Proposal
+  AbstractUnitOfWork ..> User
+  AbstractUnitOfWork ..> Ontology
+  AbstractUnitOfWork <|-- SqlAlchemyUnitOfWork
+  SqlAlchemyUnitOfWork *-- SqlAlchemyTopicRepository
+  ExpertModel <|.. OllamaExpertModel
+  ExpertModel <|.. RuleBasedExpertModel
+  LedgerReplica <|.. JsonLinesLedgerNode
+  Clock <|.. SystemClock
